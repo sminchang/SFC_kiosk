@@ -14,9 +14,6 @@ spring:
         format_sql: true
   profiles:
     include: private
-  redis:
-    host: localhost
-    port: 8080
 
 logging:
   level:

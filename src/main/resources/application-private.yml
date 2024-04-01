@@ -1,0 +1,4 @@
+kakao:
+  api_key: 421446e63cf0748471575b5b59e42471
+  login_redirect_uri: http://localhost:8080/memberIndex
+  logout_redirect_uri: http://localhost:8080/logout

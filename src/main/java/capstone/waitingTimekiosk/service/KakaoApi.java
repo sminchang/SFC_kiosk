@@ -136,5 +136,24 @@ public class KakaoApi {
         Long id = jsonNode.get("id").asLong();
         logger.info("kakao logout - id = {}", id);
     }
+
+    //클라이언트 토큰 유효성 확인-인가 검증에 사용
+    public HttpStatusCode tokenCheck(String accessToken) {
+        // HTTP Header 생성
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", "Bearer " + accessToken);
+
+        // HTTP 요청 보내기
+        HttpEntity<MultiValueMap<String, String>> TokenInfoRequest = new HttpEntity<>(headers);
+        RestTemplate rt = new RestTemplate();
+        ResponseEntity<String> response = rt.exchange(
+                "https://kapi.kakao.com/v1/user/access_token_info",
+                HttpMethod.GET,
+                TokenInfoRequest,
+                String.class
+        );
+
+        return response.getStatusCode();
+    }
 }
 

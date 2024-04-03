@@ -76,4 +76,44 @@ public class AuthController {
 
         return "redirect:/";
     }
+
+    @GetMapping("/menuConfig")
+    public String ConfigPage(@CookieValue(name = "accessToken", defaultValue = "not found") String tokenCookie){
+        if(kakaoApi.tokenCheck(tokenCookie).is2xxSuccessful())
+            return "html/adminPage/menuConfig";
+        else
+            return "401"; //실제 반환되지 않음, 서버에서 자체 오류냄
+    }
+
+    @GetMapping("/menuDemand")
+    public String demandPage(@CookieValue(name = "accessToken", defaultValue = "not found") String tokenCookie) {
+        if(kakaoApi.tokenCheck(tokenCookie).is2xxSuccessful())
+            return "html/adminPage/menuDemand";
+        else
+            return "401"; //실제 반환되지 않음, 서버에서 자체 오류냄
+    }
+
+    @GetMapping("/orderState")
+    public String statePage(@CookieValue(name = "accessToken", defaultValue = "not found") String tokenCookie) {
+        if(kakaoApi.tokenCheck(tokenCookie).is2xxSuccessful())
+            return "html/adminPage/orderState";
+        else
+            return "401"; //실제 반환되지 않음, 서버에서 자체 오류냄
+    }
+
+    @GetMapping("/timeSetting")
+    public String settingPage(@CookieValue(name = "accessToken", defaultValue = "not found") String tokenCookie) {
+        if(kakaoApi.tokenCheck(tokenCookie).is2xxSuccessful())
+            return "html/adminPage/timeSetting";
+        else
+            return "401"; //실제 반환되지 않음, 서버에서 자체 오류냄
+    }
+
+    @GetMapping("/menu")
+    public String menuPage(@CookieValue(name = "accessToken", defaultValue = "not found") String tokenCookie) {
+        if(kakaoApi.tokenCheck(tokenCookie).is2xxSuccessful())
+            return "html/consumerPage/menu";
+        else
+            return "401"; //실제 반환되지 않음, 서버에서 자체 오류냄
+    }
 }

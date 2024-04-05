@@ -2,32 +2,61 @@ package capstone.waitingTimekiosk.domain;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Entity
-@Getter
+@Getter @Setter //setter 대체할거 찾기
 public class MenuItem {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "menuItem_id")
+    @Column(name = "menu_item_id")
     private Long id;
 
     //메뉴를 소유한 메뉴판 식별
-    @ManyToOne
-    @JoinColumn(name = "menu_id")
-    private Menu menu_id;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "shop_id")
+    private Shop shop;
 
     private String menuName;
 
-    private String category;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id")
+    private Category category;
 
     private int price;
 
-    private int default_time; //기본 대기 시간
+    private int defaultTime; //기본 대기 시간
 
-    private int event_time; //이벤트 설정 대기 시간
+    private int eventTime; //이벤트 설정 대기 시간
 
-    private int event_quantity; //이벤트 설정 수량
+    private int eventQuantity; //이벤트 설정 수량
 
-    private Long image_path; //메뉴 이미지가 저장된 파일 경로
+    private Long imagePath; //메뉴 이미지가 저장된 파일 경로
+
+    private String description;
+
+    //해당 메뉴와 연결된 주문목록
+    @OneToMany(mappedBy = "menuItem", cascade = CascadeType.REMOVE)
+    private List<OrderItem> orderItems = new ArrayList<>();
+
+    protected MenuItem() {
+
+    }
+
+    public MenuItem(Shop shop) {
+        this.shop = shop;
+    }
+
+    public void setMenu(Shop shop) {
+        this.shop = shop;
+    }
+
+    public void addOrderItem(OrderItem orderItem) {
+        orderItems.add(orderItem);
+        orderItem.setMenuItem(this);
+    }
 }

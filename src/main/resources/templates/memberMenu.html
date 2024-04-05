@@ -55,34 +55,12 @@
     <section class="py-5 text-center container">
         <div class="row py-lg-5">
             <div class="col-lg-6 col-md-8 mx-auto">
-                <h1 class="fw-light">새로운 매장을 등록하고 사용해보세요.</h1>
-                <div class="btn-group" th:each="shop : ${shops}">
-                    <a href="/memberMenu" class="btn btn-primary btn-lg my-2" th:text="${shop.shopName}"></a>
-                    <button type="button" class="btn btn-primary btn-lg my-2" data-bs-toggle="modal" data-bs-target="#deleteModal">X</button>
-                </div>
-                <button type="button" class="btn btn-secondary btn-sm my-2" data-bs-toggle="modal" data-bs-target="#newShopModal">+매장 추가</button>
-                <div class="modal fade" id="newShopModal" tabindex="-1" aria-labelledby="newShopModalLabel" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h1 class="modal-title fs-5" id="newShopModalLabel">New shop</h1>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <form action="/new/shop" method="post">
-                                <div class="modal-body">
-                                    <div class="mb-3">
-                                        <label for="shopName" class="col-form-label">shop name</label>
-                                        <input type="text" class="form-control" id="shopName" name="shopName" required>
-                                    </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="submit" class="btn btn-primary">Create</button>
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
+                <h1 class="fw-light">Waiting Time Kiosk</h1>
+                <p class="lead text-muted">공항, 기차역, 고속터미널 등의 예매형 대중교통시설 인근에 위치한 식당들 위한
+                    개선된 키오스크를 제공합니다. 짧은 대기시간을 홍보하세요.<p>
+                <a href="/menu" class="btn btn-primary btn-lg my-2">고객 화면</a>
+                <a href="/orderState" class="btn btn-secondary btn-lg my-2">관리자 화면</a>
+                </p>
             </div>
         </div>
     </section>

@@ -69,55 +69,52 @@
                         <h1 class="modal-title fs-5" id="newMenuModalLabel">New menu</h1>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div class="modal-body">
-                        <form>
+                    <form role="form", action="/new/menuItem" th:object="${menuForm}" method="post">
+                        <div class="modal-body">
                             <div class="mb-3">
-                                <label for="category" class="form-label">category</label>
-                                <select class="form-select" id="category" required>
+                                <label th:for="categoryName" class="form-label">category</label>
+                                <select class="form-select" th:field="*{categoryName}" required>
                                     <option value="">Choose...</option>
-                                    <option>main menu</option>
+                                    <option th:each="category : ${categorys}" th:value="${category.categoryName}" th:text="${category.categoryName}"></option>
                                 </select>
                                 <div class="invalid-feedback">
                                     Please select a valid category.
                                 </div>
                             </div>
                             <div class="mb-3">
-                                <label for="menuName" class="col-form-label">menu name</label>
-                                <input type="text" class="form-control" id="menuName">
+                                <label th:for="menuName" class="col-form-label">menu name</label>
+                                <input type="text" class="form-control" th:field="*{menuName}">
                             </div>
                             <div class="mb-3">
-                                <label for="price" class="col-form-label">menu price</label>
-                                <input type="text" class="form-control" id="price" placeholder="₩">
+                                <label th:for="price" class="col-form-label">menu price</label>
+                                <input type="text" class="form-control" th:field="*{price}" placeholder="₩">
                             </div>
                             <div class="mb-3">
-                                <label for="cookingTime" class="col-form-label">cooking time</label>
-                                <input type="text" class="form-control" id="cookingTime" placeholder="mins">
+                                <label th:for="defaultTime" class="col-form-label">cooking time</label>
+                                <input type="text" class="form-control" th:field="*{defaultTime}" placeholder="mins">
                             </div>
                             <div class="mb-3">
-                                <label for="image" class="col-form-label">menu image</label>
+                                <label th:for="imagePath" class="col-form-label">menu image</label>
                                 <div class="input-group">
-                                    <input type="text" class="form-control" id="image">
+                                    <input type="text" class="form-control" th:field="*{imagePath}">
                                     <button type="file" class="btn btn-secondary">upload</button>
                                 </div>
                             </div>
                             <div class="mb-3">
-                                <label for="messageText" class="col-form-label">Message</label>
-                                <textarea class="form-control" id="messageText"></textarea>
+                                <label th:for="description" class="col-form-label">description</label>
+                                <textarea class="form-control" th:field="*{description}"></textarea>
                             </div>
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary">Create</button>
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">Create</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
         <ul class="nav nav-pills">
-            <li class="nav-item"><a href="#" class="nav-link">fast menu</a></li>
-            <li class="nav-item"><a href="#" class="nav-link">main menu</a></li>
-            <li class="nav-item"><a href="#" class="nav-link">side menu</a></li>
-            <li class="nav-item"><a href="#" class="nav-link">drink</a></li>
+            <li  th:each="category : ${categorys}" class="nav-item"><a href="#" class="nav-link" th:text="${category.categoryName}"></a></li>
         </ul>
         <button type="button" class="btn btn-outline-secondary ms-5" data-bs-toggle="modal" data-bs-target="#newCategoryModal">+category</button>
         <div class="modal fade" id="newCategoryModal" tabindex="-1" aria-labelledby="newCategoryModalLabel" aria-hidden="true">
@@ -127,18 +124,18 @@
                         <h1 class="modal-title fs-5" id="newCategoryModalLabel">New category</h1>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <div class="modal-body">
-                        <form>
+                    <form action="/new/category" method="post">
+                        <div class="modal-body">
                             <div class="mb-3">
                                 <label for="categoryName" class="col-form-label">category name</label>
-                                <input type="text" class="form-control" id="categoryName">
+                                <input type="text" class="form-control" id="categoryName" name="categoryName" required>
                             </div>
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary">Create</button>
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">Create</button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -149,17 +146,17 @@
     <div class="album py-5 bg-light">
         <div class="container">
             <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
-                <div class="col">
+                <div class="col" th:each="menu : ${menus}">
                     <div class="card shadow-sm">
                         <svg class="bd-placeholder-img card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="#55595c"/><text x="50%" y="50%" fill="#eceeef" dy=".3em">Thumbnail</text></svg>
                         <div class="card-body">
-                            <p class="card-text">menu name</p>
+                            <p class="card-text" th:text="${menu.menuName}"></p>
                             <div class="d-flex justify-content-between align-items-center">
                                 <div class="btn-group">
                                     <button type="button" class="btn btn-sm btn-outline-secondary">update</button>
                                     <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#deleteModal">delete</button>
                                 </div>
-                                <small class="text-muted">9 mins</small>
+                                <small class="text-muted" th:text="${menu.defaultTime}"> mins</small>
                             </div>
                         </div>
                     </div>

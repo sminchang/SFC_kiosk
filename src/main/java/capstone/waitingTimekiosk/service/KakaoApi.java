@@ -22,28 +22,8 @@ public class KakaoApi {
     @Value("${kakao.api_key}")
     private String kakaoApiKey;
 
-    @Value("${kakao.login_redirect_uri}")
-    private String kakaoRedirectUri;
-
-    @Value("${kakao.logout_redirect_uri}")
-    private String kakaoLogoutRedirectUri;
-
-    private String cookieToken;
-
-    private static final Logger logger = LoggerFactory.getLogger(KakaoApi.class);
-
-    public void startLogin() {
-        String url = "https://kauth.kakao.com/oauth/authorize" +
-                "client_id=" + kakaoApiKey +
-                "&redirect_uri=" + kakaoRedirectUri +
-                "response_type='code'";
-
-        // HTTP 요청 보내기
-        RestTemplate rt = new RestTemplate();
-        ResponseEntity<String> response = rt.getForEntity(url, String.class);
-    }
-
     public String getAccessToken(String code) throws JsonProcessingException {
+
         // HTTP Header 생성
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
@@ -73,6 +53,16 @@ public class KakaoApi {
 
         return jsonNode.get("access_token").asText();
     }
+
+    @Value("${kakao.login_redirect_uri}")
+    private String kakaoRedirectUri;
+
+    @Value("${kakao.logout_redirect_uri}")
+    private String kakaoLogoutRedirectUri;
+
+    private String cookieToken;
+
+    private static final Logger logger = LoggerFactory.getLogger(KakaoApi.class);
 
     public void setCookie(HttpServletResponse response, String cookieToken) {
         Cookie cookie = new Cookie("accessToken", cookieToken);

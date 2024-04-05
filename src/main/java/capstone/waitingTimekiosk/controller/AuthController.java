@@ -1,8 +1,12 @@
 package capstone.waitingTimekiosk.controller;
 
+
+import capstone.waitingTimekiosk.domain.Shop;
+import capstone.waitingTimekiosk.repository.ShopRepository;
 import capstone.waitingTimekiosk.service.KakaoApi;
 import capstone.waitingTimekiosk.domain.Member;
 import capstone.waitingTimekiosk.repository.MemberRepository;
+import capstone.waitingTimekiosk.service.MemberService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
@@ -13,6 +17,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 
 @RequiredArgsConstructor //생성자 자동 생성, 의존관계 자동 주입
 @Controller
@@ -20,6 +26,8 @@ public class AuthController {
 
     private final KakaoApi kakaoApi;
     private final MemberRepository memberRepository;
+    private final ShopRepository shopRepository;
+    private final MemberService memberService;
     private final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
     //초기화면, 카카오 API 설정이 바뀌면 yml만 수정하도록 설계
@@ -41,10 +49,21 @@ public class AuthController {
 
         //3.사용자 정보 받기
         Member member = kakaoApi.getUserInfo(accessToken);
-        memberRepository.save(member);
+
+        //3-1.사용자 중복검사
+        Long memberId = memberService.validateDuplicateMember(member);
 
         //4.OAuth 서버로부터 받은 액세스 토큰을 응답 쿠키 헤더에 넣어 클라이언트 브라우저에 보내기
         kakaoApi.setCookie(response, accessToken);
+
+        //회원의 매장 조회
+        List<Shop> shops;
+        try {
+            shops = shopRepository.findListByMemberId(memberId);
+            model.addAttribute("shops",shops);
+        } catch (Exception e){
+            logger.info("회원이 등록한 shop이 없습니다.");
+        }
 
         //서버 사이드 렌더링
         model.addAttribute("nickname", member.getNickname());
@@ -77,10 +96,22 @@ public class AuthController {
         return "redirect:/";
     }
 
+    @GetMapping("/memberMenu")
+    public String memberPage(@CookieValue(name = "accessToken", defaultValue = "not found") String accessToken, Model model) throws JsonProcessingException {
+
+        Member member = kakaoApi.getUserInfo(accessToken);
+        member = memberRepository.findByEmail(member.getEmail()); //조회값이 없어서 null인경우 예외처리필요
+
+        model.addAttribute("nickname",member.getNickname());
+        return "memberMenu";
+    }
+
     @GetMapping("/menuConfig")
-    public String ConfigPage(@CookieValue(name = "accessToken", defaultValue = "not found") String tokenCookie){
-        if(kakaoApi.tokenCheck(tokenCookie).is2xxSuccessful())
+    public String ConfigPage(@CookieValue(name = "accessToken", defaultValue = "not found") String tokenCookie, Model model){
+        if(kakaoApi.tokenCheck(tokenCookie).is2xxSuccessful()){
+            model.addAttribute("menuForm", new MenuForm());
             return "html/adminPage/menuConfig";
+        }
         else
             return "401"; //실제 반환되지 않음, 서버에서 자체 오류냄
     }
@@ -116,4 +147,5 @@ public class AuthController {
         else
             return "401"; //실제 반환되지 않음, 서버에서 자체 오류냄
     }
+
 }

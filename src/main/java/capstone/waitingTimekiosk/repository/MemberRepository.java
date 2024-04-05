@@ -18,7 +18,14 @@ public class MemberRepository {
         return member.getId();
     }
 
-    public Member find(Long id) {
+    public Member findByEmail(String email) {
+        return em.createQuery("SELECT m FROM Member m WHERE m.email = :email", Member.class)
+                .setParameter("email", email)
+                .getSingleResult();
+    }
+
+    public Member findById(Long id) {
         return em.find(Member.class, id);
     }
+
 }

@@ -57,7 +57,7 @@
             <div class="col-lg-6 col-md-8 mx-auto">
                 <h1 class="fw-light">새로운 매장을 등록하고 사용해보세요.</h1>
                 <div class="btn-group" th:each="shop : ${shops}">
-                    <a href="/memberMenu" class="btn btn-primary btn-lg my-2" th:text="${shop.shopName}"></a>
+                    <a th:href="@{/memberMenu(shopId=${shop.id})}" class="btn btn-primary btn-lg my-2" th:text="${shop.shopName}"></a>
                     <button type="button" class="btn btn-primary btn-lg my-2" data-bs-toggle="modal" data-bs-target="#deleteModal">X</button>
                 </div>
                 <button type="button" class="btn btn-secondary btn-sm my-2" data-bs-toggle="modal" data-bs-target="#newShopModal">+매장 추가</button>

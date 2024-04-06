@@ -5,14 +5,11 @@ import capstone.waitingTimekiosk.domain.Member;
 import capstone.waitingTimekiosk.domain.MenuItem;
 import capstone.waitingTimekiosk.domain.Shop;
 import capstone.waitingTimekiosk.repository.CategoryRepository;
-import capstone.waitingTimekiosk.repository.MemberRepository;
 import capstone.waitingTimekiosk.repository.MenuItemRepository;
 import capstone.waitingTimekiosk.repository.ShopRepository;
-import capstone.waitingTimekiosk.service.KakaoApi;
 import capstone.waitingTimekiosk.service.MemberService;
+import capstone.waitingTimekiosk.service.MenuService;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import jakarta.persistence.NoResultException;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,12 +24,11 @@ import java.util.List;
 @RequiredArgsConstructor
 @Controller
 public class MenuController {
-    private final KakaoApi kakaoApi;
     private final CategoryRepository categoryRepository;
     private final MenuItemRepository menuItemRepository;
-    private final MemberRepository memberRepository;
     private final ShopRepository shopRepository;
     private final MemberService memberService;
+    private final MenuService menuService;
     private final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
 
@@ -49,28 +45,26 @@ public class MenuController {
     }
 
     @PostMapping("/new/category")
-    public String newCategory(@CookieValue(name = "accessToken", defaultValue = "not found") String accessToken,
+    public String newCategory(@CookieValue(name = "shopId", defaultValue = "not found") String shopId,
                               @RequestParam String categoryName, Model model) throws JsonProcessingException {
 
-        Member member = memberService.findMember(accessToken);
-        Shop shop = shopRepository.findByMemberId(member.getId());
+        Shop shop = shopRepository.findById(shopId);
 
-        memberService.validateDuplicateCategory(shop, categoryName);
+        menuService.validateDuplicateCategory(shop, categoryName);
         //같은 shopId로 된 categoryName을 저장할 수 없도록 처리했음, 사용자에게 경고 메세지를 띄우는거 구현해야함
 
-        List<Category> categorys = categoryRepository.findAll(shop.getId());
+        List<Category> categorys = categoryRepository.findListByShopId(shop.getId());
         model.addAttribute("categorys", categorys);
         model.addAttribute("menuForm", new MenuForm());
         return "html/adminPage/menuConfig";
     }
 
     @PostMapping("/new/menuItem")
-    public String newMenuItem(@CookieValue(name = "accessToken", defaultValue = "not found") String accessToken,
+    public String newMenuItem(@CookieValue(name = "shopId", defaultValue = "not found") String shopId,
                               MenuForm form,
                               Model model) throws JsonProcessingException {
 
-        Member member = memberService.findMember(accessToken);
-        Shop shop = shopRepository.findByMemberId(member.getId());
+        Shop shop = shopRepository.findById(shopId);
         Category category = categoryRepository.findCategory(shop.getId(),form.getCategoryName());
 
         MenuItem menuItem = new MenuItem(shop);
@@ -82,8 +76,8 @@ public class MenuController {
         menuItem.setDescription(form.getDescription());
         menuItemRepository.save(menuItem);
 
-        List<Category> categorys = categoryRepository.findAll(shop.getId());
-        List<MenuItem> menus = menuItemRepository.findAll(shop.getId());
+        List<Category> categorys = categoryRepository.findListByShopId(shop.getId());
+        List<MenuItem> menus = menuItemRepository.findListByShopId(shop.getId());
 
         model.addAttribute("categorys", categorys);
         model.addAttribute("menuForm", new MenuForm());

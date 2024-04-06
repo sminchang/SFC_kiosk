@@ -21,7 +21,7 @@ public class CategoryRepository {
         return category.getId();
     }
 
-    public List<Category> findAll(Long shopId) {
+    public List<Category> findListByShopId(Long shopId) {
         return em.createQuery("select m from Category m where m.shop.id =:shopId", Category.class)
                 .setParameter("shopId",shopId)
                 .getResultList();

@@ -20,7 +20,7 @@ public class MenuItemRepository {
         return menuItem.getId();
     }
 
-    public List<MenuItem> findAll(Long shopId) {
+    public List<MenuItem> findListByShopId(Long shopId) {
         return em.createQuery("select m from MenuItem m where m.shop.id =:shopId", MenuItem.class)
                 .setParameter("shopId",shopId)
                 .getResultList();

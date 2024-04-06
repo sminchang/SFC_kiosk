@@ -32,4 +32,9 @@ public class ShopRepository {
                 .setParameter("id", id)
                 .getSingleResult();
     }
+
+    public Shop findById(String shopId) {
+        Long id = Long.parseLong(shopId);
+        return em.find(Shop.class, id);
+    }
 }

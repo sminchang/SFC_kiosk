@@ -1,12 +1,16 @@
 package capstone.waitingTimekiosk.controller;
 
 
+import capstone.waitingTimekiosk.domain.Category;
+import capstone.waitingTimekiosk.domain.MenuItem;
 import capstone.waitingTimekiosk.domain.Shop;
+import capstone.waitingTimekiosk.repository.CategoryRepository;
+import capstone.waitingTimekiosk.repository.MenuItemRepository;
 import capstone.waitingTimekiosk.repository.ShopRepository;
 import capstone.waitingTimekiosk.service.KakaoApi;
 import capstone.waitingTimekiosk.domain.Member;
-import capstone.waitingTimekiosk.repository.MemberRepository;
 import capstone.waitingTimekiosk.service.MemberService;
+import capstone.waitingTimekiosk.service.MenuService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
@@ -25,9 +29,11 @@ import java.util.List;
 public class AuthController {
 
     private final KakaoApi kakaoApi;
-    private final MemberRepository memberRepository;
     private final ShopRepository shopRepository;
     private final MemberService memberService;
+    private final MenuItemRepository menuItemRepository;
+    private final MenuService menuService;
+    private final CategoryRepository categoryRepository;
     private final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
     //초기화면, 카카오 API 설정이 바뀌면 yml만 수정하도록 설계
@@ -45,7 +51,6 @@ public class AuthController {
 
         //2. 토큰 받기
         String accessToken = kakaoApi.getAccessToken(code);
-        logger.info("get-AccessToken={}", accessToken);
 
         //3.사용자 정보 받기
         Member member = kakaoApi.getUserInfo(accessToken);
@@ -56,7 +61,7 @@ public class AuthController {
         //4.OAuth 서버로부터 받은 액세스 토큰을 응답 쿠키 헤더에 넣어 클라이언트 브라우저에 보내기
         kakaoApi.setCookie(response, accessToken);
 
-        //회원의 매장 조회
+        //회원의 shop 조회
         List<Shop> shops;
         try {
             shops = shopRepository.findListByMemberId(memberId);
@@ -97,22 +102,34 @@ public class AuthController {
     }
 
     @GetMapping("/memberMenu")
-    public String memberPage(@CookieValue(name = "accessToken", defaultValue = "not found") String accessToken, Model model) throws JsonProcessingException {
+    public String memberPage(@CookieValue(name = "accessToken", defaultValue = "not found") String accessToken,
+                             HttpServletResponse response,
+                             @RequestParam String shopId,
+                             Model model) throws JsonProcessingException {
+        Member member = memberService.findMember(accessToken);
 
-        Member member = kakaoApi.getUserInfo(accessToken);
-        member = memberRepository.findByEmail(member.getEmail()); //조회값이 없어서 null인경우 예외처리필요
+        //클라이언트가 앞으로의 페이지에서 shopId를 기억하도록 쿠키 전송
+        menuService.setCookie(response, shopId);
 
         model.addAttribute("nickname",member.getNickname());
+        model.addAttribute("kakaoApiKey", kakaoApi.getKakaoApiKey());
+        model.addAttribute("logoutRedirectUri", kakaoApi.getKakaoLogoutRedirectUri());
         return "memberMenu";
     }
 
     @GetMapping("/menuConfig")
-    public String ConfigPage(@CookieValue(name = "accessToken", defaultValue = "not found") String tokenCookie, Model model){
+    public String ConfigPage(@CookieValue(name = "accessToken", defaultValue = "not found") String tokenCookie,
+                             @CookieValue(name = "shopId", defaultValue = "not found") String shopId,
+                             Model model){
         if(kakaoApi.tokenCheck(tokenCookie).is2xxSuccessful()){
+            Shop shop = shopRepository.findById(shopId);
+            List<Category> categorys = categoryRepository.findListByShopId(shop.getId());
+            List<MenuItem> menus = menuItemRepository.findListByShopId(shop.getId());
+            model.addAttribute("categorys", categorys);
+            model.addAttribute("menus",menus);
             model.addAttribute("menuForm", new MenuForm());
             return "html/adminPage/menuConfig";
-        }
-        else
+        } else
             return "401"; //실제 반환되지 않음, 서버에서 자체 오류냄
     }
 
@@ -133,18 +150,32 @@ public class AuthController {
     }
 
     @GetMapping("/timeSetting")
-    public String settingPage(@CookieValue(name = "accessToken", defaultValue = "not found") String tokenCookie) {
-        if(kakaoApi.tokenCheck(tokenCookie).is2xxSuccessful())
+    public String settingPage(@CookieValue(name = "accessToken", defaultValue = "not found") String tokenCookie,
+                              @CookieValue(name = "shopId", defaultValue = "not found") String shopId,
+                              Model model) {
+        if(kakaoApi.tokenCheck(tokenCookie).is2xxSuccessful()) {
+            Shop shop = shopRepository.findById(shopId);
+            List<Category> categorys = categoryRepository.findListByShopId(shop.getId());
+            List<MenuItem> menus = menuItemRepository.findListByShopId(shop.getId());
+            model.addAttribute("categorys", categorys);
+            model.addAttribute("menus",menus);
             return "html/adminPage/timeSetting";
-        else
+        } else
             return "401"; //실제 반환되지 않음, 서버에서 자체 오류냄
     }
 
     @GetMapping("/menu")
-    public String menuPage(@CookieValue(name = "accessToken", defaultValue = "not found") String tokenCookie) {
-        if(kakaoApi.tokenCheck(tokenCookie).is2xxSuccessful())
+    public String menuPage(@CookieValue(name = "accessToken", defaultValue = "not found") String tokenCookie,
+                           @CookieValue(name = "shopId", defaultValue = "not found") String shopId,
+                           Model model) {
+        if(kakaoApi.tokenCheck(tokenCookie).is2xxSuccessful()) {
+            Shop shop = shopRepository.findById(shopId);
+            List<Category> categorys = categoryRepository.findListByShopId(shop.getId());
+            List<MenuItem> menus = menuItemRepository.findListByShopId(shop.getId());
+            model.addAttribute("categorys", categorys);
+            model.addAttribute("menus",menus);
             return "html/consumerPage/menu";
-        else
+        }else
             return "401"; //실제 반환되지 않음, 서버에서 자체 오류냄
     }
 

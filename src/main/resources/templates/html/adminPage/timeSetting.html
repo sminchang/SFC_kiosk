@@ -38,7 +38,7 @@
 <header>
     <div class="navbar navbar-dark bg-dark shadow-sm">
         <div class="container">
-            <a href="/" class="navbar-brand d-flex align-items-center">
+            <a href="/memberMenu" class="navbar-brand d-flex align-items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor">
                     <path d="M7.996 0A8 8 0 0 0 0 8a8 8 0 0 0 6.93 7.93v-1.613a1.06 1.06 0 0 0-.717-1.008A5.6 5.6 0 0 1 2.4 7.865 5.58 5.58 0 0 1 8.054 2.4a5.6 5.6 0 0 1 5.535 5.81l-.002.046-.012.192-.005.061a5 5 0 0 1-.033.284l-.01.068c-.685 4.516-6.564 7.054-6.596 7.068A7.998 7.998 0 0 0 15.992 8 8 8 0 0 0 7.996.001Z"/>
                 </svg>
@@ -62,10 +62,7 @@
 <div class="container">
     <header class="d-flex justify-content-center py-3">
         <ul class="nav nav-pills">
-            <li class="nav-item"><a href="#" class="nav-link">fast menu</a></li>
-            <li class="nav-item"><a href="#" class="nav-link">main menu</a></li>
-            <li class="nav-item"><a href="#" class="nav-link">side menu</a></li>
-            <li class="nav-item"><a href="#" class="nav-link">drink</a></li>
+            <li  th:each="category : ${categorys}" class="nav-item"><a href="#" class="nav-link" th:text="${category.categoryName}"></a></li>
         </ul>
     </header>
 </div>
@@ -74,13 +71,13 @@
     <div class="album py-5 bg-light">
         <div class="container">
             <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
-                <div class="col">
+                <div class="col" th:each="menu : ${menus}">
                     <div class="card shadow-sm">
                         <svg class="bd-placeholder-img card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="#55595c"/><text x="50%" y="50%" fill="#eceeef" dy=".3em">Thumbnail</text></svg>
                         <div class="card-body">
-                            <p class="card-text">menu name</p>
-                            <small class="text-muted">default: 9 mins<br>
-                            current: 9 mins</small>
+                            <p class="card-text" th:text="${menu.menuName}"></p>
+                            <small class="text-muted" th:text="|default: ${menu.defaultTime}mins|"></small>
+                            <small class="text-muted" th:text="|event: ${menu.eventTime}mins|"></small>
                             <div class="d-flex justify-content-between align-items-center">
                                 <div class="input-group">
                                     <input type="text" class="form-control" placeholder="event time(mins)">

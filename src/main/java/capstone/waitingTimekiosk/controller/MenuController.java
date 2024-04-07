@@ -7,6 +7,7 @@ import capstone.waitingTimekiosk.domain.Shop;
 import capstone.waitingTimekiosk.repository.CategoryRepository;
 import capstone.waitingTimekiosk.repository.MenuItemRepository;
 import capstone.waitingTimekiosk.repository.ShopRepository;
+import capstone.waitingTimekiosk.service.KakaoApi;
 import capstone.waitingTimekiosk.service.MemberService;
 import capstone.waitingTimekiosk.service.MenuService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -29,6 +30,7 @@ public class MenuController {
     private final ShopRepository shopRepository;
     private final MemberService memberService;
     private final MenuService menuService;
+    private final KakaoApi kakaoApi;
     private final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
 
@@ -41,7 +43,13 @@ public class MenuController {
         Shop shop = new Shop(member, shopName);
         shopRepository.save(shop);
 
-        return "redirect:/"; //로그인 직후 화면에서 렌더링하는 일이라 로그인과 이어져야해서 초기화면으로 넘기게됨, 추후 해결방안 모색하기
+        List<Shop> shops = shopRepository.findListByMemberId(member.getId());
+        model.addAttribute("shops",shops);
+        model.addAttribute("nickname", member.getNickname());
+        model.addAttribute("kakaoApiKey", kakaoApi.getKakaoApiKey());
+        model.addAttribute("logoutRedirectUri", kakaoApi.getKakaoLogoutRedirectUri());
+
+        return "memberIndex";
     }
 
     @PostMapping("/new/category")

@@ -55,12 +55,12 @@
     <section class="py-5 text-center container">
         <div class="row py-lg-5">
             <div class="col-lg-6 col-md-8 mx-auto">
-                <h1 class="fw-light">새로운 매장을 등록하고 사용해보세요.</h1>
+                <h1 class="fw-light">새로운 매장을 등록하고 <br>사용해보세요.</h1>
                 <div class="btn-group" th:each="shop : ${shops}">
                     <a th:href="@{/memberMenu(shopId=${shop.id})}" class="btn btn-primary btn-lg my-2" th:text="${shop.shopName}"></a>
-                    <button type="button" class="btn btn-primary btn-lg my-2" data-bs-toggle="modal" data-bs-target="#deleteModal">X</button>
+                    <button type="button" class="btn btn-primary btn-lg my-2 me-3" data-bs-toggle="modal" data-bs-target="#deleteModal">X</button>
                 </div>
-                <button type="button" class="btn btn-secondary btn-sm my-2" data-bs-toggle="modal" data-bs-target="#newShopModal">+매장 추가</button>
+                <button type="button" class="btn btn-secondary btn-sm my-2 me-3" data-bs-toggle="modal" data-bs-target="#newShopModal">+매장 추가</button>
                 <div class="modal fade" id="newShopModal" tabindex="-1" aria-labelledby="newShopModalLabel" aria-hidden="true">
                     <div class="modal-dialog">
                         <div class="modal-content">
@@ -90,8 +90,8 @@
 
 <footer class="text-muted py-5 fixed-bottom">
     <div class="container">
-        <p class="mb-1">Album example is &copy; Bootstrap, but please download and customize it for yourself!</p>
-        <p class="mb-0">New to Bootstrap? <a href="/static">Visit the homepage</a> or read our <a href="../getting-started/introduction/">getting started guide</a>.</p>
+        <p class="mb-1">SFC is Station Fast Chicken with the motif of KFC</p>
+        <p class="mb-0">waiting time kiosk is <a href="https://github.com/sminchang/waitingTime_kiosk">open source</a></p>
     </div>
 </footer>
 

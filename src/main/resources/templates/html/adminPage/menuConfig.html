@@ -125,7 +125,8 @@
             </div>
         </div>
         <ul class="nav nav-pills">
-            <li th:each="category : ${categorys}" class="dropdown nav-item"><a th:href="@{/config/category/{categoryName}(categoryName=${category.categoryName})}" class="nav-link" th:text="${category.categoryName}"></a>
+            <li class="nav-item"><a th:href="@{/menuConfig/category/fastMenu}" class="nav-link">fast menu</a></li>
+            <li th:each="category : ${categorys}" class="dropdown nav-item"><a th:href="@{/menuConfig/category/{categoryName}(categoryName=${category.categoryName})}" class="nav-link" th:text="${category.categoryName}"></a>
                 <div class="dropdown-content"><button type="button" class="btn btn-sm" style="color: #007bff;" data-bs-toggle="modal" th:attr="data-bs-target=${'#categoryDeleteModal' + category.id}">X</button></div>
             <div class="modal fade" th:id="${'categoryDeleteModal' + category.id}" tabindex="-1" aria-labelledby="categoryDeleteModalLabel" aria-hidden="true">
                 <div class="modal-dialog">

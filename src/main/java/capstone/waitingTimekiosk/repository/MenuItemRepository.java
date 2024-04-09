@@ -1,6 +1,6 @@
 package capstone.waitingTimekiosk.repository;
 
-import capstone.waitingTimekiosk.domain.Category;
+import capstone.waitingTimekiosk.domain.Member;
 import capstone.waitingTimekiosk.domain.MenuItem;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -28,13 +28,20 @@ public class MenuItemRepository {
         em.remove(menuItem);
     }
 
-    public List<MenuItem> findListByShopId(Long shopId) {
-        return em.createQuery("select m from MenuItem m where m.shop.id =:shopId", MenuItem.class)
-                .setParameter("shopId",shopId)
+    public MenuItem findById(String menuId) {
+        Long id = Long.parseLong(menuId);
+        return em.find(MenuItem.class, id);
+    }
+
+    public List<MenuItem> findListByFastMenu(Long shopId, int time) {
+        return em.createQuery("select m from MenuItem m where m.shop.id = :shopId and m.defaultTime <= :time or (m.eventTime > 0 and m.eventTime <= :time)", MenuItem.class)
+                .setParameter("shopId", shopId)
+                .setParameter("time", time)
                 .getResultList();
     }
 
-    public List<MenuItem> findListByShopId_category(Long shopId, String categoryName) {
+
+    public List<MenuItem> findListByCategory(Long shopId, String categoryName) {
         return em.createQuery("select m from MenuItem m where m.shop.id =:shopId and m.category.categoryName = :categoryName", MenuItem.class)
                 .setParameter("shopId",shopId)
                 .setParameter("categoryName",categoryName)

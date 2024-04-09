@@ -61,7 +61,7 @@ public class MenuController {
         //같은 shopId로 된 categoryName을 저장할 수 없도록 처리했음, 사용자에게 경고 메세지를 띄우는거 구현해야함
 
         List<Category> categorys = categoryRepository.findListByShopId(shop.getId());
-        List<MenuItem> menus = menuItemRepository.findListByShopId(shop.getId());
+        List<MenuItem> menus = menuItemRepository.findListByCategory(shop.getId(),categoryName);
 
         model.addAttribute("categorys", categorys);
         model.addAttribute("menuForm", new MenuForm());
@@ -92,7 +92,7 @@ public class MenuController {
         menuItemRepository.save(menuItem);
 
         List<Category> categorys = categoryRepository.findListByShopId(shop.getId());
-        List<MenuItem> menus = menuItemRepository.findListByShopId(shop.getId());
+        List<MenuItem> menus = menuItemRepository.findListByCategory(shop.getId(),category.getCategoryName());
 
         model.addAttribute("categorys", categorys);
         model.addAttribute("menuForm", new MenuForm());
@@ -127,7 +127,7 @@ public class MenuController {
         categoryRepository.delete(categoryId);
 
         List<Category> categorys = categoryRepository.findListByShopId(shop.getId());
-        List<MenuItem> menus = menuItemRepository.findListByShopId(shop.getId());
+        List<MenuItem> menus = menuItemRepository.findListByFastMenu(shop.getId(),5);
 
         model.addAttribute("categorys", categorys);
         model.addAttribute("menuForm", new MenuForm());
@@ -142,11 +142,12 @@ public class MenuController {
                                  Model model) {
         kakaoApi.tokenCheck(accessToken);
         Shop shop = shopRepository.findById(shopId);
+        String categoryName = menuItemRepository.findById(menuId).getCategory().getCategoryName();
 
         menuItemRepository.delete(menuId);
 
         List<Category> categorys = categoryRepository.findListByShopId(shop.getId());
-        List<MenuItem> menus = menuItemRepository.findListByShopId(shop.getId());
+        List<MenuItem> menus = menuItemRepository.findListByCategory(shop.getId(), categoryName);
 
         model.addAttribute("categorys", categorys);
         model.addAttribute("menuForm", new MenuForm());
@@ -154,8 +155,8 @@ public class MenuController {
         return "html/adminPage/menuConfig";
     }
 
-    @GetMapping("/config/category/{categoryName}")
-    public String configCategory(@CookieValue(name = "accessToken", defaultValue = "not found") String accessToken,
+    @GetMapping("/menuConfig/category/{categoryName}")
+    public String menuConfigCategory(@CookieValue(name = "accessToken", defaultValue = "not found") String accessToken,
                               @CookieValue(name = "shopId", defaultValue = "not found") String shopId,
                               @PathVariable String categoryName,
                               Model model){
@@ -163,7 +164,7 @@ public class MenuController {
         Shop shop = shopRepository.findById(shopId);
 
         List<Category> categorys = categoryRepository.findListByShopId(shop.getId());
-        List<MenuItem> menus = menuItemRepository.findListByShopId_category(shop.getId(), categoryName);
+        List<MenuItem> menus = menuItemRepository.findListByCategory(shop.getId(), categoryName);
 
         model.addAttribute("categorys", categorys);
         model.addAttribute("menuForm", new MenuForm());
@@ -181,7 +182,7 @@ public class MenuController {
         Shop shop = shopRepository.findById(shopId);
 
         List<Category> categorys = categoryRepository.findListByShopId(shop.getId());
-        List<MenuItem> menus = menuItemRepository.findListByShopId_category(shop.getId(), categoryName);
+        List<MenuItem> menus = menuItemRepository.findListByCategory(shop.getId(), categoryName);
 
         model.addAttribute("categorys", categorys);
         //model.addAttribute("menuForm", new MenuForm());
@@ -199,7 +200,57 @@ public class MenuController {
         Shop shop = shopRepository.findById(shopId);
 
         List<Category> categorys = categoryRepository.findListByShopId(shop.getId());
-        List<MenuItem> menus = menuItemRepository.findListByShopId_category(shop.getId(), categoryName);
+        List<MenuItem> menus = menuItemRepository.findListByCategory(shop.getId(), categoryName);
+
+        model.addAttribute("categorys", categorys);
+        model.addAttribute("menus", menus);
+
+        return "html/consumerPage/menu";
+    }
+
+    @GetMapping("/menuConfig/category/fastMenu")
+    public String menuConfigfastMenu(@CookieValue(name = "accessToken", defaultValue = "not found") String accessToken,
+                               @CookieValue(name = "shopId", defaultValue = "not found") String shopId,
+                               Model model){
+        kakaoApi.tokenCheck(accessToken);
+        Shop shop = shopRepository.findById(shopId);
+
+        List<Category> categorys = categoryRepository.findListByShopId(shop.getId());
+        List<MenuItem> menus = menuItemRepository.findListByFastMenu(shop.getId(), 5);
+
+        model.addAttribute("categorys", categorys);
+        model.addAttribute("menuForm", new MenuForm());
+        model.addAttribute("menus", menus);
+
+        return "html/adminPage/menuConfig";
+    }
+
+    @GetMapping("/timeSetting/category/fastMenu")
+    public String timeSettingfastMenu(@CookieValue(name = "accessToken", defaultValue = "not found") String accessToken,
+                               @CookieValue(name = "shopId", defaultValue = "not found") String shopId,
+                               Model model){
+        kakaoApi.tokenCheck(accessToken);
+        Shop shop = shopRepository.findById(shopId);
+
+        List<Category> categorys = categoryRepository.findListByShopId(shop.getId());
+        List<MenuItem> menus = menuItemRepository.findListByFastMenu(shop.getId(), 5);
+
+        model.addAttribute("categorys", categorys);
+        //model.addAttribute("menuForm", new MenuForm());
+        model.addAttribute("menus", menus);
+
+        return "html/adminPage/timeSetting";
+    }
+
+    @GetMapping("/menu/category/fastMenu")
+    public String menufastMenu(@CookieValue(name = "accessToken", defaultValue = "not found") String accessToken,
+                               @CookieValue(name = "shopId", defaultValue = "not found") String shopId,
+                               Model model){
+        kakaoApi.tokenCheck(accessToken);
+        Shop shop = shopRepository.findById(shopId);
+
+        List<Category> categorys = categoryRepository.findListByShopId(shop.getId());
+        List<MenuItem> menus = menuItemRepository.findListByFastMenu(shop.getId(), 5);
 
         model.addAttribute("categorys", categorys);
         model.addAttribute("menus", menus);

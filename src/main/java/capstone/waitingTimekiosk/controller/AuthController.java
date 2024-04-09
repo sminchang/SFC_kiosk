@@ -147,7 +147,7 @@ public class AuthController {
         kakaoApi.tokenCheck(accessToken);
         Shop shop = shopRepository.findById(shopId);
         List<Category> categorys = categoryRepository.findListByShopId(shop.getId());
-        List<MenuItem> menus = menuItemRepository.findListByShopId(shop.getId());
+        List<MenuItem> menus = menuItemRepository.findListByFastMenu(shop.getId(), 5);
 
         model.addAttribute("categorys", categorys);
         model.addAttribute("menus",menus);
@@ -174,7 +174,7 @@ public class AuthController {
         kakaoApi.tokenCheck(accessToken);
         Shop shop = shopRepository.findById(shopId);
         List<Category> categorys = categoryRepository.findListByShopId(shop.getId());
-        List<MenuItem> menus = menuItemRepository.findListByShopId(shop.getId());
+        List<MenuItem> menus = menuItemRepository.findListByFastMenu(shop.getId(), 5);;
 
         model.addAttribute("categorys", categorys);
         model.addAttribute("menus",menus);
@@ -188,7 +188,7 @@ public class AuthController {
         kakaoApi.tokenCheck(accessToken);
         Shop shop = shopRepository.findById(shopId);
         List<Category> categorys = categoryRepository.findListByShopId(shop.getId());
-        List<MenuItem> menus = menuItemRepository.findListByShopId(shop.getId());
+        List<MenuItem> menus = menuItemRepository.findListByFastMenu(shop.getId(), 5);;
 
         model.addAttribute("categorys", categorys);
         model.addAttribute("menus",menus);

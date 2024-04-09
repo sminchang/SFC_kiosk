@@ -41,7 +41,8 @@
         <a href="/backHome" id="doubleClickLink" class="navbar-brand d-flex text-white align-items-center me-5">
             back</a>
         <ul class="nav nav-pills">
-            <li  th:each="category : ${categorys}" class="nav-item"><a th:href="@{/menu/category/{categoryName}(categoryName=${category.categoryName})}" class="nav-link" th:text="${category.categoryName}"></a></li>
+            <li class="nav-item"><a th:href="@{/menu/category/fastMenu}" class="nav-link">fast menu</a></li>
+            <li th:each="category : ${categorys}" class="nav-item"><a th:href="@{/menu/category/{categoryName}(categoryName=${category.categoryName})}" class="nav-link" th:text="${category.categoryName}"></a></li>
         </ul>
         <button type="button" class="btn btn-outline-secondary ms-5" data-bs-toggle="modal" data-bs-target="#cartModal">your cart</button>
     </header>
@@ -130,7 +131,7 @@
                                     <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-container="body" data-bs-toggle="popover" data-bs-placement="bottom" data-bs-content="message">View</button>
                                     <button type="button" class="btn btn-sm btn-outline-secondary">Add</button>
                                 </div>
-                                <small class="text-muted" th:text="${menu.eventTime} ?: ${menu.defaultTime}">mins</small>
+                                <small class="text-muted" th:text="${menu.eventTime} > 0 ? ${menu.eventTime} : ${menu.defaultTime} + 'mins'"></small>
                             </div>
                         </div>
                     </div>

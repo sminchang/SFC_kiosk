@@ -3,6 +3,9 @@ package capstone.waitingTimekiosk.domain;
 import jakarta.persistence.*;
 import lombok.Getter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Getter
 public class Category {
@@ -17,6 +20,9 @@ public class Category {
 
     private String categoryName;
 
+    @OneToMany(mappedBy = "category", cascade = CascadeType.REMOVE)
+    private List<MenuItem> menuItems = new ArrayList<>();
+
     protected Category() {
 
     }
@@ -25,4 +31,14 @@ public class Category {
         this.shop = shop;
         this.categoryName = categoryName;
     }
+
+    public void setShop(Shop shop) {
+        this.shop = shop;
+    }
+
+    public void addMenuItem(MenuItem menuItem) {
+        menuItems.add(menuItem);
+        menuItem.setCategory(this);
+    }
+
 }

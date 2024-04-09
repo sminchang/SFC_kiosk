@@ -14,7 +14,9 @@ import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.server.ResponseStatusException;
 
 @Getter
 @Component
@@ -128,7 +130,7 @@ public class KakaoApi {
     }
 
     //클라이언트 토큰 유효성 확인-인가 검증에 사용
-    public HttpStatusCode tokenCheck(String accessToken) {
+    public void tokenCheck(String accessToken) {
         // HTTP Header 생성
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", "Bearer " + accessToken);
@@ -136,14 +138,19 @@ public class KakaoApi {
         // HTTP 요청 보내기
         HttpEntity<MultiValueMap<String, String>> TokenInfoRequest = new HttpEntity<>(headers);
         RestTemplate rt = new RestTemplate();
+        try{
         ResponseEntity<String> response = rt.exchange(
                 "https://kapi.kakao.com/v1/user/access_token_info",
                 HttpMethod.GET,
                 TokenInfoRequest,
                 String.class
         );
-
-        return response.getStatusCode();
+        response.getStatusCode().is2xxSuccessful();
+        }
+        // 토큰이 만료된 경우
+        catch (HttpClientErrorException ex){
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Access Token is invalid or expired.");
+        }
     }
 }
 

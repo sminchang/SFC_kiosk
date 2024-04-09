@@ -21,6 +21,8 @@ public class MenuService {
             return categoryRepository.findCategory(shop.getId(), categoryName).getId();
         }catch (EmptyResultDataAccessException e){
             Category category = new Category(shop, categoryName);
+            //외래키 연관관계 설정
+            shop.addCategory(category);
             return categoryRepository.save(category);
         }
     }

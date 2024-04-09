@@ -51,7 +51,7 @@ public class MenuItem {
         this.shop = shop;
     }
 
-    public void setMenu(Shop shop) {
+    public void setShop(Shop shop) {
         this.shop = shop;
     }
 

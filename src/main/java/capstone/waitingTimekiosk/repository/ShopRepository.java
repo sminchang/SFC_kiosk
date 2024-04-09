@@ -1,7 +1,5 @@
 package capstone.waitingTimekiosk.repository;
 
-import capstone.waitingTimekiosk.domain.Category;
-import capstone.waitingTimekiosk.domain.MenuItem;
 import capstone.waitingTimekiosk.domain.Shop;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -21,16 +19,17 @@ public class ShopRepository {
         return shop.getId();
     }
 
+    @Transactional
+    public void delete(String shopId) {
+        Long id = Long.parseLong(shopId);
+        Shop shop = em.find(Shop.class, id);
+        em.remove(shop);
+    }
+
     public List<Shop> findListByMemberId(Long id) {
         return em.createQuery("select m from Shop m where m.member.id = :id", Shop.class)
                 .setParameter("id", id)
                 .getResultList();
-    }
-
-    public Shop findByMemberId(Long id) {
-        return em.createQuery("select m from Shop m where m.member.id = :id", Shop.class)
-                .setParameter("id", id)
-                .getSingleResult();
     }
 
     public Shop findById(String shopId) {

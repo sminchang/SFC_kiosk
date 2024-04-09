@@ -31,6 +31,17 @@
             white-space: nowrap;
             -webkit-overflow-scrolling: touch;
         }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            width: 100%;
+            text-align: center;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
     </style>
 
 
@@ -38,7 +49,7 @@
 <header>
     <div class="navbar navbar-dark bg-dark shadow-sm">
         <div class="container">
-            <a href="/memberMenu" class="navbar-brand d-flex align-items-center">
+            <a href="/backHome" class="navbar-brand d-flex align-items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor">
                     <path d="M7.996 0A8 8 0 0 0 0 8a8 8 0 0 0 6.93 7.93v-1.613a1.06 1.06 0 0 0-.717-1.008A5.6 5.6 0 0 1 2.4 7.865 5.58 5.58 0 0 1 8.054 2.4a5.6 5.6 0 0 1 5.535 5.81l-.002.046-.012.192-.005.061a5 5 0 0 1-.033.284l-.01.068c-.685 4.516-6.564 7.054-6.596 7.068A7.998 7.998 0 0 0 15.992 8 8 8 0 0 0 7.996.001Z"/>
                 </svg>
@@ -114,7 +125,26 @@
             </div>
         </div>
         <ul class="nav nav-pills">
-            <li  th:each="category : ${categorys}" class="nav-item"><a href="#" class="nav-link" th:text="${category.categoryName}"></a></li>
+            <li th:each="category : ${categorys}" class="dropdown nav-item"><a href="#" class="nav-link" th:text="${category.categoryName}"></a>
+                <div class="dropdown-content"><button type="button" class="btn btn-sm" style="color: #007bff;" data-bs-toggle="modal" th:attr="data-bs-target=${'#categoryDeleteModal' + category.id}">X</button></div>
+            <div class="modal fade" th:id="${'categoryDeleteModal' + category.id}" tabindex="-1" aria-labelledby="categoryDeleteModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="categoryDeleteModalLabel">check message</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <span th:text="|Are you sure you want to delete the ${category.categoryName}?|"></span><br>
+                            <span>The included menus are deleted together.</span></div>
+                        <div class="modal-footer">
+                            <a class="btn btn-primary" th:href="@{/remove/category(categoryId=${category.id})}">Yes</a>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </li>
         </ul>
         <button type="button" class="btn btn-outline-secondary ms-5" data-bs-toggle="modal" data-bs-target="#newCategoryModal">+category</button>
         <div class="modal fade" id="newCategoryModal" tabindex="-1" aria-labelledby="newCategoryModalLabel" aria-hidden="true">

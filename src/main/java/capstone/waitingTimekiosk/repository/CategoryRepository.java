@@ -2,6 +2,7 @@ package capstone.waitingTimekiosk.repository;
 
 import capstone.waitingTimekiosk.domain.Category;
 import capstone.waitingTimekiosk.domain.Member;
+import capstone.waitingTimekiosk.domain.Shop;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
@@ -19,6 +20,13 @@ public class CategoryRepository {
     public Long save(Category category) {
         em.persist(category);
         return category.getId();
+    }
+
+    @Transactional
+    public void delete(String categoryId) {
+        Long id = Long.parseLong(categoryId);
+        Category category = em.find(Category.class, id);
+        em.remove(category);
     }
 
     public List<Category> findListByShopId(Long shopId) {

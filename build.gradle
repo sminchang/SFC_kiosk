@@ -26,12 +26,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-devtools'
-	implementation 'com.google.code.gson:gson:2.8.6' //자바 객체를 json으로 변환해주는 구글 라이브러리
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-	implementation 'org.springframework.boot:spring-boot-starter-validation'
-
-
-	testImplementation 'junit:junit:4.13.1'//뷰 템플릿 변경 후 바로 적용
 
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'com.h2database:h2'

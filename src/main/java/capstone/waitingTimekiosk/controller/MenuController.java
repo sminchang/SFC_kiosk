@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -38,7 +39,7 @@ public class MenuController {
     public String newMenu(@CookieValue(name = "accessToken", defaultValue = "not found") String accessToken,
                           @RequestParam String shopName,
                           Model model) throws JsonProcessingException {
-
+        kakaoApi.tokenCheck(accessToken);
         Member member = memberService.findMember(accessToken);
         Shop shop = new Shop(member, shopName);
         shopRepository.save(shop);
@@ -53,36 +54,80 @@ public class MenuController {
     }
 
     @PostMapping("/new/category")
-    public String newCategory(@CookieValue(name = "shopId", defaultValue = "not found") String shopId,
-                              @RequestParam String categoryName, Model model) throws JsonProcessingException {
-
+    public String newCategory(@CookieValue(name = "accessToken", defaultValue = "not found") String accessToken,
+                              @CookieValue(name = "shopId", defaultValue = "not found") String shopId,
+                              @RequestParam String categoryName, Model model) {
+        kakaoApi.tokenCheck(accessToken);
         Shop shop = shopRepository.findById(shopId);
 
         menuService.validateDuplicateCategory(shop, categoryName);
         //같은 shopId로 된 categoryName을 저장할 수 없도록 처리했음, 사용자에게 경고 메세지를 띄우는거 구현해야함
 
         List<Category> categorys = categoryRepository.findListByShopId(shop.getId());
+        List<MenuItem> menus = menuItemRepository.findListByShopId(shop.getId());
+
         model.addAttribute("categorys", categorys);
         model.addAttribute("menuForm", new MenuForm());
+        model.addAttribute("menus", menus);
         return "html/adminPage/menuConfig";
     }
 
     @PostMapping("/new/menuItem")
-    public String newMenuItem(@CookieValue(name = "shopId", defaultValue = "not found") String shopId,
+    public String newMenuItem(@CookieValue(name = "accessToken", defaultValue = "not found") String accessToken,
+                              @CookieValue(name = "shopId", defaultValue = "not found") String shopId,
                               MenuForm form,
-                              Model model) throws JsonProcessingException {
-
+                              Model model) {
+        kakaoApi.tokenCheck(accessToken);
         Shop shop = shopRepository.findById(shopId);
         Category category = categoryRepository.findCategory(shop.getId(),form.getCategoryName());
-
         MenuItem menuItem = new MenuItem(shop);
+
+        //외래키 연관관계 설정
+        shop.addMenuItem(menuItem);
+        category.addMenuItem(menuItem);
+
+        //menuItem 등록
         menuItem.setMenuName(form.getMenuName());
-        menuItem.setCategory(category);
         menuItem.setPrice(form.getPrice());
         menuItem.setDefaultTime(form.getDefaultTime());
         menuItem.setImagePath(form.getImagePath());
         menuItem.setDescription(form.getDescription());
         menuItemRepository.save(menuItem);
+
+        List<Category> categorys = categoryRepository.findListByShopId(shop.getId());
+        List<MenuItem> menus = menuItemRepository.findListByShopId(shop.getId());
+
+        model.addAttribute("categorys", categorys);
+        model.addAttribute("menuForm", new MenuForm());
+        model.addAttribute("menus", menus);
+        return "html/adminPage/menuConfig";
+    }
+
+    @GetMapping("/remove/shop")
+    public String removeShop(@CookieValue(name = "accessToken", defaultValue = "not found") String accessToken,
+                             @RequestParam String shopId,
+                             Model model) throws JsonProcessingException {
+        kakaoApi.tokenCheck(accessToken);
+        Member member = memberService.findMember(accessToken);
+
+        shopRepository.delete(shopId);
+
+        List<Shop> shops = shopRepository.findListByMemberId(member.getId());
+        model.addAttribute("shops",shops);
+        model.addAttribute("nickname", member.getNickname());
+        model.addAttribute("kakaoApiKey", kakaoApi.getKakaoApiKey());
+        model.addAttribute("logoutRedirectUri", kakaoApi.getKakaoLogoutRedirectUri());
+        return "memberIndex";
+    }
+
+    @GetMapping("/remove/category")
+    public String removeCategory(@CookieValue(name = "accessToken", defaultValue = "not found") String accessToken,
+                                 @CookieValue(name = "shopId", defaultValue = "not found") String shopId,
+                                 @RequestParam String categoryId,
+                                 Model model) throws JsonProcessingException {
+        kakaoApi.tokenCheck(accessToken);
+        Shop shop = shopRepository.findById(shopId);
+        categoryRepository.delete(categoryId);
 
         List<Category> categorys = categoryRepository.findListByShopId(shop.getId());
         List<MenuItem> menus = menuItemRepository.findListByShopId(shop.getId());

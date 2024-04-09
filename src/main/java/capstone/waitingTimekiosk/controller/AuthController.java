@@ -106,6 +106,7 @@ public class AuthController {
                              HttpServletResponse response,
                              @RequestParam String shopId,
                              Model model) throws JsonProcessingException {
+        kakaoApi.tokenCheck(accessToken);
         Member member = memberService.findMember(accessToken);
 
         //클라이언트가 앞으로의 페이지에서 shopId를 기억하도록 쿠키 전송
@@ -117,66 +118,80 @@ public class AuthController {
         return "memberMenu";
     }
 
+    //홈화면으로 돌아가는 경우
+    @GetMapping("/backHome")
+    public String homePage(@CookieValue(name = "accessToken", defaultValue = "not found") String accessToken,
+                           Model model) throws JsonProcessingException {
+        kakaoApi.tokenCheck(accessToken);
+        Member member = memberService.findMember(accessToken);
+
+        //회원의 shop 조회
+        List<Shop> shops;
+        try {
+            shops = shopRepository.findListByMemberId(member.getId());
+            model.addAttribute("shops",shops);
+        } catch (Exception e){
+            logger.info("회원이 등록한 shop이 없습니다.");
+        }
+
+        model.addAttribute("nickname", member.getNickname());
+        model.addAttribute("kakaoApiKey", kakaoApi.getKakaoApiKey());
+        model.addAttribute("logoutRedirectUri", kakaoApi.getKakaoLogoutRedirectUri());
+        return "memberIndex";
+    }
+
     @GetMapping("/menuConfig")
-    public String ConfigPage(@CookieValue(name = "accessToken", defaultValue = "not found") String tokenCookie,
+    public String ConfigPage(@CookieValue(name = "accessToken", defaultValue = "not found") String accessToken,
                              @CookieValue(name = "shopId", defaultValue = "not found") String shopId,
                              Model model){
-        if(kakaoApi.tokenCheck(tokenCookie).is2xxSuccessful()){
-            Shop shop = shopRepository.findById(shopId);
-            List<Category> categorys = categoryRepository.findListByShopId(shop.getId());
-            List<MenuItem> menus = menuItemRepository.findListByShopId(shop.getId());
-            model.addAttribute("categorys", categorys);
-            model.addAttribute("menus",menus);
-            model.addAttribute("menuForm", new MenuForm());
-            return "html/adminPage/menuConfig";
-        } else
-            return "401"; //실제 반환되지 않음, 서버에서 자체 오류냄
+        kakaoApi.tokenCheck(accessToken);
+        Shop shop = shopRepository.findById(shopId);
+        List<Category> categorys = categoryRepository.findListByShopId(shop.getId());
+        List<MenuItem> menus = menuItemRepository.findListByShopId(shop.getId());
+
+        model.addAttribute("categorys", categorys);
+        model.addAttribute("menus",menus);
+        model.addAttribute("menuForm", new MenuForm());
+        return "html/adminPage/menuConfig";
     }
 
     @GetMapping("/menuDemand")
-    public String demandPage(@CookieValue(name = "accessToken", defaultValue = "not found") String tokenCookie) {
-        if(kakaoApi.tokenCheck(tokenCookie).is2xxSuccessful())
-            return "html/adminPage/menuDemand";
-        else
-            return "401"; //실제 반환되지 않음, 서버에서 자체 오류냄
+    public String demandPage(@CookieValue(name = "accessToken", defaultValue = "not found") String accessToken) {
+        kakaoApi.tokenCheck(accessToken);
+        return "html/adminPage/menuDemand";
     }
 
     @GetMapping("/orderState")
-    public String statePage(@CookieValue(name = "accessToken", defaultValue = "not found") String tokenCookie) {
-        if(kakaoApi.tokenCheck(tokenCookie).is2xxSuccessful())
-            return "html/adminPage/orderState";
-        else
-            return "401"; //실제 반환되지 않음, 서버에서 자체 오류냄
+    public String statePage(@CookieValue(name = "accessToken", defaultValue = "not found") String accessToken) {
+        kakaoApi.tokenCheck(accessToken);
+        return "html/adminPage/orderState";
     }
 
     @GetMapping("/timeSetting")
-    public String settingPage(@CookieValue(name = "accessToken", defaultValue = "not found") String tokenCookie,
+    public String settingPage(@CookieValue(name = "accessToken", defaultValue = "not found") String accessToken,
                               @CookieValue(name = "shopId", defaultValue = "not found") String shopId,
                               Model model) {
-        if(kakaoApi.tokenCheck(tokenCookie).is2xxSuccessful()) {
-            Shop shop = shopRepository.findById(shopId);
-            List<Category> categorys = categoryRepository.findListByShopId(shop.getId());
-            List<MenuItem> menus = menuItemRepository.findListByShopId(shop.getId());
-            model.addAttribute("categorys", categorys);
-            model.addAttribute("menus",menus);
-            return "html/adminPage/timeSetting";
-        } else
-            return "401"; //실제 반환되지 않음, 서버에서 자체 오류냄
+        kakaoApi.tokenCheck(accessToken);
+        Shop shop = shopRepository.findById(shopId);
+        List<Category> categorys = categoryRepository.findListByShopId(shop.getId());
+        List<MenuItem> menus = menuItemRepository.findListByShopId(shop.getId());
+
+        model.addAttribute("categorys", categorys);
+        model.addAttribute("menus",menus);
+        return "html/adminPage/timeSetting";
     }
 
     @GetMapping("/menu")
-    public String menuPage(@CookieValue(name = "accessToken", defaultValue = "not found") String tokenCookie,
+    public String menuPage(@CookieValue(name = "accessToken", defaultValue = "not found") String accessToken,
                            @CookieValue(name = "shopId", defaultValue = "not found") String shopId,
                            Model model) {
-        if(kakaoApi.tokenCheck(tokenCookie).is2xxSuccessful()) {
-            Shop shop = shopRepository.findById(shopId);
-            List<Category> categorys = categoryRepository.findListByShopId(shop.getId());
-            List<MenuItem> menus = menuItemRepository.findListByShopId(shop.getId());
-            model.addAttribute("categorys", categorys);
-            model.addAttribute("menus",menus);
-            return "html/consumerPage/menu";
-        }else
-            return "401"; //실제 반환되지 않음, 서버에서 자체 오류냄
-    }
+        kakaoApi.tokenCheck(accessToken);
+        Shop shop = shopRepository.findById(shopId);
+        List<Category> categorys = categoryRepository.findListByShopId(shop.getId());
+        List<MenuItem> menus = menuItemRepository.findListByShopId(shop.getId());
 
+        model.addAttribute("categorys", categorys);
+        model.addAttribute("menus",menus);
+        return "html/consumerPage/menu";
+    }
 }

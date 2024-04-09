@@ -56,9 +56,28 @@
         <div class="row py-lg-5">
             <div class="col-lg-6 col-md-8 mx-auto">
                 <h1 class="fw-light">새로운 매장을 등록하고 <br>사용해보세요.</h1>
-                <div class="btn-group" th:each="shop : ${shops}">
+                <div th:each="shop : ${shops}">
+                <div class="btn-group">
                     <a th:href="@{/memberMenu(shopId=${shop.id})}" class="btn btn-primary btn-lg my-2" th:text="${shop.shopName}"></a>
-                    <button type="button" class="btn btn-primary btn-lg my-2 me-3" data-bs-toggle="modal" data-bs-target="#deleteModal">X</button>
+                    <button type="button" class="btn btn-primary btn-lg my-2 me-3" data-bs-toggle="modal" th:attr="data-bs-target=${'#shopDeleteModal' + shop.id}">X</button>
+                </div>
+                <div class="modal fade" th:id="${'shopDeleteModal' + shop.id}" tabindex="-1" aria-labelledby="shopDeleteModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h1 class="modal-title fs-5" id="shopDeleteModalLabel">check message</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <span th:text="|Are you sure you want to delete the ${shop.shopName}?|"></span><br>
+                                <span>The included menus are deleted together.</span></div>
+                            <div class="modal-footer">
+                                <a class="btn btn-primary" th:href="@{/remove/shop(shopId=${shop.id})}">Yes</a>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
                 </div>
                 <button type="button" class="btn btn-secondary btn-sm my-2 me-3" data-bs-toggle="modal" data-bs-target="#newShopModal">+매장 추가</button>
                 <div class="modal fade" id="newShopModal" tabindex="-1" aria-labelledby="newShopModalLabel" aria-hidden="true">

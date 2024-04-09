@@ -24,6 +24,9 @@ public class Shop {
     @OneToMany(mappedBy = "shop", cascade = CascadeType.REMOVE)
     private List<MenuItem> menuItems = new ArrayList<>();
 
+    @OneToMany(mappedBy = "shop", cascade = CascadeType.REMOVE)
+    private List<Category> categories = new ArrayList<>();
+
     protected Shop() {
     }
 
@@ -35,9 +38,15 @@ public class Shop {
     public void setMember(Member member) {
         this.member = member;
     }
+
     public void addMenuItem(MenuItem menuItem) {
         menuItems.add(menuItem);
-        menuItem.setMenu(this);
+        menuItem.setShop(this);
+    }
+
+    public void addCategory(Category category) {
+        categories.add(category);
+        category.setShop(this);
     }
 
 }

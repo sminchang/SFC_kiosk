@@ -1,6 +1,5 @@
 package capstone.waitingTimekiosk.repository;
 
-import capstone.waitingTimekiosk.domain.Category;
 import capstone.waitingTimekiosk.domain.MenuItem;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -11,6 +10,7 @@ import java.util.List;
 
 @Repository
 public class MenuItemRepository {
+
     @PersistenceContext
     private EntityManager em;
 

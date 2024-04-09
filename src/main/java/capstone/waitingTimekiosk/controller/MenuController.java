@@ -16,10 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -155,5 +152,58 @@ public class MenuController {
         model.addAttribute("menuForm", new MenuForm());
         model.addAttribute("menus", menus);
         return "html/adminPage/menuConfig";
+    }
+
+    @GetMapping("/config/category/{categoryName}")
+    public String configCategory(@CookieValue(name = "accessToken", defaultValue = "not found") String accessToken,
+                              @CookieValue(name = "shopId", defaultValue = "not found") String shopId,
+                              @PathVariable String categoryName,
+                              Model model){
+        kakaoApi.tokenCheck(accessToken);
+        Shop shop = shopRepository.findById(shopId);
+
+        List<Category> categorys = categoryRepository.findListByShopId(shop.getId());
+        List<MenuItem> menus = menuItemRepository.findListByShopId_category(shop.getId(), categoryName);
+
+        model.addAttribute("categorys", categorys);
+        model.addAttribute("menuForm", new MenuForm());
+        model.addAttribute("menus", menus);
+
+        return "html/adminPage/menuConfig";
+    }
+
+    @GetMapping("/timeSetting/category/{categoryName}")
+    public String timeSettingCategory(@CookieValue(name = "accessToken", defaultValue = "not found") String accessToken,
+                              @CookieValue(name = "shopId", defaultValue = "not found") String shopId,
+                              @PathVariable String categoryName,
+                              Model model){
+        kakaoApi.tokenCheck(accessToken);
+        Shop shop = shopRepository.findById(shopId);
+
+        List<Category> categorys = categoryRepository.findListByShopId(shop.getId());
+        List<MenuItem> menus = menuItemRepository.findListByShopId_category(shop.getId(), categoryName);
+
+        model.addAttribute("categorys", categorys);
+        //model.addAttribute("menuForm", new MenuForm());
+        model.addAttribute("menus", menus);
+
+        return "html/adminPage/timeSetting";
+    }
+
+    @GetMapping("/menu/category/{categoryName}")
+    public String menuCategory(@CookieValue(name = "accessToken", defaultValue = "not found") String accessToken,
+                              @CookieValue(name = "shopId", defaultValue = "not found") String shopId,
+                              @PathVariable String categoryName,
+                              Model model){
+        kakaoApi.tokenCheck(accessToken);
+        Shop shop = shopRepository.findById(shopId);
+
+        List<Category> categorys = categoryRepository.findListByShopId(shop.getId());
+        List<MenuItem> menus = menuItemRepository.findListByShopId_category(shop.getId(), categoryName);
+
+        model.addAttribute("categorys", categorys);
+        model.addAttribute("menus", menus);
+
+        return "html/consumerPage/menu";
     }
 }

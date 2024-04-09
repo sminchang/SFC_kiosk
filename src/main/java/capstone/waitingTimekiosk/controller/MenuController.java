@@ -124,10 +124,29 @@ public class MenuController {
     public String removeCategory(@CookieValue(name = "accessToken", defaultValue = "not found") String accessToken,
                                  @CookieValue(name = "shopId", defaultValue = "not found") String shopId,
                                  @RequestParam String categoryId,
-                                 Model model) throws JsonProcessingException {
+                                 Model model) {
         kakaoApi.tokenCheck(accessToken);
         Shop shop = shopRepository.findById(shopId);
         categoryRepository.delete(categoryId);
+
+        List<Category> categorys = categoryRepository.findListByShopId(shop.getId());
+        List<MenuItem> menus = menuItemRepository.findListByShopId(shop.getId());
+
+        model.addAttribute("categorys", categorys);
+        model.addAttribute("menuForm", new MenuForm());
+        model.addAttribute("menus", menus);
+        return "html/adminPage/menuConfig";
+    }
+
+    @GetMapping("/remove/menuItem")
+    public String removeMenuItem(@CookieValue(name = "accessToken", defaultValue = "not found") String accessToken,
+                                 @CookieValue(name = "shopId", defaultValue = "not found") String shopId,
+                                 @RequestParam String menuId,
+                                 Model model) {
+        kakaoApi.tokenCheck(accessToken);
+        Shop shop = shopRepository.findById(shopId);
+
+        menuItemRepository.delete(menuId);
 
         List<Category> categorys = categoryRepository.findListByShopId(shop.getId());
         List<MenuItem> menus = menuItemRepository.findListByShopId(shop.getId());

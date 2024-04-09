@@ -185,27 +185,25 @@
                             <div class="d-flex justify-content-between align-items-center">
                                 <div class="btn-group">
                                     <button type="button" class="btn btn-sm btn-outline-secondary">update</button>
-                                    <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#deleteModal">delete</button>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" th:attr="data-bs-target=${'#menuDeleteModal' + menu.id}">delete</button>
                                 </div>
                                 <small class="text-muted" th:text="${menu.defaultTime}"> mins</small>
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-            <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h1 class="modal-title fs-5" id="deleteModalLabel">check message</h1>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            Are you sure you want to delete this menu?
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-primary">Yes</button>
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                    <div class="modal fade" th:id="${'menuDeleteModal' + menu.id}" tabindex="-1" aria-labelledby="menuDeleteModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h1 class="modal-title fs-5" id="menuDeleteModalLabel">check message</h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body" th:text="|Are you sure you want to delete ${menu.menuName}?|"></div>
+                                <div class="modal-footer">
+                                    <a class="btn btn-primary" th:href="@{/remove/menuItem(menuId=${menu.id})}">Yes</a>
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

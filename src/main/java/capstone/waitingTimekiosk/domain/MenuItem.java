@@ -35,7 +35,7 @@ public class MenuItem {
 
     private int eventQuantity; //이벤트 설정 수량
 
-    private Long imagePath; //메뉴 이미지가 저장된 파일 경로
+    private String imagePath; //메뉴 이미지가 저장된 파일 경로
 
     private String description;
 

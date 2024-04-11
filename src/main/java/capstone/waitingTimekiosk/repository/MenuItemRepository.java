@@ -40,12 +40,10 @@ public class MenuItemRepository {
                 .getResultList();
     }
 
-
     public List<MenuItem> findListByCategory(Long shopId, String categoryName) {
         return em.createQuery("select m from MenuItem m where m.shop.id =:shopId and m.category.categoryName = :categoryName", MenuItem.class)
                 .setParameter("shopId",shopId)
                 .setParameter("categoryName",categoryName)
                 .getResultList();
     }
-
 }

@@ -14,11 +14,15 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @Controller
@@ -29,6 +33,10 @@ public class MenuController {
     private final MemberService memberService;
     private final MenuService menuService;
     private final KakaoApi kakaoApi;
+
+    @Value("${spring.servlet.multipart.location}")
+    private String path;
+
     private final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
 
@@ -73,7 +81,7 @@ public class MenuController {
     public String newMenuItem(@CookieValue(name = "accessToken", defaultValue = "not found") String accessToken,
                               @CookieValue(name = "shopId", defaultValue = "not found") String shopId,
                               MenuForm form,
-                              Model model) {
+                              Model model) throws IOException {
         kakaoApi.tokenCheck(accessToken);
         Shop shop = shopRepository.findById(shopId);
         Category category = categoryRepository.findCategory(shop.getId(),form.getCategoryName());
@@ -83,11 +91,16 @@ public class MenuController {
         shop.addMenuItem(menuItem);
         category.addMenuItem(menuItem);
 
+        //파일 업로드 및 파일 경로 저장
+        File file = new File(path + UUID.randomUUID()); //seqeunce++로 대체할지 고민해보기
+        form.getImg().transferTo(file);
+        String imagePath = file.getCanonicalPath();
+
         //menuItem 등록
         menuItem.setMenuName(form.getMenuName());
         menuItem.setPrice(form.getPrice());
         menuItem.setDefaultTime(form.getDefaultTime());
-        menuItem.setImagePath(form.getImagePath());
+        menuItem.setImagePath(imagePath);
         menuItem.setDescription(form.getDescription());
         menuItemRepository.save(menuItem);
 

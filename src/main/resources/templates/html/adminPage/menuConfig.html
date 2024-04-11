@@ -80,7 +80,7 @@
                         <h1 class="modal-title fs-5" id="newMenuModalLabel">New menu</h1>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <form role="form", action="/new/menuItem" th:object="${menuForm}" method="post">
+                    <form role="form", action="/new/menuItem" th:object="${menuForm}" method="post" enctype="multipart/form-data">
                         <div class="modal-body">
                             <div class="mb-3">
                                 <label th:for="categoryName" class="form-label">category</label>
@@ -105,11 +105,8 @@
                                 <input type="text" class="form-control" th:field="*{defaultTime}" placeholder="mins">
                             </div>
                             <div class="mb-3">
-                                <label th:for="imagePath" class="col-form-label">menu image</label>
-                                <div class="input-group">
-                                    <input type="text" class="form-control" th:field="*{imagePath}">
-                                    <button type="file" class="btn btn-secondary">upload</button>
-                                </div>
+                                <label th:for="img" class="col-form-label">menu image</label>
+                                <input type="file" class="form-control" th:field="*{img}">
                             </div>
                             <div class="mb-3">
                                 <label th:for="description" class="col-form-label">description</label>

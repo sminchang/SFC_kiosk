@@ -14,6 +14,10 @@ spring:
         format_sql: true
   profiles:
     include: private
+  servlet:
+    multipart:
+      location: C:/Users/Minchang Sung/desktop/capstone/waitingTime-kiosk/src/main/resources/img/
+      max-file-size: 5MB
 
 logging:
   level:

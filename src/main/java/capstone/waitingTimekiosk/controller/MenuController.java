@@ -92,9 +92,9 @@ public class MenuController {
         category.addMenuItem(menuItem);
 
         //파일 업로드 및 파일 경로 저장
-        File file = new File(path + UUID.randomUUID()); //seqeunce++로 대체할지 고민해보기
+        File file = new File(path + UUID.randomUUID() + ".jpg"); //seqeunce++로 대체할지 고민해보기
         form.getImg().transferTo(file);
-        String imagePath = file.getCanonicalPath();
+        String imagePath = "/img/" + file.getName();
 
         //menuItem 등록
         menuItem.setMenuName(form.getMenuName());

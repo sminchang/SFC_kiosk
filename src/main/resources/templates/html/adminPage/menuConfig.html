@@ -106,7 +106,7 @@
                             </div>
                             <div class="mb-3">
                                 <label th:for="img" class="col-form-label">menu image</label>
-                                <input type="file" class="form-control" th:field="*{img}">
+                                <input type="file" class="form-control" th:field="*{img}"placeholder=".jpg 형식만 지원합니다.">
                             </div>
                             <div class="mb-3">
                                 <label th:for="description" class="col-form-label">description</label>
@@ -176,7 +176,7 @@
             <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
                 <div class="col" th:each="menu : ${menus}">
                     <div class="card shadow-sm">
-                        <svg class="bd-placeholder-img card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="#55595c"/><text x="50%" y="50%" fill="#eceeef" dy=".3em">Thumbnail</text></svg>
+                        <img th:src="@{${menu.imagePath}}" class="bd-placeholder-img card-img-top" alt="Thumbnail" style="width: 100%; height: 225px; object-fit: cover;">
                         <div class="card-body">
                             <p class="card-text" th:text="${menu.menuName}"></p>
                             <p class="card-text" th:text="${menu.price}">₩</p>

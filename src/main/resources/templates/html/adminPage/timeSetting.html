@@ -74,17 +74,20 @@
             <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
                 <div class="col" th:each="menu : ${menus}">
                     <div class="card shadow-sm">
-                        <svg class="bd-placeholder-img card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="#55595c"/><text x="50%" y="50%" fill="#eceeef" dy=".3em">Thumbnail</text></svg>
+                        <img th:src="@{${menu.imagePath}}" class="bd-placeholder-img card-img-top" alt="Thumbnail" style="width: 100%; height: 225px; object-fit: cover;">
                         <div class="card-body">
                             <p class="card-text" th:text="${menu.menuName}"></p>
                             <small class="text-muted" th:text="|default: ${menu.defaultTime}mins|"></small>
                             <small class="text-muted" th:text="|event: ${menu.eventTime}mins|"></small>
                             <div class="d-flex justify-content-between align-items-center">
+                                <form role="form" action="/event" method="post">
                                 <div class="input-group">
-                                    <input type="text" class="form-control" placeholder="event time(mins)">
-                                    <input type="text" class="form-control" placeholder="quantity">
-                                    <button type="submit" class="btn btn-secondary">setting</button>
-                                </div>
+                                        <input type="hidden" name="menuId" th:value="${menu.id}">
+                                        <input type="text" class="form-control" name="eventTime" placeholder="event time(mins)">
+                                        <input type="text" class="form-control" name="eventQuantity" placeholder="quantity">
+                                        <button type="submit" class="btn btn-secondary">setting</button>
+                                    </div>
+                                </form>
                             </div>
                         </div>
                     </div>

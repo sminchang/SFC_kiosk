@@ -34,7 +34,7 @@ public class MenuItemRepository {
     }
 
     public List<MenuItem> findListByFastMenu(Long shopId, int time) {
-        return em.createQuery("select m from MenuItem m where m.shop.id = :shopId and m.defaultTime <= :time or (m.eventTime > 0 and m.eventTime <= :time)", MenuItem.class)
+        return em.createQuery("select m from MenuItem m where m.shop.id = :shopId and (m.defaultTime <= :time or (m.eventTime > 0 and m.eventTime <= :time))", MenuItem.class)
                 .setParameter("shopId", shopId)
                 .setParameter("time", time)
                 .getResultList();

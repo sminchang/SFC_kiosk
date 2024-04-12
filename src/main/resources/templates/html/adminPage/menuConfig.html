@@ -94,7 +94,7 @@
                             </div>
                             <div class="mb-3">
                                 <label th:for="menuName" class="col-form-label">menu name</label>
-                                <input type="text" class="form-control" th:field="*{menuName}">
+                                <input type="text" class="form-control" th:field="*{menuName}" required>
                             </div>
                             <div class="mb-3">
                                 <label th:for="price" class="col-form-label">menu price</label>
@@ -105,8 +105,8 @@
                                 <input type="text" class="form-control" th:field="*{defaultTime}" placeholder="mins">
                             </div>
                             <div class="mb-3">
-                                <label th:for="img" class="col-form-label">menu image</label>
-                                <input type="file" class="form-control" th:field="*{img}"placeholder=".jpg 형식만 지원합니다.">
+                                <label th:for="image" class="col-form-label">menu image</label>
+                                <input type="file" class="form-control" th:field="*{image}" placeholder=".jpg 형식만 지원합니다.">
                             </div>
                             <div class="mb-3">
                                 <label th:for="description" class="col-form-label">description</label>
@@ -182,10 +182,53 @@
                             <p class="card-text" th:text="${menu.price}">₩</p>
                             <div class="d-flex justify-content-between align-items-center">
                                 <div class="btn-group">
-                                    <button type="button" class="btn btn-sm btn-outline-secondary">update</button>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" th:attr="data-bs-target=${'#menuUpdateModal' + menu.id}">update</button>
                                     <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" th:attr="data-bs-target=${'#menuDeleteModal' + menu.id}">delete</button>
                                 </div>
                                 <small class="text-muted" th:text="${menu.defaultTime}"> mins</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal fade" th:id="${'menuUpdateModal' + menu.id}" tabindex="-1" aria-labelledby="menuUpdateModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h1 class="modal-title fs-5" id="menuUpdateModalLabel">Update the menu</h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <form role="form", action="/update/menuItem" th:object="${menuForm}" method="post" enctype="multipart/form-data">
+                                    <div class="modal-body">
+                                        <input type="hidden" name="menuId" th:value="${menu.id}">
+                                        <div class="mb-3">
+                                            <label class="form-label">category</label>
+                                            <input type="text" class="form-control" name="categoryName" th:value="${menu.category.categoryName}" readonly>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label class="col-form-label">menu name</label>
+                                            <input type="text" class="form-control" name="menuName" th:value="${menu.menuName}"readonly>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label th:for="price" class="col-form-label">menu price</label>
+                                            <input type="text" class="form-control" th:field="*{price}">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label th:for="defaultTime" class="col-form-label">cooking time</label>
+                                            <input type="text" class="form-control" th:field="*{defaultTime}">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label th:for="image" class="col-form-label">menu image</label>
+                                            <input type="file" class="form-control" th:field="*{image}">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label th:for="description" class="col-form-label">description</label>
+                                            <textarea class="form-control" th:field="*{description}"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="submit" class="btn btn-primary">update</button>
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    </div>
+                                </form>
                             </div>
                         </div>
                     </div>

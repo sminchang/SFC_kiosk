@@ -16,7 +16,7 @@ spring:
     include: private
   servlet:
     multipart:
-      location: C:/Users/Minchang Sung/desktop/capstone/waitingTime-kiosk/src/main/resources/static/img/
+      location: C:/Users/Minchang Sung/desktop/capstone/waitingTime-kiosk/src/main/resources/static/
       max-file-size: 10MB
 
 logging:

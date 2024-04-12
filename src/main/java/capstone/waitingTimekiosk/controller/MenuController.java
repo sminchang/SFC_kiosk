@@ -93,7 +93,7 @@ public class MenuController {
 
         //파일 업로드 및 파일 경로 저장
         File file = new File(path + UUID.randomUUID() + ".jpg"); //seqeunce++로 대체할지 고민해보기
-        form.getImg().transferTo(file);
+        form.getImage().transferTo(file);
         String imagePath = "/img/" + file.getName();
 
         //menuItem 등록
@@ -102,6 +102,47 @@ public class MenuController {
         menuItem.setDefaultTime(form.getDefaultTime());
         menuItem.setImagePath(imagePath);
         menuItem.setDescription(form.getDescription());
+        menuItemRepository.save(menuItem);
+
+        List<Category> categorys = categoryRepository.findListByShopId(shop.getId());
+        List<MenuItem> menus = menuItemRepository.findListByCategory(shop.getId(),category.getCategoryName());
+
+        model.addAttribute("categorys", categorys);
+        model.addAttribute("menuForm", new MenuForm());
+        model.addAttribute("menus", menus);
+        return "html/adminPage/menuConfig";
+    }
+
+
+    @PostMapping("/update/menuItem")
+    public String updateMenuItem(@CookieValue(name = "accessToken", defaultValue = "not found") String accessToken,
+                                 @CookieValue(name = "shopId", defaultValue = "not found") String shopId,
+                                 @RequestParam String menuId,
+                                 @RequestParam String categoryName,
+                                 MenuForm form,
+                                 Model model) throws IOException {
+        kakaoApi.tokenCheck(accessToken);
+        Shop shop = shopRepository.findById(shopId);
+        Category category = categoryRepository.findCategory(shop.getId(),categoryName);
+
+        //파일 재등록
+        MenuItem menuItem = menuItemRepository.findById(menuId);
+        if(form.getImage().getSize()!=0) {
+            File savedFile = new File(path + menuItem.getImagePath());
+            if (savedFile.exists())
+                savedFile.delete();
+            File updateFile = new File(path + "img/" + UUID.randomUUID() + ".jpg"); //seqeunce++로 대체할지 고민해보기
+            form.getImage().transferTo(updateFile);
+            String imagePath = "/img/" + updateFile.getName();
+            menuItem.setImagePath(imagePath);
+        }
+        //menuItem 변경
+        if(form.getPrice()!=0)
+            menuItem.setPrice(form.getPrice());
+        if(form.getDefaultTime()!=0)
+            menuItem.setDefaultTime(form.getDefaultTime());
+        if(form.getDescription()!=null)
+            menuItem.setDescription(form.getDescription());
         menuItemRepository.save(menuItem);
 
         List<Category> categorys = categoryRepository.findListByShopId(shop.getId());

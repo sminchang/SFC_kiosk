@@ -20,7 +20,7 @@ public class MenuForm {
 
     private int eventQuantity; //이벤트 설정 수량
 
-    private MultipartFile img; //메뉴 이미지 파일
+    private MultipartFile image; //메뉴 이미지 파일
 
     private String description;
 }

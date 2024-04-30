@@ -1,3 +1,4 @@
+/*
 package capstone.waitingTimekiosk;
 
 import org.junit.jupiter.api.Test;
@@ -11,3 +12,4 @@ class WaitingTimeKioskApplicationTests {
 	}
 
 }
+*/

@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -217,12 +218,17 @@ public class MenuController {
         kakaoApi.tokenCheck(accessToken);
         Shop shop = shopRepository.findById(shopId);
 
-        List<Category> categorys = categoryRepository.findListByShopId(shop.getId());
-        List<MenuItem> menus = menuItemRepository.findListByCategory(shop.getId(), categoryName);
+        if("fastMenu".equals(categoryName)){
+            List<MenuItem> menus = menuItemRepository.findListByFastMenu(shop.getId(), 5);
+            model.addAttribute("menus", menus);
+        } else{
+            List<MenuItem> menus = menuItemRepository.findListByCategory(shop.getId(), categoryName);
+            model.addAttribute("menus", menus);
+        }
 
+        List<Category> categorys = categoryRepository.findListByShopId(shop.getId());
         model.addAttribute("categorys", categorys);
         model.addAttribute("menuForm", new MenuForm());
-        model.addAttribute("menus", menus);
 
         return "html/adminPage/menuConfig";
     }
@@ -235,80 +241,33 @@ public class MenuController {
         kakaoApi.tokenCheck(accessToken);
         Shop shop = shopRepository.findById(shopId);
 
-        List<Category> categorys = categoryRepository.findListByShopId(shop.getId());
-        List<MenuItem> menus = menuItemRepository.findListByCategory(shop.getId(), categoryName);
+        if("fastMenu".equals(categoryName)){
+            List<MenuItem> menus = menuItemRepository.findListByFastMenu(shop.getId(), 5);
+            model.addAttribute("menus", menus);
+        } else{
+            List<MenuItem> menus = menuItemRepository.findListByCategory(shop.getId(), categoryName);
+            model.addAttribute("menus", menus);
+        }
 
+        List<Category> categorys = categoryRepository.findListByShopId(shop.getId());
         model.addAttribute("categorys", categorys);
-        //model.addAttribute("menuForm", new MenuForm());
-        model.addAttribute("menus", menus);
 
         return "html/adminPage/timeSetting";
     }
 
     @GetMapping("/menu/category/{categoryName}")
-    public String menuCategory(@CookieValue(name = "accessToken", defaultValue = "not found") String accessToken,
-                              @CookieValue(name = "shopId", defaultValue = "not found") String shopId,
-                              @PathVariable String categoryName,
-                              Model model){
+    public ResponseEntity<List<MenuItem>> menuCategory(@CookieValue(name = "accessToken", defaultValue = "not found") String accessToken,
+                                                       @CookieValue(name = "shopId", defaultValue = "not found") String shopId,
+                                                       @PathVariable String categoryName){
         kakaoApi.tokenCheck(accessToken);
         Shop shop = shopRepository.findById(shopId);
 
-        List<Category> categorys = categoryRepository.findListByShopId(shop.getId());
-        List<MenuItem> menus = menuItemRepository.findListByCategory(shop.getId(), categoryName);
-
-        model.addAttribute("categorys", categorys);
-        model.addAttribute("menus", menus);
-
-        return "html/consumerPage/menu";
-    }
-
-    @GetMapping("/menuConfig/category/fastMenu")
-    public String menuConfigfastMenu(@CookieValue(name = "accessToken", defaultValue = "not found") String accessToken,
-                               @CookieValue(name = "shopId", defaultValue = "not found") String shopId,
-                               Model model){
-        kakaoApi.tokenCheck(accessToken);
-        Shop shop = shopRepository.findById(shopId);
-
-        List<Category> categorys = categoryRepository.findListByShopId(shop.getId());
-        List<MenuItem> menus = menuItemRepository.findListByFastMenu(shop.getId(), 5);
-
-        model.addAttribute("categorys", categorys);
-        model.addAttribute("menuForm", new MenuForm());
-        model.addAttribute("menus", menus);
-
-        return "html/adminPage/menuConfig";
-    }
-
-    @GetMapping("/timeSetting/category/fastMenu")
-    public String timeSettingfastMenu(@CookieValue(name = "accessToken", defaultValue = "not found") String accessToken,
-                               @CookieValue(name = "shopId", defaultValue = "not found") String shopId,
-                               Model model){
-        kakaoApi.tokenCheck(accessToken);
-        Shop shop = shopRepository.findById(shopId);
-
-        List<Category> categorys = categoryRepository.findListByShopId(shop.getId());
-        List<MenuItem> menus = menuItemRepository.findListByFastMenu(shop.getId(), 5);
-
-        model.addAttribute("categorys", categorys);
-        //model.addAttribute("menuForm", new MenuForm());
-        model.addAttribute("menus", menus);
-
-        return "html/adminPage/timeSetting";
-    }
-
-    @GetMapping("/menu/category/fastMenu")
-    public String menufastMenu(@CookieValue(name = "accessToken", defaultValue = "not found") String accessToken,
-                               @CookieValue(name = "shopId", defaultValue = "not found") String shopId,
-                               Model model){
-        kakaoApi.tokenCheck(accessToken);
-        Shop shop = shopRepository.findById(shopId);
-
-        List<Category> categorys = categoryRepository.findListByShopId(shop.getId());
-        List<MenuItem> menus = menuItemRepository.findListByFastMenu(shop.getId(), 5);
-
-        model.addAttribute("categorys", categorys);
-        model.addAttribute("menus", menus);
-
-        return "html/consumerPage/menu";
+        if("fastMenu".equals(categoryName)){
+            List<MenuItem> menus = menuItemRepository.findListByFastMenu(shop.getId(), 5);
+            return ResponseEntity.ok(menus);
+        } else{
+            List<MenuItem> menus = menuItemRepository.findListByCategory(shop.getId(), categoryName);
+            return ResponseEntity.ok(menus);
+        }
     }
 }

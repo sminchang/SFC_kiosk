@@ -41,8 +41,10 @@
         <a href="/backHome" id="doubleClickLink" class="navbar-brand d-flex text-white align-items-center me-5">
             back</a>
         <ul class="nav nav-pills">
-            <li class="nav-item"><a th:href="@{/menu/category/fastMenu}" class="nav-link">fast menu</a></li>
-            <li th:each="category : ${categorys}" class="nav-item"><a th:href="@{/menu/category/{categoryName}(categoryName=${category.categoryName})}" class="nav-link" th:text="${category.categoryName}"></a></li>
+            <li class="nav-item"><a data-category="fastMenu" class="nav-link">fast menu</a></li>
+            <li th:each="category : ${categorys}" class="nav-item">
+                <a th:data-category="${category.categoryName}" class="nav-link" th:text="${category.categoryName}"></a>
+            </li>
         </ul>
         <button type="button" class="btn btn-outline-secondary ms-5" data-bs-toggle="modal" data-bs-target="#cartModal">your cart</button>
     </header>
@@ -57,40 +59,12 @@
             </div>
             <div class="modal-body">
                 <form>
-                    <ul class="list-group mb-3">
-                        <li class="list-group-item d-flex justify-content-between lh-sm">
-                            <div>
-                                <h6 class="my-0">Product name</h6>
-                                <small class="text-body-secondary">Brief description</small>
-                            </div>
-                            <span class="text-body-secondary">$12</span>
-                        </li>
-                        <li class="list-group-item d-flex justify-content-between lh-sm">
-                            <div>
-                                <h6 class="my-0">Second product</h6>
-                                <small class="text-body-secondary">Brief description</small>
-                            </div>
-                            <span class="text-body-secondary">$8</span>
-                        </li>
-                        <li class="list-group-item d-flex justify-content-between lh-sm">
-                            <div>
-                                <h6 class="my-0">Third item</h6>
-                                <small class="text-body-secondary">Brief description</small>
-                            </div>
-                            <span class="text-body-secondary">$5</span>
-                        </li>
-                        <li class="list-group-item d-flex justify-content-between bg-body-tertiary">
-                            <div class="text-success">
-                                <h6 class="my-0">Promo code</h6>
-                                <small>EXAMPLECODE</small>
-                            </div>
-                            <span class="text-success">−$5</span>
-                        </li>
-                        <li class="list-group-item d-flex justify-content-between">
-                            <span>Total (USD)</span>
-                            <strong>$20</strong>
-                        </li>
+                    <ul class="list-group mb-3" id="cartItems">
                     </ul>
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>Total (KRW)</span>
+                        <strong id="total-price">₩0</strong>
+                    </li>
                     <hr class="my-4">
                     <h4 class="mb-3">Payment</h4>
                     <div class="my-3">
@@ -129,9 +103,8 @@
                             <div class="d-flex justify-content-between align-items-center">
                                 <div class="btn-group">
                                     <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-container="body" data-bs-toggle="popover" data-bs-placement="bottom" data-bs-content="message">View</button>
-                                    <button type="button" class="btn btn-sm btn-outline-secondary">Add</button>
-                                </div>
-                                <small class="text-muted" th:text="${menu.eventTime} > 0 ? ${menu.eventTime} : ${menu.defaultTime} + 'mins'"></small>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary" th:attr="onclick='addToCart({ id: \'' + ${menu.id} + '\', menuName: \'' + ${menu.menuName} + '\', price: \'' + ${menu.price} + '\' })'">Add</button></div>
+                                <small class="text-muted" th:text="${menu.eventTime} > 0 ? ${menu.eventTime} + 'mins' : ${menu.defaultTime} + 'mins'"></small>
                             </div>
                         </div>
                     </div>
@@ -172,6 +145,262 @@ const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstra
     document.getElementById('doubleClickLink').addEventListener('click', function(e) {
         e.preventDefault(); // 기본 이벤트(링크 이동)를 방지
     });
+
+    //카테고리 링크 클릭 이벤트 리스너
+    document.querySelectorAll('.nav-link[data-category]').forEach(item => {
+        item.addEventListener('click', (event) => {
+            event.preventDefault();
+            const category = event.target.getAttribute('data-category');
+            fetchMenuItems(category);
+        });
+    });
+
+    //초기 카테고리 로드
+    document.addEventListener('DOMContentLoaded', () => {
+        const initialCategory = document.querySelector('.nav-link[data-category]').getAttribute('data-category');
+        fetchMenuItems(initialCategory);
+    });
 </script>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    let products = {};
+
+    function decrementQuantity(event, menuItemId, price) {
+        event.stopPropagation();
+        event.preventDefault();
+
+        if (products[menuItemId].quantity > 1) {
+            products[menuItemId].quantity--;
+        }
+
+        document.getElementById(`quantity-${menuItemId}`).textContent = products[menuItemId].quantity;
+        updatePrice(menuItemId);
+        updateTotalPrice();
+    }
+
+    function incrementQuantity(event, menuItemId, price) {
+        event.stopPropagation();
+        event.preventDefault();
+
+        products[menuItemId].quantity++;
+
+        document.getElementById(`quantity-${menuItemId}`).textContent = products[menuItemId].quantity;
+        updatePrice(menuItemId);
+        updateTotalPrice();
+    }
+
+    function updatePrice(menuItemId) {
+        const price = products[menuItemId].price * products[menuItemId].quantity;
+        document.getElementById(`price-${menuItemId}`).textContent = `₩${price}`;
+    }
+
+    function updateTotalPrice() {
+        let total = 0;
+        for (const menuItemId in products) {
+            total += products[menuItemId].price * products[menuItemId].quantity;
+        }
+        document.getElementById('total-price').textContent = `₩${total}`;
+    }
+    /*]]>*/
+</script>
+
+<script>
+
+    function fetchMenuItems(category) {
+        fetch(`/menu/category/${category}`)
+            .then(response => response.json())
+            .then(data => {
+                updateMenuItems(data);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    }
+
+    function updateMenuItems(menuItems) {
+        const menuContainer = document.querySelector('.row.row-cols-1.row-cols-sm-2.row-cols-md-3.g-3');
+        menuContainer.innerHTML = '';
+
+        menuItems.forEach(menuItem => {
+            const menuElement = createMenuElement(menuItem);
+            menuContainer.appendChild(menuElement);
+        });
+    }
+
+    function createMenuElement(menuItem) {
+        const colElement = document.createElement('div');
+        colElement.classList.add('col');
+
+        const cardElement = document.createElement('div');
+        cardElement.classList.add('card', 'shadow-sm');
+
+        const imageElement = document.createElement('img');
+        imageElement.src = menuItem.imagePath;
+        imageElement.classList.add('bd-placeholder-img', 'card-img-top');
+        imageElement.alt = 'Thumbnail';
+        imageElement.style.width = '100%';
+        imageElement.style.height = '225px';
+        imageElement.style.objectFit = 'cover';
+
+        const cardBodyElement = document.createElement('div');
+        cardBodyElement.classList.add('card-body');
+
+        const menuNameElement = document.createElement('p');
+        menuNameElement.classList.add('card-text');
+        menuNameElement.textContent = menuItem.menuName;
+
+        const priceElement = document.createElement('p');
+        priceElement.classList.add('card-text');
+        priceElement.textContent = `₩${menuItem.price}`;
+
+        const buttonGroupElement = document.createElement('div');
+        buttonGroupElement.classList.add('btn-group');
+
+        const viewButtonElement = document.createElement('button');
+        viewButtonElement.type = 'button';
+        viewButtonElement.classList.add('btn', 'btn-sm', 'btn-outline-secondary');
+        viewButtonElement.dataset.bsContainer = 'body';
+        viewButtonElement.dataset.bsToggle = 'popover';
+        viewButtonElement.dataset.bsPlacement = 'bottom';
+        viewButtonElement.dataset.bsContent = 'message';
+        viewButtonElement.textContent = 'View';
+
+        const addButtonElement = document.createElement('button');
+        addButtonElement.type = 'button';
+        addButtonElement.classList.add('btn', 'btn-sm', 'btn-outline-secondary');
+        addButtonElement.setAttribute('onclick', `addToCart({ id: '${menuItem.id}', menuName: '${menuItem.menuName}', price: '${menuItem.price}' })`);
+        addButtonElement.textContent = 'Add';
+
+        const timeElement = document.createElement('small');
+        timeElement.classList.add('text-muted');
+        timeElement.textContent = menuItem.eventTime > 0 ? `${menuItem.eventTime} mins` : `${menuItem.defaultTime} mins`;
+
+        buttonGroupElement.appendChild(viewButtonElement);
+        buttonGroupElement.appendChild(addButtonElement);
+
+        const buttonContainerElement = document.createElement('div');
+        buttonContainerElement.classList.add('d-flex', 'justify-content-between', 'align-items-center');
+        buttonContainerElement.appendChild(buttonGroupElement);
+        buttonContainerElement.appendChild(timeElement);
+
+        cardBodyElement.appendChild(menuNameElement);
+        cardBodyElement.appendChild(priceElement);
+        cardBodyElement.appendChild(buttonContainerElement);
+
+        cardElement.appendChild(imageElement);
+        cardElement.appendChild(cardBodyElement);
+
+        colElement.appendChild(cardElement);
+
+        return colElement;
+    }
+
+    function addToCart(menuItem) {
+        // 메뉴 항목이 이미 추가되어 있는지 확인
+        const existingItem = document.getElementById(`cart-item-${menuItem.id}`);
+
+        if (existingItem) {
+            // 이미 추가된 메뉴 항목인 경우, 수량만 증가
+            products[menuItem.id].quantity++;
+            document.getElementById(`quantity-${menuItem.id}`).textContent = products[menuItem.id].quantity;
+            updatePrice(menuItem.id);
+        } else {
+            // 새로운 메뉴 항목인 경우, DOM에 추가
+            const cartItemsContainer = document.getElementById('cartItems');
+            const itemElement = createCartItemElement(menuItem);
+            cartItemsContainer.insertBefore(itemElement, cartItemsContainer.lastChild);
+        }
+
+        // 메뉴 항목을 클라이언트 측 저장소에 저장
+        let cartItems = JSON.parse(sessionStorage.getItem('cartItems') || '[]');
+        const existingItemIndex = cartItems.findIndex(item => item.id === menuItem.id);
+
+        if (existingItemIndex !== -1) {
+            // 이미 추가된 메뉴 항목인 경우, 수량만 증가
+            cartItems[existingItemIndex].quantity++;
+        } else {
+            // 새로운 메뉴 항목인 경우, 배열에 추가
+            cartItems.push({ ...menuItem, quantity: 1 });
+        }
+
+        sessionStorage.setItem('cartItems', JSON.stringify(cartItems));
+
+        // products 객체 업데이트
+        if (!products[menuItem.id]) {
+            products[menuItem.id] = {
+                quantity: 1,
+                price: menuItem.price
+            };
+        }
+        updateTotalPrice();
+    }
+
+    function removeToCart(event, menuItemId) {
+        event.stopPropagation();
+        event.preventDefault();
+
+        // 해당 메뉴 항목을 DOM에서 제거
+        const itemElement = document.getElementById(`cart-item-${menuItemId}`);
+        itemElement.remove();
+
+        // 해당 메뉴 항목을 클라이언트 측 저장소에서 제거
+        let cartItems = JSON.parse(sessionStorage.getItem('cartItems') || '[]');
+        cartItems = cartItems.filter(item => item.id !== menuItemId);
+        sessionStorage.setItem('cartItems', JSON.stringify(cartItems));
+
+        // products 객체에서 해당 메뉴 항목 제거
+        delete products[menuItemId];
+
+        updateTotalPrice();
+    }
+
+    function createCartItemElement(menuItem) {
+        const itemElement = document.createElement('li');
+        itemElement.id = `cart-item-${menuItem.id}`;
+        itemElement.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'lh-sm');
+
+        const nameElement = document.createElement('div');
+        nameElement.textContent = menuItem.menuName;
+
+        const quantityElement = document.createElement('div');
+        const decrementButton = document.createElement('button');
+        decrementButton.classList.add('btn', 'btn-sm', 'btn-outline-secondary');
+        decrementButton.textContent = '-';
+        decrementButton.addEventListener('click', (event) => decrementQuantity(event, menuItem.id, menuItem.price));
+
+        const quantitySpan = document.createElement('span');
+        quantitySpan.id = `quantity-${menuItem.id}`;
+        quantitySpan.classList.add('mx-3');
+        quantitySpan.textContent = '1';
+
+        const incrementButton = document.createElement('button');
+        incrementButton.classList.add('btn', 'btn-sm', 'btn-outline-secondary');
+        incrementButton.textContent = '+';
+        incrementButton.addEventListener('click', (event) => incrementQuantity(event, menuItem.id, menuItem.price));
+
+        quantityElement.appendChild(decrementButton);
+        quantityElement.appendChild(quantitySpan);
+        quantityElement.appendChild(incrementButton);
+
+        const priceElement = document.createElement('span');
+        priceElement.id = `price-${menuItem.id}`;
+        priceElement.classList.add('text-body-secondary');
+        priceElement.textContent = `₩${menuItem.price}`;
+
+        const removeButton = document.createElement('button');
+        removeButton.classList.add('btn', 'btn-sm', 'btn-outline-secondary');
+        removeButton.textContent = 'x';
+        removeButton.addEventListener('click', (event) => removeToCart(event,menuItem.id));
+
+        itemElement.appendChild(nameElement);
+        itemElement.appendChild(quantityElement);
+        itemElement.appendChild(priceElement);
+        itemElement.appendChild(removeButton);
+
+        return itemElement;
+    }
+</script>
+
 </body>
 </html>

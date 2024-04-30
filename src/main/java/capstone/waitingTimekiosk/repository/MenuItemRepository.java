@@ -28,9 +28,12 @@ public class MenuItemRepository {
         em.remove(menuItem);
     }
 
-    public MenuItem findById(String menuId) {
-        Long id = Long.parseLong(menuId);
+    public MenuItem findById(String menuItemId) {
+        Long id = Long.parseLong(menuItemId);
         return em.find(MenuItem.class, id);
+    }
+    public MenuItem findById(Long menuItemId) {
+        return em.find(MenuItem.class, menuItemId);
     }
 
     public List<MenuItem> findListByFastMenu(Long shopId, int time) {

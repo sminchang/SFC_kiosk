@@ -1,5 +1,6 @@
 package capstone.waitingTimekiosk.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,12 +20,14 @@ public class MenuItem {
     //메뉴를 소유한 메뉴판 식별
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "shop_id")
+    @JsonIgnore
     private Shop shop;
 
     private String menuName;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
+    @JsonIgnore
     private Category category;
 
     private int price;

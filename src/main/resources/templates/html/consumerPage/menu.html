@@ -358,12 +358,15 @@ const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstra
     function createCartItemElement(menuItem) {
         const itemElement = document.createElement('li');
         itemElement.id = `cart-item-${menuItem.id}`;
-        itemElement.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'lh-sm');
+        itemElement.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-center');
 
         const nameElement = document.createElement('div');
         nameElement.textContent = menuItem.menuName;
+        nameElement.classList.add('me-auto'); // 메뉴 이름 길이에 상관없이 왼쪽에 고정
 
         const quantityElement = document.createElement('div');
+        quantityElement.classList.add('d-flex', 'align-items-center'); // 수량 부분 가운데 정렬
+
         const decrementButton = document.createElement('button');
         decrementButton.classList.add('btn', 'btn-sm', 'btn-outline-secondary');
         decrementButton.textContent = '-';
@@ -371,7 +374,7 @@ const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstra
 
         const quantitySpan = document.createElement('span');
         quantitySpan.id = `quantity-${menuItem.id}`;
-        quantitySpan.classList.add('mx-3');
+        quantitySpan.classList.add('mx-2'); // 수량 양쪽 여백 조절
         quantitySpan.textContent = '1';
 
         const incrementButton = document.createElement('button');
@@ -385,13 +388,13 @@ const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstra
 
         const priceElement = document.createElement('span');
         priceElement.id = `price-${menuItem.id}`;
-        priceElement.classList.add('text-body-secondary');
+        priceElement.classList.add('text-body-secondary', 'ms-2'); // 가격 왼쪽 여백 추가
         priceElement.textContent = `₩${menuItem.price}`;
 
         const removeButton = document.createElement('button');
-        removeButton.classList.add('btn', 'btn-sm', 'btn-outline-secondary');
+        removeButton.classList.add('btn', 'btn-sm', 'btn-outline-secondary', 'ms-2'); // 제거 버튼 왼쪽 여백 추가
         removeButton.textContent = 'x';
-        removeButton.addEventListener('click', (event) => removeToCart(event,menuItem.id));
+        removeButton.addEventListener('click', (event) => removeToCart(event, menuItem.id));
 
         itemElement.appendChild(nameElement);
         itemElement.appendChild(quantityElement);

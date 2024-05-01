@@ -102,8 +102,8 @@
                             <p class="card-text" th:text="${menu.price}">₩</p>
                             <div class="d-flex justify-content-between align-items-center">
                                 <div class="btn-group">
-                                    <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-container="body" data-bs-toggle="popover" data-bs-placement="bottom" data-bs-content="message">View</button>
-                                    <button type="button" class="btn btn-sm btn-outline-secondary" th:attr="onclick='addToCart({ id: \'' + ${menu.id} + '\', menuName: \'' + ${menu.menuName} + '\', price: \'' + ${menu.price} + '\' })'">Add</button></div>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-container="body" data-bs-toggle="popover" data-bs-placement="bottom" th:data-bs-content="${menu.description}">View</button>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary add-button" th:attr="onclick='addToCart({ id: \'' + ${menu.id} + '\', menuName: \'' + ${menu.menuName} + '\', price: \'' + ${menu.price} + '\' })'">Add</button></div>
                                 <small class="text-muted" th:text="${menu.eventTime} > 0 ? ${menu.eventTime} + 'mins' : ${menu.defaultTime} + 'mins'"></small>
                             </div>
                         </div>
@@ -127,12 +127,6 @@
             event.target.classList.remove('active');
         });
     });
-</script>
-
-<script>
-    //팝오버 활성화 로직
-const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
-const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
 </script>
 
 <script>
@@ -160,6 +154,7 @@ const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstra
         const initialCategory = document.querySelector('.nav-link[data-category]').getAttribute('data-category');
         fetchMenuItems(initialCategory);
     });
+
 </script>
 
 <script th:inline="javascript">
@@ -212,6 +207,16 @@ const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstra
             .then(response => response.json())
             .then(data => {
                 updateMenuItems(data);
+
+                // 현재 열려 있는 팝오버 모두 숨기기
+                const openPopovers = document.querySelectorAll('.popover.show');
+                openPopovers.forEach(popover => {
+                    popover.remove();
+                });
+
+                //팝오버 초기화
+                const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]');
+                [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl));
             })
             .catch(error => {
                 console.error('Error:', error);
@@ -263,7 +268,7 @@ const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstra
         viewButtonElement.dataset.bsContainer = 'body';
         viewButtonElement.dataset.bsToggle = 'popover';
         viewButtonElement.dataset.bsPlacement = 'bottom';
-        viewButtonElement.dataset.bsContent = 'message';
+        viewButtonElement.dataset.bsContent = `${menuItem.description}`;
         viewButtonElement.textContent = 'View';
 
         const addButtonElement = document.createElement('button');
@@ -334,6 +339,21 @@ const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstra
             };
         }
         updateTotalPrice();
+
+        // Add 버튼에 팝오버 표시
+        const addButton = document.querySelector(`button[onclick="addToCart({ id: '${menuItem.id}', menuName: '${menuItem.menuName}', price: '${menuItem.price}' })"]`);
+        const popover = new bootstrap.Popover(addButton, {
+            content: '메뉴가 추가되었습니다.',
+            trigger: 'manual',
+            placement: 'bottom'
+        });
+
+        popover.show();
+
+        // 2초 후에 팝오버 자동으로 닫기
+        setTimeout(() => {
+            popover.hide();
+        }, 1000);
     }
 
     function removeToCart(event, menuItemId) {

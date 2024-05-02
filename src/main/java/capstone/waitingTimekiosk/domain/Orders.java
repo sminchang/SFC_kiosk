@@ -2,6 +2,7 @@ package capstone.waitingTimekiosk.domain;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
 import org.aspectj.weaver.ast.Or;
 
 import java.time.LocalDateTime;
@@ -20,6 +21,7 @@ public class Orders {
     @JoinColumn(name = "shop_id")
     private Shop shop;
 
+    @Setter
     private Boolean status; //주문 제공 여부
 
     private LocalDateTime date; //주문 등록 시간, 수요도 지표에 활용

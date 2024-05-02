@@ -16,6 +16,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 import java.util.List;
 
 
@@ -54,4 +56,15 @@ public class OrderController {
 
         return "redirect:/menu";
     }
+
+    @PostMapping("orderComplete")
+    public String orderComplete(@RequestParam Long orderId){
+
+        Orders order = ordersRepository.findById(orderId);
+        order.setStatus(true);
+        ordersRepository.save(order);
+
+        return "redirect:/orderState";
+    }
+
 }

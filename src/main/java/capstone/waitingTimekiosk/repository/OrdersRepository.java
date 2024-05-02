@@ -21,6 +21,10 @@ public class OrdersRepository {
         return orders.getId();
     }
 
+    public Orders findById(Long orderId) {
+        return em.find(Orders.class, orderId);
+    }
+
     public List<Orders> findListByShopId(Long shopId) {
         return em.createQuery("select m from Orders m where m.shop.id = :shopId and m.status = false", Orders.class)
                 .setParameter("shopId", shopId)

@@ -324,56 +324,42 @@
     }
 
     function addToCart(menuItem) {
-        // 메뉴 항목이 이미 추가되어 있는지 확인
         const existingItem = document.getElementById(`cart-item-${menuItem.id}`);
 
         if (existingItem) {
-            // 이미 추가된 메뉴 항목인 경우, 수량만 증가
             products[menuItem.id].quantity++;
             document.getElementById(`quantity-${menuItem.id}`).textContent = products[menuItem.id].quantity;
             updatePrice(menuItem.id);
-
-            // quantityInput 값 업데이트
-            const quantityInput = existingItem.querySelector('input[name$="].quantity"]');
-            quantityInput.value = products[menuItem.id].quantity;
+            updateQuantity(menuItem.id, products[menuItem.id].quantity);
         } else {
-            // 새로운 메뉴 항목인 경우, DOM에 추가
             const cartItemsContainer = document.getElementById('cartItems');
             const itemElement = createCartItemElement(menuItem);
             cartItemsContainer.insertBefore(itemElement, cartItemsContainer.lastChild);
-        }
-
-        // 메뉴 항목을 클라이언트 측 저장소에 저장
-        let cartItems = JSON.parse(sessionStorage.getItem('cartItems') || '[]');
-        const existingItemIndex = cartItems.findIndex(item => item.id === menuItem.id);
-
-        if (existingItemIndex !== -1) {
-            // 이미 추가된 메뉴 항목인 경우, 수량만 증가
-            cartItems[existingItemIndex].quantity++;
-        } else {
-            // 새로운 메뉴 항목인 경우, 배열에 추가
-            cartItems.push({ ...menuItem, quantity: 1 });
-
-            const itemElement = createCartItemElement({ ...menuItem, quantity: 1 });
-            cartItemsContainer.insertBefore(itemElement, cartItemsContainer.lastChild);
-
-            const orderItemInputs = itemElement.querySelectorAll('input[type="hidden"]');
-            orderItemInputs[0].value = menuItem.id;
-            orderItemInputs[1].value = 1;
-        }
-
-        sessionStorage.setItem('cartItems', JSON.stringify(cartItems));
-
-        // products 객체 업데이트
-        if (!products[menuItem.id]) {
             products[menuItem.id] = {
                 quantity: 1,
                 price: menuItem.price
             };
         }
-        updateTotalPrice();
 
-        // Add 버튼에 팝오버 표시
+        updateCartInStorage(menuItem);
+        showAddedConfirmation(menuItem);
+        updateTotalPrice();
+    }
+
+    function updateCartInStorage(menuItem) {
+        let cartItems = JSON.parse(sessionStorage.getItem('cartItems') || '[]');
+        const existingItemIndex = cartItems.findIndex(item => item.id === menuItem.id);
+
+        if (existingItemIndex !== -1) {
+            cartItems[existingItemIndex].quantity = products[menuItem.id].quantity;
+        } else {
+            cartItems.push({ ...menuItem, quantity: 1 });
+        }
+
+        sessionStorage.setItem('cartItems', JSON.stringify(cartItems));
+    }
+
+    function showAddedConfirmation(menuItem) {
         const addButton = document.querySelector(`button[onclick="addToCart({ id: '${menuItem.id}', menuName: '${menuItem.menuName}', price: '${menuItem.price}' })"]`);
         const popover = new bootstrap.Popover(addButton, {
             content: '메뉴가 추가되었습니다.',
@@ -382,32 +368,24 @@
         });
 
         popover.show();
-
-        // 2초 후에 팝오버 자동으로 닫기
-        setTimeout(() => {
-            popover.hide();
-        }, 1000);
+        setTimeout(() => popover.hide(), 1000);
     }
 
     function removeToCart(event, menuItemId) {
         event.stopPropagation();
         event.preventDefault();
 
-        // 해당 메뉴 항목을 DOM에서 제거
         const itemElement = document.getElementById(`cart-item-${menuItemId}`);
         itemElement.remove();
 
-        // 해당 메뉴 항목을 클라이언트 측 저장소에서 제거
         let cartItems = JSON.parse(sessionStorage.getItem('cartItems') || '[]');
         cartItems = cartItems.filter(item => item.id !== menuItemId);
         sessionStorage.setItem('cartItems', JSON.stringify(cartItems));
 
-        // products 객체에서 해당 메뉴 항목 제거
         delete products[menuItemId];
 
         updateTotalPrice();
     }
-
     function createCartItemElement(menuItem) {
         const itemElement = document.createElement('li');
         itemElement.id = `cart-item-${menuItem.id}`;

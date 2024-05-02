@@ -1,6 +1,5 @@
 package capstone.waitingTimekiosk.repository;
 
-import capstone.waitingTimekiosk.domain.Member;
 import capstone.waitingTimekiosk.domain.MenuItem;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;

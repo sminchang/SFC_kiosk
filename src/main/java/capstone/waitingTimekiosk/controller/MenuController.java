@@ -62,7 +62,8 @@ public class MenuController {
     @PostMapping("/new/category")
     public String newCategory(@CookieValue(name = "accessToken", defaultValue = "not found") String accessToken,
                               @CookieValue(name = "shopId", defaultValue = "not found") String shopId,
-                              @RequestParam String categoryName, Model model) {
+                              @RequestParam String categoryName,
+                              Model model) {
         kakaoApi.tokenCheck(accessToken);
         Shop shop = shopRepository.findById(shopId);
 

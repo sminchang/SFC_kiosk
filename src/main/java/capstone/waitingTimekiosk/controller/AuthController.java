@@ -2,9 +2,7 @@ package capstone.waitingTimekiosk.controller;
 
 
 import capstone.waitingTimekiosk.domain.*;
-import capstone.waitingTimekiosk.repository.CategoryRepository;
-import capstone.waitingTimekiosk.repository.MenuItemRepository;
-import capstone.waitingTimekiosk.repository.ShopRepository;
+import capstone.waitingTimekiosk.repository.*;
 import capstone.waitingTimekiosk.service.KakaoApi;
 import capstone.waitingTimekiosk.service.MemberService;
 import capstone.waitingTimekiosk.service.MenuService;
@@ -18,7 +16,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 @RequiredArgsConstructor //생성자 자동 생성, 의존관계 자동 주입
@@ -31,6 +32,9 @@ public class AuthController {
     private final MenuItemRepository menuItemRepository;
     private final MenuService menuService;
     private final CategoryRepository categoryRepository;
+    private final OrdersRepository ordersRepository;
+    private final OrderItemRepository orderItemRepository;
+
     private final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
     //초기화면, 카카오 API 설정이 바뀌면 yml만 수정하도록 설계
@@ -159,8 +163,15 @@ public class AuthController {
     }
 
     @GetMapping("/orderState")
-    public String statePage(@CookieValue(name = "accessToken", defaultValue = "not found") String accessToken) {
+    public String statePage(@CookieValue(name = "accessToken", defaultValue = "not found") String accessToken,
+                            @CookieValue(name = "shopId", defaultValue = "not found") String shopId,
+                            Model model) {
         kakaoApi.tokenCheck(accessToken);
+        Shop shop = shopRepository.findById(shopId);
+        List<Orders> orders = ordersRepository.findListByShopId(shop.getId());
+
+
+        model.addAttribute("orderList", orders);
         return "html/adminPage/orderState";
     }
 

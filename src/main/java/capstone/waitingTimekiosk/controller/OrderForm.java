@@ -7,10 +7,10 @@ import java.util.ArrayList;
 import java.util.List;
 @Getter @Setter
 public class OrderForm {
-    private List<OrderItem> orderItems = new ArrayList<>();
+    private List<CartItem> orderItems = new ArrayList<>();
 
     @Getter @Setter
-    public static class OrderItem {
+    public static class CartItem {
         private Long menuItemId;
         private Integer quantity;
     }

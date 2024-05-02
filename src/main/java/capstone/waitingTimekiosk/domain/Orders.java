@@ -16,6 +16,10 @@ public class Orders {
     @Column(name = "orders_id")
     private Long id;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "shop_id")
+    private Shop shop;
+
     private Boolean status; //주문 제공 여부
 
     private LocalDateTime date; //주문 등록 시간, 수요도 지표에 활용
@@ -25,6 +29,12 @@ public class Orders {
     private List<OrderItem> orderItems = new ArrayList<>();
 
     protected Orders() {
+    }
+
+    public Orders(Shop shop) {
+        this.shop = shop;
+        this.status = false;
+        this.date = LocalDateTime.now();
     }
 
     public void addOrderItem(OrderItem orderItem) {

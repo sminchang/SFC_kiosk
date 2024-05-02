@@ -58,8 +58,12 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form>
+                <form id="orderForm" action="/new/order" th:object="${orderForm}" method="post">
                     <ul class="list-group mb-3" id="cartItems">
+                        <li th:each="orderItem, itemStat : *{orderItems}" class="list-group-item d-flex justify-content-between align-items-center">
+                            <input type="hidden" th:field="*{orderItems[__${itemStat.index}__].menuItemId}">
+                            <input type="hidden" th:field="*{orderItems[__${itemStat.index}__].quantity}">
+                        </li>
                     </ul>
                     <li class="list-group-item d-flex justify-content-between">
                         <span>Total (KRW)</span>
@@ -81,10 +85,10 @@
                             <label class="form-check-label" for="paypal">PayPal</label>
                         </div>
                     </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">payment</button>
+                    </div>
                 </form>
-            </div>
-            <div class="modal-footer">
-                <button type="submit" class="btn btn-primary">payment</button>
             </div>
         </div>
     </div>
@@ -161,6 +165,12 @@
     /*<![CDATA[*/
     let products = {};
 
+    function updateQuantity(menuItemId, quantity) {
+        const inputElement = document.querySelector(`input[value="${menuItemId}"]`);
+        const orderItemInput = inputElement.nextElementSibling;
+        orderItemInput.value = quantity;
+    }
+
     function decrementQuantity(event, menuItemId, price) {
         event.stopPropagation();
         event.preventDefault();
@@ -172,6 +182,12 @@
         document.getElementById(`quantity-${menuItemId}`).textContent = products[menuItemId].quantity;
         updatePrice(menuItemId);
         updateTotalPrice();
+
+        updateQuantity(menuItemId, products[menuItemId].quantity);
+
+        const itemElement = document.getElementById(`cart-item-${menuItemId}`);
+        const quantityInput = itemElement.querySelector('input[name$="].quantity"]');
+        quantityInput.value = products[menuItemId].quantity;
     }
 
     function incrementQuantity(event, menuItemId, price) {
@@ -183,6 +199,12 @@
         document.getElementById(`quantity-${menuItemId}`).textContent = products[menuItemId].quantity;
         updatePrice(menuItemId);
         updateTotalPrice();
+
+        updateQuantity(menuItemId, products[menuItemId].quantity);
+
+        const itemElement = document.getElementById(`cart-item-${menuItemId}`);
+        const quantityInput = itemElement.querySelector('input[name$="].quantity"]');
+        quantityInput.value = products[menuItemId].quantity;
     }
 
     function updatePrice(menuItemId) {
@@ -310,6 +332,10 @@
             products[menuItem.id].quantity++;
             document.getElementById(`quantity-${menuItem.id}`).textContent = products[menuItem.id].quantity;
             updatePrice(menuItem.id);
+
+            // quantityInput 값 업데이트
+            const quantityInput = existingItem.querySelector('input[name$="].quantity"]');
+            quantityInput.value = products[menuItem.id].quantity;
         } else {
             // 새로운 메뉴 항목인 경우, DOM에 추가
             const cartItemsContainer = document.getElementById('cartItems');
@@ -327,6 +353,13 @@
         } else {
             // 새로운 메뉴 항목인 경우, 배열에 추가
             cartItems.push({ ...menuItem, quantity: 1 });
+
+            const itemElement = createCartItemElement({ ...menuItem, quantity: 1 });
+            cartItemsContainer.insertBefore(itemElement, cartItemsContainer.lastChild);
+
+            const orderItemInputs = itemElement.querySelectorAll('input[type="hidden"]');
+            orderItemInputs[0].value = menuItem.id;
+            orderItemInputs[1].value = 1;
         }
 
         sessionStorage.setItem('cartItems', JSON.stringify(cartItems));
@@ -416,10 +449,22 @@
         removeButton.textContent = 'x';
         removeButton.addEventListener('click', (event) => removeToCart(event, menuItem.id));
 
+        const menuItemIdInput = document.createElement('input');
+        menuItemIdInput.type = 'hidden';
+        menuItemIdInput.name = 'orderItems[' + (document.querySelectorAll('#cartItems li').length) + '].menuItemId';
+        menuItemIdInput.value = menuItem.id;
+
+        const quantityInput = document.createElement('input');
+        quantityInput.type = 'hidden';
+        quantityInput.name = 'orderItems[' + (document.querySelectorAll('#cartItems li').length) + '].quantity';
+        quantityInput.value = 1;
+
         itemElement.appendChild(nameElement);
         itemElement.appendChild(quantityElement);
         itemElement.appendChild(priceElement);
         itemElement.appendChild(removeButton);
+        itemElement.appendChild(menuItemIdInput);
+        itemElement.appendChild(quantityInput);
 
         return itemElement;
     }

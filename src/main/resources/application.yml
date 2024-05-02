@@ -27,3 +27,4 @@ logging:
         orm:
           jdbc:
             bind: trace
+

@@ -1,14 +1,11 @@
 package capstone.waitingTimekiosk.controller;
 
 
-import capstone.waitingTimekiosk.domain.Category;
-import capstone.waitingTimekiosk.domain.MenuItem;
-import capstone.waitingTimekiosk.domain.Shop;
+import capstone.waitingTimekiosk.domain.*;
 import capstone.waitingTimekiosk.repository.CategoryRepository;
 import capstone.waitingTimekiosk.repository.MenuItemRepository;
 import capstone.waitingTimekiosk.repository.ShopRepository;
 import capstone.waitingTimekiosk.service.KakaoApi;
-import capstone.waitingTimekiosk.domain.Member;
 import capstone.waitingTimekiosk.service.MemberService;
 import capstone.waitingTimekiosk.service.MenuService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -184,6 +181,7 @@ public class AuthController {
     @GetMapping("/menu")
     public String menuPage(@CookieValue(name = "accessToken", defaultValue = "not found") String accessToken,
                            @CookieValue(name = "shopId", defaultValue = "not found") String shopId,
+                           OrderForm orderForm,
                            Model model) {
         kakaoApi.tokenCheck(accessToken);
         Shop shop = shopRepository.findById(shopId);
@@ -192,6 +190,7 @@ public class AuthController {
 
         model.addAttribute("categorys", categorys);
         model.addAttribute("menus",menus);
+        model.addAttribute("orderForm", orderForm);
         return "html/consumerPage/menu";
     }
 }

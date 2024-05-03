@@ -1,5 +1,6 @@
 package capstone.waitingTimekiosk.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 
@@ -16,6 +17,7 @@ public class Category {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "shop_id")
+    @JsonIgnore
     private Shop shop;
 
     private String categoryName;

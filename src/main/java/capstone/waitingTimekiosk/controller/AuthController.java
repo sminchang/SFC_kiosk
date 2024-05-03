@@ -6,6 +6,7 @@ import capstone.waitingTimekiosk.repository.*;
 import capstone.waitingTimekiosk.service.KakaoApi;
 import capstone.waitingTimekiosk.service.MemberService;
 import capstone.waitingTimekiosk.service.MenuService;
+import capstone.waitingTimekiosk.service.OrderService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
@@ -20,6 +21,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 
 @RequiredArgsConstructor //생성자 자동 생성, 의존관계 자동 주입
@@ -34,6 +36,7 @@ public class AuthController {
     private final CategoryRepository categoryRepository;
     private final OrdersRepository ordersRepository;
     private final OrderItemRepository orderItemRepository;
+    private final OrderService orderService;
 
     private final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
@@ -157,8 +160,27 @@ public class AuthController {
     }
 
     @GetMapping("/menuDemand")
-    public String demandPage(@CookieValue(name = "accessToken", defaultValue = "not found") String accessToken) {
+    public String demandPage(@CookieValue(name = "accessToken", defaultValue = "not found") String accessToken,
+                             @CookieValue(name = "shopId", defaultValue = "not found") String shopId,
+                             Model model) {
         kakaoApi.tokenCheck(accessToken);
+
+        Shop shop = shopRepository.findById(shopId);
+        List<Orders> orders = ordersRepository.findListByShopId(shop.getId());
+        model.addAttribute("orders",orders);
+
+        // 메뉴별 일간, 주간, 월간, 연간 수요량을 계산합니다.
+        Map<String, Map<String, Integer>> demandData = orderService.calculateDemand(orders);
+        model.addAttribute("demandData", demandData);
+
+        // 주문 데이터에서 연도 추출하여 중복 제거 후 목록 생성
+        List<Integer> yearList = orders.stream()
+                .map(order -> order.getDate().getYear())
+                .distinct()
+                .sorted()
+                .collect(Collectors.toList());
+        model.addAttribute("yearList", yearList);
+
         return "html/adminPage/menuDemand";
     }
 
@@ -169,7 +191,6 @@ public class AuthController {
         kakaoApi.tokenCheck(accessToken);
         Shop shop = shopRepository.findById(shopId);
         List<Orders> orders = ordersRepository.findListByShopId(shop.getId());
-
 
         model.addAttribute("orderList", orders);
         return "html/adminPage/orderState";

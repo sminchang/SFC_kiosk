@@ -23,6 +23,13 @@
             white-space: nowrap;
             -webkit-overflow-scrolling: touch;
         }
+        .record {
+            transition: background-color 0.3s;
+        }
+        .record:hover {
+            background-color: #e0e0e0;
+            cursor: pointer;
+        }
     </style>
 </head>
 
@@ -95,8 +102,8 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr th:each="entry : ${demandData}">
-                        <td th:text="|${entry.value['menuName']} (ID${entry.key})|"></td>
+                    <tr th:each="entry : ${demandData}" class="record" onclick="handleRecordClick(this)">
+                    <td th:text="|${entry.value['menuName']} (ID${entry.key})|"></td>
                         <td th:text="${entry.value['daily']}"></td>
                         <td th:text="${entry.value['weekly']}"></td>
                         <td th:text="${entry.value['monthly']}"></td>
@@ -125,6 +132,16 @@
     function selectOption(option) {
         document.getElementById('selectedOption').textContent = option;
     }
+
+    // 레코드 마우스 오버 효과 적용
+    document.querySelectorAll('.record').forEach(function(record) {
+        record.addEventListener('mouseover', function() {
+            this.style.backgroundColor = '#e0e0e0';
+        });
+        record.addEventListener('mouseout', function() {
+            this.style.backgroundColor = '';
+        });
+    });
 </script>
 </body>
 </html>

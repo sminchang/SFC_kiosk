@@ -13,41 +13,48 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 public class OrderService {
-    public Map<String, Map<String, Integer>> calculateDemand(List<Orders> orderList) {
-        Map<String, Map<String, Integer>> demandData = new HashMap<>();
+    public Map<Long, Map<String, Object>> calculateDemand(List<Orders> orderList) {
+        Map<Long, Map<String, Object>> demandData = new HashMap<>();
         LocalDateTime currentDate = LocalDateTime.now();
 
         for (Orders order : orderList) {
             LocalDateTime orderDate = order.getDate();
 
             for (OrderItem orderItem : order.getOrderItems()) {
+                Long menuItemId = orderItem.getMenuItem().getId();
                 String menuName = orderItem.getMenuItem().getMenuName();
                 int quantity = orderItem.getQuantity();
 
-                if (!demandData.containsKey(menuName)) {
-                    demandData.put(menuName, new HashMap<>());
+                if (!demandData.containsKey(menuItemId)) {
+                    Map<String, Object> menuData = new HashMap<>();
+                    menuData.put("menuName", menuName);
+                    menuData.put("daily", 0);
+                    menuData.put("weekly", 0);
+                    menuData.put("monthly", 0);
+                    menuData.put("annual", 0);
+                    demandData.put(menuItemId, menuData);
                 }
 
-                Map<String, Integer> menuDemand = demandData.get(menuName);
+                Map<String, Object> menuData = demandData.get(menuItemId);
 
                 // 일간 수요량 계산
                 if (orderDate.toLocalDate().isEqual(currentDate.toLocalDate())) {
-                    menuDemand.put("daily", menuDemand.getOrDefault("daily", 0) + quantity);
+                    menuData.put("daily", (int) menuData.get("daily") + quantity);
                 }
 
                 // 주간 수요량 계산
                 if (orderDate.isAfter(currentDate.minusWeeks(1))) {
-                    menuDemand.put("weekly", menuDemand.getOrDefault("weekly", 0) + quantity);
+                    menuData.put("weekly", (int) menuData.get("weekly") + quantity);
                 }
 
                 // 월간 수요량 계산
                 if (orderDate.getMonthValue() == currentDate.getMonthValue() && orderDate.getYear() == currentDate.getYear()) {
-                    menuDemand.put("monthly", menuDemand.getOrDefault("monthly", 0) + quantity);
+                    menuData.put("monthly", (int) menuData.get("monthly") + quantity);
                 }
 
                 // 연간 수요량 계산
                 if (orderDate.getYear() == currentDate.getYear()) {
-                    menuDemand.put("annual", menuDemand.getOrDefault("annual", 0) + quantity);
+                    menuData.put("annual", (int) menuData.get("annual") + quantity);
                 }
             }
         }

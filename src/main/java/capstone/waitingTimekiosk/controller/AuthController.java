@@ -170,7 +170,7 @@ public class AuthController {
         model.addAttribute("orders",orders);
 
         // 메뉴별 일간, 주간, 월간, 연간 수요량을 계산합니다.
-        Map<String, Map<String, Integer>> demandData = orderService.calculateDemand(orders);
+        Map<Long, Map<String, Object>> demandData = orderService.calculateDemand(orders);
         model.addAttribute("demandData", demandData);
 
         // 주문 데이터에서 연도 추출하여 중복 제거 후 목록 생성

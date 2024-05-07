@@ -33,8 +33,8 @@ public class Member {
         this.nickname = nickname;
     }
 
-    public void addMenu(Shop menu) {
-        shops.add(menu);
-        menu.setMember(this);
+    public void addShop(Shop shop) {
+        shops.add(shop);
+        shop.setMember(this);
     }
 }

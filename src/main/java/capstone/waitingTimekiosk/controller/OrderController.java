@@ -46,12 +46,16 @@ public class OrderController {
         List<OrderForm.CartItem> cartItems = orderForm.getOrderItems();
         for (OrderForm.CartItem cartItem : cartItems){
             logger.info("Id: {}, Quantity: {}", cartItem.getMenuItemId(), cartItem.getQuantity());
-        OrderItem orderItem = new OrderItem(orders);
-        MenuItem menuItem = menuItemRepository.findById(cartItem.getMenuItemId());
-        orderItem.setOrders(orders);
-        orderItem.setMenuItem(menuItem);
-        orderItem.setQuantity(cartItem.getQuantity());
-        orderItemRepository.save(orderItem);
+            OrderItem orderItem = new OrderItem(orders);
+            MenuItem menuItem = menuItemRepository.findById(cartItem.getMenuItemId());
+            orderItem.setOrders(orders);
+            orderItem.setMenuItem(menuItem);
+            orderItem.setQuantity(cartItem.getQuantity());
+            orderItemRepository.save(orderItem);
+
+            //외래키 연관관계 설정
+            orders.addOrderItem(orderItem);
+            menuItem.addOrderItem(orderItem);
         }
 
         return "redirect:/menu";

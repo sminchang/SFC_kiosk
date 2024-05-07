@@ -50,6 +50,9 @@ public class MenuController {
         Shop shop = new Shop(member, shopName);
         shopRepository.save(shop);
 
+        //외래키 연관관계 설정
+        member.addShop(shop);
+
         List<Shop> shops = shopRepository.findListByMemberId(member.getId());
         model.addAttribute("shops",shops);
         model.addAttribute("nickname", member.getNickname());

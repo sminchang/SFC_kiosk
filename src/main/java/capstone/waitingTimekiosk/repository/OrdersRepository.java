@@ -26,7 +26,26 @@ public class OrdersRepository {
     }
 
     public List<Orders> findListByShopId(Long shopId) {
+        return em.createQuery("select m from Orders m where m.shop.id = :shopId", Orders.class)
+                .setParameter("shopId", shopId)
+                .getResultList();
+    }
+
+    public List<Orders> findListByShopIdAndFalse(Long shopId) {
         return em.createQuery("select m from Orders m where m.shop.id = :shopId and m.status = false", Orders.class)
+                .setParameter("shopId", shopId)
+                .getResultList();
+    }
+
+    public List<Orders> findListByShopIdAndYear(Long shopId, int year) {
+        return em.createQuery("select m from Orders m where m.shop.id = :shopId and function('YEAR', m.date) = :year", Orders.class)
+                .setParameter("shopId", shopId)
+                .setParameter("year", year)
+                .getResultList();
+    }
+
+    public List<Integer> findYearList(Long shopId) {
+        return em.createQuery("select distinct function('YEAR', m.date) from Orders m where m.shop.id = :shopId", Integer.class)
                 .setParameter("shopId", shopId)
                 .getResultList();
     }

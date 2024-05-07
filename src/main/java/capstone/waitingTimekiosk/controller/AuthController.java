@@ -17,6 +17,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -35,7 +36,6 @@ public class AuthController {
     private final MenuService menuService;
     private final CategoryRepository categoryRepository;
     private final OrdersRepository ordersRepository;
-    private final OrderItemRepository orderItemRepository;
     private final OrderService orderService;
 
     private final Logger logger = LoggerFactory.getLogger(AuthController.class);
@@ -162,24 +162,56 @@ public class AuthController {
     @GetMapping("/menuDemand")
     public String demandPage(@CookieValue(name = "accessToken", defaultValue = "not found") String accessToken,
                              @CookieValue(name = "shopId", defaultValue = "not found") String shopId,
+                             @RequestParam(required = false, defaultValue = "") String year,
                              Model model) {
         kakaoApi.tokenCheck(accessToken);
-
         Shop shop = shopRepository.findById(shopId);
-        List<Orders> orders = ordersRepository.findListByShopId(shop.getId());
-        model.addAttribute("orders",orders);
 
-        // 메뉴별 일간, 주간, 월간, 연간 수요량을 계산합니다.
-        Map<Long, Map<String, Object>> demandData = orderService.calculateDemand(orders);
-        model.addAttribute("demandData", demandData);
+        //전체 주문 데이터
+        List<Orders> entireOrders = ordersRepository.findListByShopId(shop.getId());
 
-        // 주문 데이터에서 연도 추출하여 중복 제거 후 목록 생성
-        List<Integer> yearList = orders.stream()
+        // 전체 주문 데이터에서 연도 추출하여 중복 제거 후 목록 생성
+        List<Integer> yearList = entireOrders.stream()
                 .map(order -> order.getDate().getYear())
                 .distinct()
                 .sorted()
                 .collect(Collectors.toList());
         model.addAttribute("yearList", yearList);
+
+        //전체 주문 데이터에서 해당 년도에 대한 데이터만 추출하여 전송
+        List<Orders> orders;
+        if (year.isEmpty()) {
+            orders = entireOrders.stream()
+                    .filter(order -> order.getDate().getYear() == LocalDate.now().getYear())
+                    .collect(Collectors.toList());
+        } else {
+            orders = entireOrders.stream()
+                    .filter(order -> order.getDate().getYear() == Integer.parseInt(year))
+                    .collect(Collectors.toList());
+        }
+        model.addAttribute("orders", orders);
+
+        //js 코드에서 객체 내부 객체를 조회하지 못하는 문제를 해결하기 위해 가공한 데이터 형식
+        List<Map<String, Object>> ordersData = orders.stream()
+                .map(order -> {
+                    Map<String, Object> orderMap = new HashMap<>();
+                    orderMap.put("date", order.getDate());
+                    orderMap.put("orderItems", order.getOrderItems().stream()
+                            .map(orderItem -> {
+                                Map<String, Object> orderItemMap = new HashMap<>();
+                                orderItemMap.put("menuItemId", orderItem.getMenuItem().getId());
+                                orderItemMap.put("quantity", orderItem.getQuantity());
+                                return orderItemMap;
+                            })
+                            .collect(Collectors.toList()));
+                    return orderMap;
+                })
+                .collect(Collectors.toList());
+        model.addAttribute("ordersData", ordersData);
+
+        // 메뉴별 일간, 주간, 월간, 연간 수요량을 계산합니다.
+        Map<Long, Map<String, Object>> demandData = orderService.calculateDemand(orders);
+        model.addAttribute("demandData", demandData);
 
         return "html/adminPage/menuDemand";
     }
@@ -190,7 +222,7 @@ public class AuthController {
                             Model model) {
         kakaoApi.tokenCheck(accessToken);
         Shop shop = shopRepository.findById(shopId);
-        List<Orders> orders = ordersRepository.findListByShopId(shop.getId());
+        List<Orders> orders = ordersRepository.findListByShopIdAndFalse(shop.getId());
 
         model.addAttribute("orderList", orders);
         return "html/adminPage/orderState";

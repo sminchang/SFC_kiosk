@@ -62,9 +62,10 @@
     <div class="row">
         <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
             <div class="position-sticky pt-3 sidebar-sticky">
+                <h3>years</h3>
                 <ul class="nav flex-column">
                     <li class="nav-item" th:each="year : ${yearList}">
-                        <a class="nav-link active" aria-current="page" href="#" th:text="${year}"></a>
+                        <a class="nav-link active" aria-current="page" th:href="@{/menuDemand(year=${year})}" th:text="${year}"></a>
                     </li>
                 </ul>
             </div>
@@ -89,6 +90,14 @@
             </div>
 
             <canvas class="my-4 w-100" id="myChart" width="900" height="380"></canvas>
+
+            <div th:each="order : ${orders}">
+                <span th:text="${order.date}"></span>
+                <div th:each="orderItem : ${order.orderItems}">
+                    <span th:text="${orderItem.menuItem.menuName}"></span>
+                    <span th:text="${orderItem.quantity}"></span>
+                </div>
+            </div>
 
             <div class="table-responsive">
                 <table class="table table-striped table-sm">
@@ -143,5 +152,40 @@
         });
     });
 </script>
+
+<script th:inline="javascript">
+
+    /*<![CDATA[*/
+    var orders = /*[[${orders}]]*/ [];
+    var ordersData = /*[[${ordersData}]]*/ [];
+    /*]]>*/
+
+    // 페이지 로드 시 첫 번째 레코드 선택
+    window.onload = function() {
+        var firstRecord = document.querySelector('.record');
+        if (firstRecord) {
+            handleRecordClick(firstRecord);
+        }
+    };
+
+    function handleRecordClick(record) {
+        var menuItemId = record.querySelector('td:first-child').textContent.match(/ID(\d+)/)[1];
+        console.log('menuItemId:', menuItemId);
+        var filteredOrderItems = ordersData.flatMap(function(order) {
+            return order.orderItems.filter(function(orderItem) {
+                return orderItem.menuItemId == menuItemId;
+            }).map(function(orderItem) {
+                return {
+                    date: order.date,
+                    quantity: orderItem.quantity
+                };
+            });
+        });
+
+        // 필터링된 주문 데이터를 dashboard.js로 전달
+        window.renderChart(filteredOrderItems);
+    }
+</script>
+
 </body>
 </html>

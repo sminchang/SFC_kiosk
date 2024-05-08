@@ -1,6 +1,5 @@
 package capstone.waitingTimekiosk.repository;
 
-import capstone.waitingTimekiosk.domain.MenuItem;
 import capstone.waitingTimekiosk.domain.Orders;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -19,6 +18,18 @@ public class OrdersRepository {
     public Long save(Orders orders) {
         em.persist(orders);
         return orders.getId();
+    }
+
+    //orderItem이 모두 삭제된 빈 orders를 삭제
+    @Transactional
+    public void removeEmptyOrders(Long shopId) {
+        List<Orders> emptyOrders = em.createQuery("select o from Orders o where o.shop.id = :shopId and o.orderItems is empty", Orders.class)
+                .setParameter("shopId", shopId)
+                .getResultList();
+
+        for (Orders order : emptyOrders) {
+            em.remove(order);
+        }
     }
 
     public Orders findById(Long orderId) {

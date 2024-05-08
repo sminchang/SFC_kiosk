@@ -1,9 +1,14 @@
 package capstone.waitingTimekiosk.domain;
 
+import capstone.waitingTimekiosk.repository.OrdersRepository;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Component;
 
 @Entity
 @Getter
@@ -44,4 +49,5 @@ public class OrderItem {
     public void setMenuItem(MenuItem menuItem) {
         this.menuItem = menuItem;
     }
+
 }

@@ -91,14 +91,6 @@
 
             <canvas class="my-4 w-100" id="myChart" width="900" height="380"></canvas>
 
-            <div th:each="order : ${orders}">
-                <span th:text="${order.date}"></span>
-                <div th:each="orderItem : ${order.orderItems}">
-                    <span th:text="${orderItem.menuItem.menuName}"></span>
-                    <span th:text="${orderItem.quantity}"></span>
-                </div>
-            </div>
-
             <div class="table-responsive">
                 <table class="table table-striped table-sm">
                     <thead>
@@ -168,6 +160,7 @@
         }
     };
 
+    //클릭 시 해당 메뉴에 대한 수요도 지표 출력
     function handleRecordClick(record) {
         var menuItemId = record.querySelector('td:first-child').textContent.match(/ID(\d+)/)[1];
         console.log('menuItemId:', menuItemId);

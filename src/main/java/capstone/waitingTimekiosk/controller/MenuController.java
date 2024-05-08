@@ -6,6 +6,7 @@ import capstone.waitingTimekiosk.domain.MenuItem;
 import capstone.waitingTimekiosk.domain.Shop;
 import capstone.waitingTimekiosk.repository.CategoryRepository;
 import capstone.waitingTimekiosk.repository.MenuItemRepository;
+import capstone.waitingTimekiosk.repository.OrdersRepository;
 import capstone.waitingTimekiosk.repository.ShopRepository;
 import capstone.waitingTimekiosk.service.KakaoApi;
 import capstone.waitingTimekiosk.service.MemberService;
@@ -30,6 +31,7 @@ import java.util.UUID;
 public class MenuController {
     private final CategoryRepository categoryRepository;
     private final MenuItemRepository menuItemRepository;
+    private final OrdersRepository ordersRepository;
     private final ShopRepository shopRepository;
     private final MemberService memberService;
     private final MenuService menuService;
@@ -207,6 +209,8 @@ public class MenuController {
 
         List<Category> categorys = categoryRepository.findListByShopId(shop.getId());
         List<MenuItem> menus = menuItemRepository.findListByCategory(shop.getId(), categoryName);
+
+        ordersRepository.removeEmptyOrders(shop.getId());
 
         model.addAttribute("categorys", categorys);
         model.addAttribute("menuForm", new MenuForm());

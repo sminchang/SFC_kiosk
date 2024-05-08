@@ -39,13 +39,16 @@ public class AuthController {
 
     private final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
-    //초기화면, 카카오 API 설정이 바뀌면 yml만 수정하도록 설계
-    //페이지 소스를 보면 앱키가 그대로 노출되는 취약점이 있다.(로그아웃도 마찬가지)
-    @GetMapping("/")
-    public String startForm(Model model) {
-        model.addAttribute("kakaoApiKey", kakaoApi.getKakaoApiKey());
-        model.addAttribute("redirectUri", kakaoApi.getKakaoRedirectUri());
-        return "index";
+    @GetMapping("/login")
+    public String login() {
+        String kakaoApiKey = kakaoApi.getKakaoApiKey();
+        String redirectUri = kakaoApi.getKakaoRedirectUri();
+
+        String kakaoAuthUrl = "https://kauth.kakao.com/oauth/authorize?client_id=" + kakaoApiKey
+                + "&redirect_uri=" + redirectUri
+                + "&response_type=code";
+
+        return "redirect:" + kakaoAuthUrl;
     }
 
     @RequestMapping("/memberIndex")

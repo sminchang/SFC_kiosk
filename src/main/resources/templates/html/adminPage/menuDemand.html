@@ -72,7 +72,7 @@
         </nav>
         <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
             <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                <h1 class="h2">sales</h1>
+                <h2>sales</h2>
                 <div class="btn-toolbar mb-2 mb-md-0">
                     <div class="dropdown">
                         <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -148,7 +148,6 @@
 <script th:inline="javascript">
 
     /*<![CDATA[*/
-    var orders = /*[[${orders}]]*/ [];
     var ordersData = /*[[${ordersData}]]*/ [];
     /*]]>*/
 
@@ -162,8 +161,10 @@
 
     //클릭 시 해당 메뉴에 대한 수요도 지표 출력
     function handleRecordClick(record) {
+        var menuName = record.querySelector('td:first-child').textContent.match(/(.+) \(ID\d+\)/)[1];
+        document.querySelector('h2').textContent = menuName;
+
         var menuItemId = record.querySelector('td:first-child').textContent.match(/ID(\d+)/)[1];
-        console.log('menuItemId:', menuItemId);
         var filteredOrderItems = ordersData.flatMap(function(order) {
             return order.orderItems.filter(function(orderItem) {
                 return orderItem.menuItemId == menuItemId;

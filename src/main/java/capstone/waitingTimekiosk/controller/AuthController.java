@@ -191,7 +191,6 @@ public class AuthController {
                     .filter(order -> order.getDate().getYear() == Integer.parseInt(year))
                     .collect(Collectors.toList());
         }
-        model.addAttribute("orders", orders);
 
         //js 코드에서 객체 내부 객체를 조회하지 못하는 문제를 해결하기 위해 가공한 데이터 형식
         List<Map<String, Object>> ordersData = orders.stream()

@@ -138,11 +138,13 @@ public class MenuController {
             File savedFile = new File(path + menuItem.getImagePath());
             if (savedFile.exists())
                 savedFile.delete();
+
             File updateFile = new File(path + "img/" + UUID.randomUUID() + ".jpg"); //seqeunce++로 대체할지 고민해보기
             form.getImage().transferTo(updateFile);
             String imagePath = "/img/" + updateFile.getName();
             menuItem.setImagePath(imagePath);
         }
+
         //menuItem 변경
         if(form.getPrice()!=0)
             menuItem.setPrice(form.getPrice());

@@ -53,6 +53,17 @@ public class OrderController {
             orderItem.setQuantity(cartItem.getQuantity());
             orderItemRepository.save(orderItem);
 
+            //이벤트 수량 항목일 경우 수량 감소, 이벤트 수량이 끝난 경우 대기 시간 초기화
+            int eventQuantity = menuItem.getEventQuantity() - cartItem.getQuantity();
+            if(eventQuantity > 0) {
+                menuItem.setEventQuantity(eventQuantity);
+            }
+            else if(eventQuantity <= 0){ //이벤트 수량 초과시 기본 시간 적용
+                menuItem.setEventQuantity(0);
+                menuItem.setEventTime(0);
+            }
+            menuItemRepository.save(menuItem);
+
             //외래키 연관관계 설정
             orders.addOrderItem(orderItem);
             menuItem.addOrderItem(orderItem);

@@ -10,7 +10,7 @@ import java.util.List;
 
 
 @Entity
-@Getter @Setter //setter 대체할거 찾기
+@Getter @Setter
 public class MenuItem {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -2,10 +2,7 @@ package capstone.waitingTimekiosk.service;
 
 import capstone.waitingTimekiosk.controller.AuthController;
 import capstone.waitingTimekiosk.domain.Member;
-import capstone.waitingTimekiosk.repository.CategoryRepository;
 import capstone.waitingTimekiosk.repository.MemberRepository;
-import capstone.waitingTimekiosk.repository.MenuItemRepository;
-import capstone.waitingTimekiosk.repository.ShopRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -19,9 +16,6 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final KakaoApi kakaoApi;
-    private final CategoryRepository categoryRepository;
-    private final ShopRepository shopRepository;
-    private final MenuItemRepository menuItemRepository;
     private final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
 

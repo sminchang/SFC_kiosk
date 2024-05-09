@@ -2,8 +2,6 @@ function updateQuantity(menuItemId, quantity) {
     const inputElement = document.querySelector(`input[value="${menuItemId}"]`);
     const orderItemInput = inputElement.nextElementSibling;
     orderItemInput.value = quantity;
-    console.log('quantity: ',quantity);
-    console.log('menuItemId', menuItemId);
 }
 
 function decrementQuantity(event, menuItemId, price) {

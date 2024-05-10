@@ -35,6 +35,7 @@ public class AuthController {
     private final CategoryRepository categoryRepository;
     private final OrdersRepository ordersRepository;
     private final DemandService demandService;
+    private final OrderItemRepository orderItemRepository;
 
     private final Logger logger = LoggerFactory.getLogger(AuthController.class);
 

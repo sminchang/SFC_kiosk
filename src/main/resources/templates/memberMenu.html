@@ -42,9 +42,7 @@
             </a>
             <div class="text-end">
                 <span class="text-light" th:text="|${nickname}님 환영합니다.|"></span>
-                <a type="button" class="btn text-light me-2 custom-hover" href="/logout"
-                   th:href="@{https://kauth.kakao.com/oauth/logout(client_id=${kakaoApiKey}, logout_redirect_uri=${logoutRedirectUri},response_type='code')}">
-                    Logout</a>
+                <a type="button" class="btn text-light me-2 custom-hover" href="/logout">Logout</a>
               </div>
         </div>
     </div>

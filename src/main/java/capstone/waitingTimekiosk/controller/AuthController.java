@@ -6,9 +6,8 @@ import capstone.waitingTimekiosk.repository.*;
 import capstone.waitingTimekiosk.service.KakaoApi;
 import capstone.waitingTimekiosk.service.MemberService;
 import capstone.waitingTimekiosk.service.MenuService;
-import capstone.waitingTimekiosk.service.OrderService;
+import capstone.waitingTimekiosk.service.DemandService;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -35,7 +34,7 @@ public class AuthController {
     private final MenuService menuService;
     private final CategoryRepository categoryRepository;
     private final OrdersRepository ordersRepository;
-    private final OrderService orderService;
+    private final DemandService demandService;
 
     private final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
@@ -78,24 +77,20 @@ public class AuthController {
 
         //서버 사이드 렌더링
         model.addAttribute("nickname", member.getNickname());
-        model.addAttribute("kakaoApiKey", kakaoApi.getKakaoApiKey());
-        model.addAttribute("logoutRedirectUri", kakaoApi.getKakaoLogoutRedirectUri());
-
         return "memberIndex";
     }
 
     //클라이언트가 로그아웃 요청 시 카카오 계정 로그아웃 후 리다이렉트 되어 액세스 토큰 만료 요청 컨트롤러로 이동
     @RequestMapping("/logout")
-    public String deleteToken(@CookieValue(name = "accessToken", defaultValue = "not found") Cookie tokenCookie,
-                            HttpServletResponse response) throws JsonProcessingException {
+    public String deleteToken(@CookieValue(name = "accessToken", defaultValue = "not found") String accessToken, HttpServletResponse response) throws JsonProcessingException {
 
-        //카카오 서버에 액세스 토큰 만료 요청
-        String accessToken = tokenCookie.getValue();
+        //카카오 서버에 액세스 토큰 만료 요청,
         kakaoApi.serviceLogout(accessToken);
-        logger.info("logout-accessToken={}",accessToken);
+        logger.info("logout-accessToken={}", accessToken);
 
+        /* 꼭 안해줘도 되는거 같아서 주석처리
         //브라우저 액세스 토큰 쿠키 초기화
-        tokenCookie.setValue(null);
+        Cookie tokenCookie = new Cookie("accessToken", null);
         tokenCookie.setMaxAge(0);
         tokenCookie.setPath("/");
         response.addCookie(tokenCookie);
@@ -103,8 +98,13 @@ public class AuthController {
         //로그: 쿠키 초기화 여부 확인
         String initToken = tokenCookie.getValue();
         logger.info("init-accessToken={}", initToken);
+        */
 
-        return "redirect:/";
+        //카카오 계정 세션 만료, 토큰과는 별개로 브라우저 로그아웃
+        String kakaoApiKey = kakaoApi.getKakaoApiKey();
+        String logoutRedirectUri = kakaoApi.getKakaoLogoutRedirectUri();
+        String kakaoAuthUrl = "https://kauth.kakao.com/oauth/logout?client_id=" + kakaoApiKey + "&logout_redirect_uri=" + logoutRedirectUri + "&response_type=code";
+        return "redirect:" + kakaoAuthUrl;
     }
 
     @GetMapping("/memberMenu")
@@ -119,8 +119,6 @@ public class AuthController {
         menuService.setCookie(response, shopId);
 
         model.addAttribute("nickname",member.getNickname());
-        model.addAttribute("kakaoApiKey", kakaoApi.getKakaoApiKey());
-        model.addAttribute("logoutRedirectUri", kakaoApi.getKakaoLogoutRedirectUri());
         return "memberMenu";
     }
 
@@ -141,8 +139,6 @@ public class AuthController {
         }
 
         model.addAttribute("nickname", member.getNickname());
-        model.addAttribute("kakaoApiKey", kakaoApi.getKakaoApiKey());
-        model.addAttribute("logoutRedirectUri", kakaoApi.getKakaoLogoutRedirectUri());
         return "memberIndex";
     }
 
@@ -174,7 +170,7 @@ public class AuthController {
 
         // 전체 주문 데이터에서 연도 추출하여 중복 제거 후 목록 생성
         List<Integer> yearList = entireOrders.stream()
-                .map(order -> order.getDate().getYear())
+                .map(order -> order.getOrderTime().getYear())
                 .distinct()
                 .sorted()
                 .collect(Collectors.toList());
@@ -184,11 +180,11 @@ public class AuthController {
         List<Orders> orders;
         if (year.isEmpty()) {
             orders = entireOrders.stream()
-                    .filter(order -> order.getDate().getYear() == LocalDate.now().getYear())
+                    .filter(order -> order.getOrderTime().getYear() == LocalDate.now().getYear())
                     .collect(Collectors.toList());
         } else {
             orders = entireOrders.stream()
-                    .filter(order -> order.getDate().getYear() == Integer.parseInt(year))
+                    .filter(order -> order.getOrderTime().getYear() == Integer.parseInt(year))
                     .collect(Collectors.toList());
         }
 
@@ -196,7 +192,7 @@ public class AuthController {
         List<Map<String, Object>> ordersData = orders.stream()
                 .map(order -> {
                     Map<String, Object> orderMap = new HashMap<>();
-                    orderMap.put("date", order.getDate());
+                    orderMap.put("orderTime", order.getOrderTime());
                     orderMap.put("orderItems", order.getOrderItems().stream()
                             .map(orderItem -> {
                                 Map<String, Object> orderItemMap = new HashMap<>();
@@ -211,7 +207,7 @@ public class AuthController {
         model.addAttribute("ordersData", ordersData);
 
         // 메뉴별 일간, 주간, 월간, 연간 수요량을 계산합니다.
-        Map<Long, Map<String, Object>> demandData = orderService.calculateDemand(orders);
+        Map<Long, Map<String, Object>> demandData = demandService.calculateDemand(orders);
         model.addAttribute("demandData", demandData);
 
         return "html/adminPage/menuDemand";

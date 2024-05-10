@@ -42,9 +42,7 @@
             </a>
             <div class="text-end">
                 <span class="text-light" th:text="|${nickname}님 환영합니다.|"></span>
-                <a type="button" class="btn text-light me-2 custom-hover" href="/logout"
-                   th:href="@{https://kauth.kakao.com/oauth/logout(client_id=${kakaoApiKey}, logout_redirect_uri=${logoutRedirectUri},response_type='code')}">
-                    Logout</a>
+                <a type="button" class="btn text-light me-2 custom-hover" href="/logout">Logout</a>
               </div>
         </div>
     </div>
@@ -56,26 +54,55 @@
             <div class="col-lg-6 col-md-8 mx-auto">
                 <h1 class="fw-light">새로운 매장을 등록하고 <br>사용해보세요.</h1>
                 <div th:each="shop : ${shops}">
-                <div class="btn-group">
-                    <a th:href="@{/memberMenu(shopId=${shop.id})}" class="btn btn-primary btn-lg my-2" th:text="${shop.shopName}"></a>
-                    <button type="button" class="btn btn-primary btn-lg my-2 me-3" data-bs-toggle="modal" th:attr="data-bs-target=${'#shopDeleteModal' + shop.id}">X</button>
-                </div>
-                <div class="modal fade" th:id="${'shopDeleteModal' + shop.id}" tabindex="-1" aria-labelledby="shopDeleteModalLabel" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h1 class="modal-title fs-5" id="shopDeleteModalLabel">check message</h1>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <span th:text="|Are you sure you want to delete the ${shop.shopName}?|"></span><br>
-                                <span>The included menus are deleted together.</span></div>
-                            <div class="modal-footer">
-                                <a class="btn btn-primary" th:href="@{/remove/shop(shopId=${shop.id})}">Yes</a>
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                    <div class="btn-group">
+                        <a th:href="@{/memberMenu(shopId=${shop.id})}" class="btn btn-primary btn-lg my-2" th:text="${shop.shopName}"></a>
+                        <button type="button" class="btn btn-primary btn-lg my-2" data-bs-toggle="modal" th:attr="data-bs-target=${'#updateShopModal' + shop.id}">⁝</button>
+                        <button type="button" class="btn btn-primary btn-lg my-2 me-3" data-bs-toggle="modal" th:attr="data-bs-target=${'#deleteShopModal' + shop.id}">X</button>
+                    </div>
+                    <div class="modal fade" th:id="${'updateShopModal' + shop.id}" tabindex="-1" aria-labelledby="updateShopModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h1 class="modal-title fs-5" id="updateShopModalLabel">Update shop</h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <form action="/update/shop" method="post">
+                                    <div class="modal-body">
+                                        <div class="mb-3">
+                                            <input type="hidden" name="shopId" th:value="${shop.id}" />
+                                            <label for="shopName" class="col-form-label">shop name</label>
+                                            <input type="text" class="form-control" th:value="${shop.shopName}" readonly>
+                                            <label for="cookingSpace" class="col-form-label">동시 조리 가능한 공간 수</label>
+                                            <input type="number" class="form-control" id="updateCookingSpace" name="updateCookingSpace" min="1" step="1" required>
+                                            <label for="kitchenStaff" class="col-form-label">주방 직원 수</label>
+                                            <input type="number" class="form-control" id="updateKitchenStaff" name="updateKitchenStaff" min="1" step="1" required>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="submit" class="btn btn-primary">Update</button>
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    </div>
+                                </form>
                             </div>
                         </div>
                     </div>
+                    <div class="modal fade" th:id="${'deleteShopModal' + shop.id}" tabindex="-1" aria-labelledby="deleteShopModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h1 class="modal-title fs-5" id="deleteShopModalLabel">check message</h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <span th:text="|Are you sure you want to delete the ${shop.shopName}?|"></span><br>
+                                    <span>The included menus are deleted together.</span>
+                                </div>
+                                <div class="modal-footer">
+                                    <a class="btn btn-primary" th:href="@{/remove/shop(shopId=${shop.id})}">Yes</a>
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <button type="button" class="btn btn-secondary btn-sm my-2 me-3" data-bs-toggle="modal" data-bs-target="#newShopModal">+매장 추가</button>
@@ -91,6 +118,10 @@
                                     <div class="mb-3">
                                         <label for="shopName" class="col-form-label">shop name</label>
                                         <input type="text" class="form-control" id="shopName" name="shopName" required>
+                                        <label for="cookingSpace" class="col-form-label">동시 조리 가능한 공간 수</label>
+                                        <input type="number" class="form-control" id="cookingSpace" name="cookingSpace" min="1" step="1" value="1" required>
+                                        <label for="kitchenStaff" class="col-form-label">주방 직원 수</label>
+                                        <input type="number" class="form-control" id="kitchenStaff" name="kitchenStaff" min="1" step="1" value="1" required>
                                     </div>
                                 </div>
                                 <div class="modal-footer">

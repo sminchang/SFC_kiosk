@@ -12,13 +12,13 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
-public class OrderService {
+public class DemandService {
     public Map<Long, Map<String, Object>> calculateDemand(List<Orders> orderList) {
         Map<Long, Map<String, Object>> demandData = new HashMap<>();
         LocalDateTime currentDate = LocalDateTime.now();
 
         for (Orders order : orderList) {
-            LocalDateTime orderDate = order.getDate();
+            LocalDateTime orderDate = order.getOrderTime();
 
             for (OrderItem orderItem : order.getOrderItems()) {
                 Long menuItemId = orderItem.getMenuItem().getId();

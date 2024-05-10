@@ -2,6 +2,7 @@ package capstone.waitingTimekiosk.domain;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +21,11 @@ public class Shop {
     private Member member;
 
     private String shopName;
+
+    @Setter
+    private int cookingSpace; //동시 조리 가능한 공간 수
+    @Setter
+    private int kitchenStaff; //주방 직원 수
 
     @OneToMany(mappedBy = "shop", cascade = CascadeType.REMOVE)
     private List<MenuItem> menuItems = new ArrayList<>();

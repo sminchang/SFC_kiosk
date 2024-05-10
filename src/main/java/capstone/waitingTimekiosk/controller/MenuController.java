@@ -42,28 +42,6 @@ public class MenuController {
 
     private final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
-
-    @PostMapping("new/shop")
-    public String newMenu(@CookieValue(name = "accessToken", defaultValue = "not found") String accessToken,
-                          @RequestParam String shopName,
-                          Model model) throws JsonProcessingException {
-        kakaoApi.tokenCheck(accessToken);
-        Member member = memberService.findMember(accessToken);
-        Shop shop = new Shop(member, shopName);
-        shopRepository.save(shop);
-
-        //외래키 연관관계 설정
-        member.addShop(shop);
-
-        List<Shop> shops = shopRepository.findListByMemberId(member.getId());
-        model.addAttribute("shops",shops);
-        model.addAttribute("nickname", member.getNickname());
-        model.addAttribute("kakaoApiKey", kakaoApi.getKakaoApiKey());
-        model.addAttribute("logoutRedirectUri", kakaoApi.getKakaoLogoutRedirectUri());
-
-        return "memberIndex";
-    }
-
     @PostMapping("/new/category")
     public String newCategory(@CookieValue(name = "accessToken", defaultValue = "not found") String accessToken,
                               @CookieValue(name = "shopId", defaultValue = "not found") String shopId,
@@ -161,23 +139,6 @@ public class MenuController {
         model.addAttribute("menuForm", new MenuForm());
         model.addAttribute("menus", menus);
         return "html/adminPage/menuConfig";
-    }
-
-    @GetMapping("/remove/shop")
-    public String removeShop(@CookieValue(name = "accessToken", defaultValue = "not found") String accessToken,
-                             @RequestParam String shopId,
-                             Model model) throws JsonProcessingException {
-        kakaoApi.tokenCheck(accessToken);
-        Member member = memberService.findMember(accessToken);
-
-        shopRepository.delete(shopId);
-
-        List<Shop> shops = shopRepository.findListByMemberId(member.getId());
-        model.addAttribute("shops",shops);
-        model.addAttribute("nickname", member.getNickname());
-        model.addAttribute("kakaoApiKey", kakaoApi.getKakaoApiKey());
-        model.addAttribute("logoutRedirectUri", kakaoApi.getKakaoLogoutRedirectUri());
-        return "memberIndex";
     }
 
     @GetMapping("/remove/category")

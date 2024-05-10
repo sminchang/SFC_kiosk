@@ -106,8 +106,8 @@ public class KakaoApi {
 
         // HTTP Header 생성
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", "Bearer " + accessToken);
         headers.add("Content-type", "application/x-www-form-urlencoded");
+        headers.add("Authorization", "Bearer " + accessToken);
 
         // HTTP 요청 보내기
         HttpEntity<MultiValueMap<String, String>> kakaoLogoutRequest = new HttpEntity<>(headers);

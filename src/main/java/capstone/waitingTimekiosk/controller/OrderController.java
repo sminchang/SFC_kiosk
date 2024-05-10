@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -77,6 +78,7 @@ public class OrderController {
 
         Orders order = ordersRepository.findById(orderId);
         order.setStatus(true);
+        order.setProvidedTime(LocalDateTime.now());
         ordersRepository.save(order);
 
         return "redirect:/orderState";

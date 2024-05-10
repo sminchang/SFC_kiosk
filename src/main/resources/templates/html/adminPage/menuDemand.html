@@ -170,7 +170,7 @@
                 return orderItem.menuItemId == menuItemId;
             }).map(function(orderItem) {
                 return {
-                    date: order.date,
+                    orderTime: order.orderTime,
                     quantity: orderItem.quantity
                 };
             });

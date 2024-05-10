@@ -6,7 +6,7 @@ function calculateMonthlyData(filteredOrderItems) {
   };
 
   filteredOrderItems.forEach(function(orderItem) {
-      var dateStr = orderItem.date;
+      var dateStr = orderItem.orderTime;
       if (typeof dateStr === 'string') {
           var date = new Date(dateStr);
           var month = date.getMonth() + 1;

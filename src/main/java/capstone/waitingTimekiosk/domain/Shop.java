@@ -23,9 +23,7 @@ public class Shop {
     private String shopName;
 
     @Setter
-    private int cookingSpace; //동시 조리 가능한 공간 수
-    @Setter
-    private int kitchenStaff; //주방 직원 수
+    private float CCR; //ConcurrentCookingResource, 동시 조리 가능한 자원 수
 
     @OneToMany(mappedBy = "shop", cascade = CascadeType.REMOVE)
     private List<MenuItem> menuItems = new ArrayList<>();

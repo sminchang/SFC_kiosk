@@ -1,7 +1,6 @@
 package capstone.waitingTimekiosk.controller;
 
 import capstone.waitingTimekiosk.domain.Category;
-import capstone.waitingTimekiosk.domain.Member;
 import capstone.waitingTimekiosk.domain.MenuItem;
 import capstone.waitingTimekiosk.domain.Shop;
 import capstone.waitingTimekiosk.repository.CategoryRepository;
@@ -11,7 +10,6 @@ import capstone.waitingTimekiosk.repository.ShopRepository;
 import capstone.waitingTimekiosk.service.KakaoApi;
 import capstone.waitingTimekiosk.service.MemberService;
 import capstone.waitingTimekiosk.service.MenuService;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

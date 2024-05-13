@@ -43,7 +43,7 @@ public class EventController {
         //event 관련값 추가 후 변경
         MenuItem menuItem = menuItemRepository.findById(menuId);
         menuItem.setEventTime(eventTime);
-        menuItem.setEventQuantity(eventQuantity);
+        menuItem.setEventQuantity(menuItem.getEventQuantity()+eventQuantity); //이전 값에 누적
         menuItemRepository.save(menuItem);
 
         model.addAttribute("categorys", categorys);

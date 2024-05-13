@@ -56,35 +56,7 @@
                 <div th:each="shop : ${shops}">
                     <div class="btn-group">
                         <a th:href="@{/memberMenu(shopId=${shop.id})}" class="btn btn-primary btn-lg my-2" th:text="${shop.shopName}"></a>
-                        <button type="button" class="btn btn-primary btn-lg my-2" data-bs-toggle="modal" th:attr="data-bs-target=${'#updateShopModal' + shop.id}">⁝</button>
                         <button type="button" class="btn btn-primary btn-lg my-2 me-3" data-bs-toggle="modal" th:attr="data-bs-target=${'#deleteShopModal' + shop.id}">X</button>
-                    </div>
-                    <div class="modal fade" th:id="${'updateShopModal' + shop.id}" tabindex="-1" aria-labelledby="updateShopModalLabel" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h1 class="modal-title fs-5" id="updateShopModalLabel">Update shop</h1>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <form action="/update/shop" method="post">
-                                    <div class="modal-body">
-                                        <div class="mb-3">
-                                            <input type="hidden" name="shopId" th:value="${shop.id}" />
-                                            <label for="shopName" class="col-form-label">shop name</label>
-                                            <input type="text" class="form-control" th:value="${shop.shopName}" readonly>
-                                            <label for="cookingSpace" class="col-form-label">동시 조리 가능한 공간 수</label>
-                                            <input type="number" class="form-control" id="updateCookingSpace" name="updateCookingSpace" min="1" step="1" required>
-                                            <label for="kitchenStaff" class="col-form-label">주방 직원 수</label>
-                                            <input type="number" class="form-control" id="updateKitchenStaff" name="updateKitchenStaff" min="1" step="1" required>
-                                        </div>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="submit" class="btn btn-primary">Update</button>
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
                     </div>
                     <div class="modal fade" th:id="${'deleteShopModal' + shop.id}" tabindex="-1" aria-labelledby="deleteShopModalLabel" aria-hidden="true">
                         <div class="modal-dialog">
@@ -118,10 +90,8 @@
                                     <div class="mb-3">
                                         <label for="shopName" class="col-form-label">shop name</label>
                                         <input type="text" class="form-control" id="shopName" name="shopName" required>
-                                        <label for="cookingSpace" class="col-form-label">동시 조리 가능한 공간 수</label>
-                                        <input type="number" class="form-control" id="cookingSpace" name="cookingSpace" min="1" step="1" value="1" required>
-                                        <label for="kitchenStaff" class="col-form-label">주방 직원 수</label>
-                                        <input type="number" class="form-control" id="kitchenStaff" name="kitchenStaff" min="1" step="1" value="1" required>
+                                        <label for="CCR" class="col-form-label">동시 조리 가능 수량</label>
+                                        <input type="number" class="form-control" id="CCR" name="CCR" min="1" value="1" required>
                                     </div>
                                 </div>
                                 <div class="modal-footer">

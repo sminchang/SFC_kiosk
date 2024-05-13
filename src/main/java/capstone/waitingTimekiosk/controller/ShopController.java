@@ -27,39 +27,12 @@ public class ShopController {
     @PostMapping("new/shop")
     public String newShop(@CookieValue(name = "accessToken", defaultValue = "not found") String accessToken,
                           @RequestParam String shopName,
-                          @RequestParam int cookingSpace,
-                          @RequestParam int kitchenStaff,
+                          @RequestParam float CCR,
                           Model model) throws JsonProcessingException {
         kakaoApi.tokenCheck(accessToken);
         Member member = memberService.findMember(accessToken);
         Shop shop = new Shop(member, shopName);
-        shop.setCookingSpace(cookingSpace);
-        shop.setKitchenStaff(kitchenStaff);
-        shopRepository.save(shop);
-
-        //외래키 연관관계 설정
-        member.addShop(shop);
-
-        List<Shop> shops = shopRepository.findListByMemberId(member.getId());
-        model.addAttribute("shops",shops);
-        model.addAttribute("nickname", member.getNickname());
-        model.addAttribute("kakaoApiKey", kakaoApi.getKakaoApiKey());
-        model.addAttribute("logoutRedirectUri", kakaoApi.getKakaoLogoutRedirectUri());
-
-        return "memberIndex";
-    }
-
-    @PostMapping("/update/shop")
-    public String updateShop(@CookieValue(name = "accessToken", defaultValue = "not found") String accessToken,
-                             @RequestParam String shopId,
-                             @RequestParam int updateCookingSpace,
-                             @RequestParam int updateKitchenStaff,
-                             Model model) throws JsonProcessingException {
-        kakaoApi.tokenCheck(accessToken);
-        Member member = memberService.findMember(accessToken);
-        Shop shop = shopRepository.findById(shopId);
-        shop.setCookingSpace(updateCookingSpace);
-        shop.setKitchenStaff(updateKitchenStaff);
+        shop.setCCR(CCR);
         shopRepository.save(shop);
 
         //외래키 연관관계 설정

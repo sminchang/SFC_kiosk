@@ -27,12 +27,10 @@ public class ShopController {
     @PostMapping("new/shop")
     public String newShop(@CookieValue(name = "accessToken", defaultValue = "not found") String accessToken,
                           @RequestParam String shopName,
-                          @RequestParam float CCR,
                           Model model) throws JsonProcessingException {
         kakaoApi.tokenCheck(accessToken);
         Member member = memberService.findMember(accessToken);
         Shop shop = new Shop(member, shopName);
-        shop.setCCR(CCR);
         shopRepository.save(shop);
 
         //외래키 연관관계 설정
@@ -41,8 +39,6 @@ public class ShopController {
         List<Shop> shops = shopRepository.findListByMemberId(member.getId());
         model.addAttribute("shops",shops);
         model.addAttribute("nickname", member.getNickname());
-        model.addAttribute("kakaoApiKey", kakaoApi.getKakaoApiKey());
-        model.addAttribute("logoutRedirectUri", kakaoApi.getKakaoLogoutRedirectUri());
 
         return "memberIndex";
     }
@@ -59,8 +55,6 @@ public class ShopController {
         List<Shop> shops = shopRepository.findListByMemberId(member.getId());
         model.addAttribute("shops",shops);
         model.addAttribute("nickname", member.getNickname());
-        model.addAttribute("kakaoApiKey", kakaoApi.getKakaoApiKey());
-        model.addAttribute("logoutRedirectUri", kakaoApi.getKakaoLogoutRedirectUri());
         return "memberIndex";
     }
 }

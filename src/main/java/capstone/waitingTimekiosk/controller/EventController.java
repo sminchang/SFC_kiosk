@@ -7,6 +7,7 @@ import capstone.waitingTimekiosk.repository.CategoryRepository;
 import capstone.waitingTimekiosk.repository.MenuItemRepository;
 import capstone.waitingTimekiosk.repository.ShopRepository;
 import capstone.waitingTimekiosk.service.KakaoApi;
+import capstone.waitingTimekiosk.service.WaitingTimeService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +27,7 @@ public class EventController {
     private final ShopRepository shopRepository;
     private final CategoryRepository categoryRepository;
     private final MenuItemRepository menuItemRepository;
+    private final WaitingTimeService waitingTimeService;
     private final Logger logger = LoggerFactory.getLogger(AuthController.class);
 
     @PostMapping("/event")
@@ -45,6 +47,9 @@ public class EventController {
         menuItem.setEventTime(eventTime);
         menuItem.setEventQuantity(menuItem.getEventQuantity()+eventQuantity); //이전 값에 누적
         menuItemRepository.save(menuItem);
+
+        //전체 메뉴 최종 대기 시간 업데이트, 이벤트 수량 설정 후 실행되야 함
+        waitingTimeService.makeFinalTime(shop.getId());
 
         model.addAttribute("categorys", categorys);
         model.addAttribute("menus",menus);

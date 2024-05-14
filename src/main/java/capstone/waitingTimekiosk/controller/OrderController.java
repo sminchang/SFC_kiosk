@@ -9,6 +9,7 @@ import capstone.waitingTimekiosk.repository.OrderItemRepository;
 import capstone.waitingTimekiosk.repository.OrdersRepository;
 import capstone.waitingTimekiosk.repository.ShopRepository;
 import capstone.waitingTimekiosk.service.KakaoApi;
+import capstone.waitingTimekiosk.service.WaitingTimeService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +32,7 @@ public class OrderController {
     private final MenuItemRepository menuItemRepository;
     private final KakaoApi kakaoApi;
     private final ShopRepository shopRepository;
+    private final WaitingTimeService waitingTimeService;
 
     @PostMapping("new/order")
     public String orderFromCart(@CookieValue(name = "accessToken", defaultValue = "not found") String accessToken,
@@ -54,6 +56,9 @@ public class OrderController {
             orderItem.setQuantity(cartItem.getQuantity());
             orderItemRepository.save(orderItem);
 
+            //전체 메뉴 최종 대기 시간 업데이트, 이벤트 수량 항목 수정 전에 먼저 실행되어야 함
+            waitingTimeService.makeFinalTime(shop.getId());
+
             //이벤트 수량 항목일 경우 수량 감소, 이벤트 수량이 끝난 경우 대기 시간 초기화
             int eventQuantity = menuItem.getEventQuantity() - cartItem.getQuantity();
             if(eventQuantity > 0) {
@@ -68,6 +73,7 @@ public class OrderController {
             //외래키 연관관계 설정
             orders.addOrderItem(orderItem);
             menuItem.addOrderItem(orderItem);
+
         }
 
         return "redirect:/menu";
@@ -80,6 +86,9 @@ public class OrderController {
         order.setStatus(true);
         order.setProvidedTime(LocalDateTime.now());
         ordersRepository.save(order);
+
+        //전체 메뉴 최종 대기 시간 업데이트
+        waitingTimeService.makeFinalTime(order.getShop().getId());
 
         return "redirect:/orderState";
     }

@@ -22,9 +22,6 @@ public class Shop {
 
     private String shopName;
 
-    @Setter
-    private float CCR; //ConcurrentCookingResource, 동시 조리 가능한 자원 수
-
     @OneToMany(mappedBy = "shop", cascade = CascadeType.REMOVE)
     private List<MenuItem> menuItems = new ArrayList<>();
 

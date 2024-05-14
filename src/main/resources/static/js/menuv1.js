@@ -52,7 +52,7 @@ function updatePrice(menuItemId) {
 function updateTotalPrice() {
     let total = 0;
     for (const menuItemId in products) {
-        total += products[menuItemId].price * products[menuItemId].quantity;
+    total += products[menuItemId].price * products[menuItemId].quantity;
     }
     document.getElementById('total-price').textContent = `₩${total}`;
 }
@@ -80,45 +80,40 @@ function fetchMenuItems(category) {
 
 function updateWaitingTime(menuItemId) {
     const timeElement = document.querySelector(`[data-menu-id="${menuItemId}"]`);
-
+  
     if (timeElement) {
-        const eventQuantity = parseInt(timeElement.dataset.eventQuantity);
-        const eventTime = parseInt(timeElement.dataset.eventTime);
-        const finalTime = parseInt(timeElement.dataset.finalTime);
-
-        const cartItemQuantity = getCartItemQuantity(menuItemId);
-        const remainingQuantity = eventQuantity - cartItemQuantity;
-
-        let resultTime;
-        if (cartItemQuantity === 0) {
-            resultTime = eventTime; // 카트에 메뉴 아이템이 없는 경우 초기 대기 시간 사용
-        } else {
-            resultTime = remainingQuantity >= 0 ? eventTime : finalTime;
-        }
-        timeElement.textContent = `${resultTime} mins`;
+      const eventQuantity = parseInt(timeElement.dataset.eventQuantity);
+      const eventTime = parseInt(timeElement.dataset.eventTime);
+      const defaultTime = parseInt(timeElement.dataset.defaultTime);
+  
+      const cartItemQuantity = getCartItemQuantity(menuItemId);
+      const remainingQuantity = eventQuantity - cartItemQuantity;
+  
+      const resultTime = remainingQuantity >= 0 ? eventTime : defaultTime;
+      timeElement.textContent = `${resultTime} mins`;
     }
-}
-
-function getCartItemQuantity(menuItemId) {
+  }
+  
+  function getCartItemQuantity(menuItemId) {
     var cartItems = document.querySelectorAll('#cartItems li');
     for (var i = 0; i < cartItems.length; i++) {
-        var cartItem = cartItems[i];
-        var cartItemId = cartItem.querySelector('input[name$=".menuItemId"]').value;
-        if (cartItemId === menuItemId) {
-            var quantityInput = cartItem.querySelector('input[name$=".quantity"]');
-            return parseInt(quantityInput.value);
-        }
+      var cartItem = cartItems[i];
+      var cartItemId = cartItem.querySelector('input[name$=".menuItemId"]').value;
+      if (cartItemId === menuItemId) {
+        var quantityInput = cartItem.querySelector('input[name$=".quantity"]');
+        return parseInt(quantityInput.value);
+      }
     }
     return 0;
-}
+  }
 
 function updateMenuItems(menuItems) {
     const menuContainer = document.querySelector('.row.row-cols-1.row-cols-sm-2.row-cols-md-3.g-3');
     menuContainer.innerHTML = '';
 
     menuItems.forEach(menuItem => {
-        const menuElement = createMenuElement(menuItem);
-        menuContainer.appendChild(menuElement);
+    const menuElement = createMenuElement(menuItem);
+    menuContainer.appendChild(menuElement);
     });
 }
 
@@ -171,8 +166,8 @@ function createMenuElement(menuItem) {
     timeElement.dataset.menuId = menuItem.id; // data-menu-id 속성 추가
     timeElement.dataset.eventQuantity = menuItem.eventQuantity; // data-event-quantity 속성 추가
     timeElement.dataset.eventTime = menuItem.eventTime; // data-event-time 속성 추가
-    timeElement.dataset.finalTime = menuItem.finalTime; // data-final-time 속성 추가
-    timeElement.textContent = menuItem.eventTime > 0 ? `${menuItem.eventTime} mins` : `${menuItem.finalTime} mins`;
+    timeElement.dataset.defaultTime = menuItem.defaultTime; // data-default-time 속성 추가
+    timeElement.textContent = menuItem.eventTime > 0 ? `${menuItem.eventTime} mins` : `${menuItem.defaultTime} mins`;
 
     buttonGroupElement.appendChild(viewButtonElement);
     buttonGroupElement.appendChild(addButtonElement);
@@ -207,8 +202,8 @@ function addToCart(menuItem) {
         const itemElement = createCartItemElement(menuItem);
         cartItemsContainer.insertBefore(itemElement, cartItemsContainer.lastChild);
         products[menuItem.id] = {
-            quantity: 1,
-            price: menuItem.price
+        quantity: 1,
+        price: menuItem.price
         };
     }
 
@@ -234,9 +229,9 @@ function updateCartInStorage(menuItem) {
 function showAddedConfirmation(menuItem) {
     const addButton = document.querySelector(`button[onclick="addToCart({ id: '${menuItem.id}', menuName: '${menuItem.menuName}', price: '${menuItem.price}' })"]`);
     const popover = new bootstrap.Popover(addButton, {
-        content: '메뉴가 추가되었습니다.',
-        trigger: 'manual',
-        placement: 'bottom'
+    content: '메뉴가 추가되었습니다.',
+    trigger: 'manual',
+    placement: 'bottom'
     });
 
     popover.show();

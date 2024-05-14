@@ -101,8 +101,12 @@
                                 <input type="number" class="form-control" th:field="*{price}" placeholder="₩" min="0" step="1" required>
                             </div>
                             <div class="mb-3">
-                                <label th:for="defaultTime" class="col-form-label">cooking time</label>
+                                <label th:for="defaultTime" class="col-form-label">default cooking time</label>
                                 <input type="number" class="form-control" th:field="*{defaultTime}" placeholder="mins" min="0" step="1" required>
+                            </div>
+                            <div class="mb-3">
+                                <label th:for="CCQ" class="col-form-label">동시 조리 가능한 수량</label>
+                                <input type="number" class="form-control" th:field="*{CCQ}" placeholder="mins" min="1" step="1" required>
                             </div>
                             <div class="mb-3">
                                 <label th:for="image" class="col-form-label">menu image</label>

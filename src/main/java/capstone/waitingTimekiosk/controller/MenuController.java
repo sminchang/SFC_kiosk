@@ -10,6 +10,7 @@ import capstone.waitingTimekiosk.repository.ShopRepository;
 import capstone.waitingTimekiosk.service.KakaoApi;
 import capstone.waitingTimekiosk.service.MemberService;
 import capstone.waitingTimekiosk.service.MenuService;
+import capstone.waitingTimekiosk.service.WaitingTimeService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +32,7 @@ public class MenuController {
     private final MenuItemRepository menuItemRepository;
     private final OrdersRepository ordersRepository;
     private final ShopRepository shopRepository;
-    private final MemberService memberService;
+    private final WaitingTimeService waitingTimeService;
     private final MenuService menuService;
     private final KakaoApi kakaoApi;
 
@@ -83,9 +84,13 @@ public class MenuController {
         menuItem.setMenuName(form.getMenuName());
         menuItem.setPrice(form.getPrice());
         menuItem.setDefaultTime(form.getDefaultTime());
+        menuItem.setCCQ(form.getCCQ());
         menuItem.setImagePath(imagePath);
         menuItem.setDescription(form.getDescription());
         menuItemRepository.save(menuItem);
+
+        //전체 메뉴 최종 대기 시간 업데이트
+        waitingTimeService.makeFinalTime(shop.getId());
 
         List<Category> categorys = categoryRepository.findListByShopId(shop.getId());
         List<MenuItem> menus = menuItemRepository.findListByCategory(shop.getId(),category.getCategoryName());
@@ -129,6 +134,9 @@ public class MenuController {
         if(form.getDescription()!=null)
             menuItem.setDescription(form.getDescription());
         menuItemRepository.save(menuItem);
+
+        //전체 메뉴 최종 대기 시간 업데이트
+        waitingTimeService.makeFinalTime(shop.getId());
 
         List<Category> categorys = categoryRepository.findListByShopId(shop.getId());
         List<MenuItem> menus = menuItemRepository.findListByCategory(shop.getId(),category.getCategoryName());

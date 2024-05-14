@@ -16,6 +16,8 @@ public class MenuForm {
 
     private int defaultTime; //기본 대기 시간
 
+    private int CCQ; //동시 조리 가능 수량
+
     private int eventTime; //이벤트 설정 대기 시간
 
     private int eventQuantity; //이벤트 설정 수량

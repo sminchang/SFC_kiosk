@@ -84,7 +84,8 @@
                             <label class="form-check-label" for="paypal">PayPal</label>
                         </div>
                     </div>
-                    <div class="modal-footer">
+                    <div class="modal-footer d-flex justify-content-between">
+                        <span id="estimated-waiting-time"></span>
                         <button type="submit" class="btn btn-primary">payment</button>
                     </div>
                 </form>
@@ -107,7 +108,7 @@
                                 <div class="btn-group">
                                     <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-container="body" data-bs-toggle="popover" data-bs-placement="bottom" th:data-bs-content="${menu.description}">View</button>
                                     <button type="button" class="btn btn-sm btn-outline-secondary add-button" th:attr="onclick='addToCart({ id: \'' + ${menu.id} + '\', menuName: \'' + ${menu.menuName} + '\', price: \'' + ${menu.price} + '\' })'">Add</button></div>
-                                <small class="text-muted" th:data-event-quantity="${menu.eventQuantity}" th:data-final-time="${menu.finalTime}" th:data-event-time="${menu.eventTime}" th:data-default-time="${menu.defaultTime}" th:data-menu-id="${menu.id}"></small>
+                                <small class="text-muted" th:data-event-quantity="${menu.eventQuantity}" th:data-final-time="${menu.finalTime}" th:data-initial-final-time="${menu.finalTime}" th:data-event-time="${menu.eventTime}" th:data-default-time="${menu.defaultTime}" th:data-ccq="${menu.CCQ}" th:data-menu-id="${menu.id}"></small>
                             </div>
                         </div>
                     </div>

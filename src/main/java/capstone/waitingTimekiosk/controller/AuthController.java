@@ -224,7 +224,7 @@ public class AuthController {
         return "html/adminPage/orderState";
     }
 
-    @GetMapping("/timeSetting")
+    @GetMapping("/eventSetting")
     public String settingPage(@CookieValue(name = "accessToken", defaultValue = "not found") String accessToken,
                               @CookieValue(name = "shopId", defaultValue = "not found") String shopId,
                               Model model) {
@@ -235,7 +235,7 @@ public class AuthController {
 
         model.addAttribute("categorys", categorys);
         model.addAttribute("menus",menus);
-        return "html/adminPage/timeSetting";
+        return "html/adminPage/eventSetting";
     }
 
     @GetMapping("/menu")

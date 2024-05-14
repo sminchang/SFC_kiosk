@@ -8,7 +8,6 @@ import capstone.waitingTimekiosk.repository.MenuItemRepository;
 import capstone.waitingTimekiosk.repository.OrdersRepository;
 import capstone.waitingTimekiosk.repository.ShopRepository;
 import capstone.waitingTimekiosk.service.KakaoApi;
-import capstone.waitingTimekiosk.service.MemberService;
 import capstone.waitingTimekiosk.service.MenuService;
 import capstone.waitingTimekiosk.service.WaitingTimeService;
 import lombok.RequiredArgsConstructor;
@@ -210,8 +209,8 @@ public class MenuController {
         return "html/adminPage/menuConfig";
     }
 
-    @GetMapping("/timeSetting/category/{categoryName}")
-    public String timeSettingCategory(@CookieValue(name = "accessToken", defaultValue = "not found") String accessToken,
+    @GetMapping("/eventSetting/category/{categoryName}")
+    public String eventSettingCategory(@CookieValue(name = "accessToken", defaultValue = "not found") String accessToken,
                               @CookieValue(name = "shopId", defaultValue = "not found") String shopId,
                               @PathVariable String categoryName,
                               Model model){
@@ -229,7 +228,7 @@ public class MenuController {
         List<Category> categorys = categoryRepository.findListByShopId(shop.getId());
         model.addAttribute("categorys", categorys);
 
-        return "html/adminPage/timeSetting";
+        return "html/adminPage/eventSetting";
     }
 
     @GetMapping("/menu/category/{categoryName}")

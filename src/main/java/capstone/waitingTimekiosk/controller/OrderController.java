@@ -56,9 +56,6 @@ public class OrderController {
             orderItem.setQuantity(cartItem.getQuantity());
             orderItemRepository.save(orderItem);
 
-            //전체 메뉴 최종 대기 시간 업데이트, 이벤트 수량 항목 수정 전에 먼저 실행되어야 함
-            waitingTimeService.makeFinalTime(shop.getId());
-
             //이벤트 수량 항목일 경우 수량 감소, 이벤트 수량이 끝난 경우 대기 시간 초기화
             int eventQuantity = menuItem.getEventQuantity() - cartItem.getQuantity();
             if(eventQuantity > 0) {
@@ -69,6 +66,10 @@ public class OrderController {
                 menuItem.setEventTime(0);
             }
             menuItemRepository.save(menuItem);
+
+            //전체 메뉴 최종 대기 시간 업데이트
+            waitingTimeService.makeFinalTime(shop.getId());
+
 
             //외래키 연관관계 설정
             orders.addOrderItem(orderItem);

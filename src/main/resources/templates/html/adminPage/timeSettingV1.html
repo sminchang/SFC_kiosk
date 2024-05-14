@@ -6,7 +6,7 @@
     <meta name="description" content="">
     <meta name="author" content="MinChang Sung, and Bootstrap contributors">
     <meta name="generator" content="Hugo 0.104.2">
-    <title>order state</title>
+    <title>menu config</title>
 
     <link rel="canonical" href="#">
     <link rel="stylesheet" href="/bottstrap-5.2.3/dist/css/bootstrap.min.css">
@@ -34,8 +34,6 @@
 
 
 </head>
-<body>
-
 <header>
     <div class="navbar navbar-dark bg-dark shadow-sm">
         <div class="container">
@@ -59,26 +57,37 @@
         </div>
     </div>
 </header>
+<body>
+<div class="container">
+    <header class="d-flex justify-content-center py-3">
+        <ul class="nav nav-pills">
+            <li class="nav-item"><a th:href="@{/eventSetting/category/fastMenu}" class="nav-link">fast menu</a></li>
+            <li  th:each="category : ${categorys}" class="nav-item"><a th:href="@{/eventSetting/category/{categoryName}(categoryName=${category.categoryName})}" class="nav-link" th:text="${category.categoryName}"></a></li>
+        </ul>
+    </header>
+</div>
 
 <main>
     <div class="album py-5 bg-light">
         <div class="container">
             <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
-                <div class="col" th:each="order : ${orderList}">
+                <div class="col" th:each="menu : ${menus}">
                     <div class="card shadow-sm">
-                        <div class="card-body" style="background-color: #55595c;">
-                            <ul class="list-group list-group-flush">
-                                <li class="list-group-item" style="background-color: #55595c; color: #eceeef;" th:each="orderItem : ${order.orderItems}" th:text="|${orderItem.menuItem.menuName}: ${orderItem.quantity}|"></li>
-                            </ul>
-                        </div>
-                        <div class="card-footer d-flex justify-content-between align-items-center">
-                            <div class="btn-group">
-                                <form action="/orderComplete" method="post">
-                                    <input type="hidden" name="orderId" th:value="${order.id}">
-                                    <button type="submit" class="btn btn-outline-secondary">complete</button>
+                        <img th:src="@{${menu.imagePath}}" class="bd-placeholder-img card-img-top" alt="Thumbnail" style="width: 100%; height: 225px; object-fit: cover;">
+                        <div class="card-body">
+                            <p class="card-text" th:text="${menu.menuName}"></p>
+                            <small class="text-muted" th:text="|event: ${menu.eventTime}mins|"></small>
+                            <small class="text-muted" th:text="|quntity: ${menu.eventQuantity}|"></small>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <form role="form" action="/event" method="post">
+                                <div class="input-group">
+                                        <input type="hidden" name="menuId" th:value="${menu.id}">
+                                        <input type="text" class="form-control" name="eventTime" placeholder="event time(mins)">
+                                        <input type="text" class="form-control" name="eventQuantity" placeholder="+quantity">
+                                        <button type="submit" class="btn btn-secondary">update</button>
+                                    </div>
                                 </form>
                             </div>
-                            <small class="text-muted">0 mins</small>
                         </div>
                     </div>
                 </div>
@@ -87,14 +96,19 @@
     </div>
 </main>
 
-<footer class="text-muted py-5">
-    <div class="container">
-        <p class="mb-1">SFC is Station Fast Chicken with the motif of KFC</p>
-        <p class="mb-0">waiting time kiosk is <a href="https://github.com/sminchang/waitingTime_kiosk">open source</a></p>
-    </div>
-</footer>
-
 <script src="/bottstrap-5.2.3/dist/js/bootstrap.bundle.min.js"></script>
-
+<script>
+    // 모든 nav-link에 대한 이벤트 리스너 추가
+    document.querySelectorAll('.nav-link').forEach(item => {
+        item.addEventListener('mouseover', (event) => {
+            // 마우스 오버 시 active 클래스 추가
+            event.target.classList.add('active');
+        });
+        item.addEventListener('mouseout', (event) => {
+            // 마우스 아웃 시 active 클래스 제거
+            event.target.classList.remove('active');
+        });
+    });
+</script>
 </body>
 </html>

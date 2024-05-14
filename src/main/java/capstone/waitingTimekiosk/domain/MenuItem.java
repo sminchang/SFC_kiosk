@@ -32,12 +32,11 @@ public class MenuItem {
 
     private int price;
 
-    @Setter
     private int CCQ; //ConcurrentCookingQuantity, 동시 조리 가능한 수량
 
     private int defaultTime; //기본 대기 시간
 
-    private int eventTime; //이벤트 설정 대기 시간
+    private int eventTime; //이벤트 설정 대기 시간, 설정 가능하지만, 설계 상 이벤트 수량이 있는 경우 1분, 없는 경우 0으로만 처리되도록 되어있다.
 
     private int finalTime; //종합된 최종 대기 시간
 

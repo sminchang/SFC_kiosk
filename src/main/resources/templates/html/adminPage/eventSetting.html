@@ -50,7 +50,7 @@
                 <ul class="dropdown-menu dropdown-menu-dark">
                     <li><button class="dropdown-item" type="button" onclick="location.href='/orderState'">주문서 확인</button></li>
                     <li><button class="dropdown-item" type="button" onclick="location.href='/menuConfig'">메뉴 관리</button></li>
-                    <li><button class="dropdown-item" type="button" onclick="location.href='/timeSetting'">대기시간 설정</button></li>
+                    <li><button class="dropdown-item" type="button" onclick="location.href='/eventSetting'">이벤트 수량 설정</button></li>
                     <li><button class="dropdown-item" type="button" onclick="location.href='/menuDemand'">메뉴 수요도</button></li>
                 </ul>
             </div>
@@ -61,8 +61,8 @@
 <div class="container">
     <header class="d-flex justify-content-center py-3">
         <ul class="nav nav-pills">
-            <li class="nav-item"><a th:href="@{/timeSetting/category/fastMenu}" class="nav-link">fast menu</a></li>
-            <li  th:each="category : ${categorys}" class="nav-item"><a th:href="@{/timeSetting/category/{categoryName}(categoryName=${category.categoryName})}" class="nav-link" th:text="${category.categoryName}"></a></li>
+            <li class="nav-item"><a th:href="@{/eventSetting/category/fastMenu}" class="nav-link">fast menu</a></li>
+            <li  th:each="category : ${categorys}" class="nav-item"><a th:href="@{/eventSetting/category/{categoryName}(categoryName=${category.categoryName})}" class="nav-link" th:text="${category.categoryName}"></a></li>
         </ul>
     </header>
 </div>
@@ -76,14 +76,12 @@
                         <img th:src="@{${menu.imagePath}}" class="bd-placeholder-img card-img-top" alt="Thumbnail" style="width: 100%; height: 225px; object-fit: cover;">
                         <div class="card-body">
                             <p class="card-text" th:text="${menu.menuName}"></p>
-                            <small class="text-muted" th:text="|event: ${menu.eventTime}mins|"></small>
-                            <small class="text-muted" th:text="|quntity: ${menu.eventQuantity}|"></small>
+                            <small class="text-muted" th:text="|current event quntity: ${menu.eventQuantity}|"></small>
                             <div class="d-flex justify-content-between align-items-center">
                                 <form role="form" action="/event" method="post">
                                 <div class="input-group">
                                         <input type="hidden" name="menuId" th:value="${menu.id}">
-                                        <input type="text" class="form-control" name="eventTime" placeholder="event time(mins)">
-                                        <input type="text" class="form-control" name="eventQuantity" placeholder="+quantity">
+                                        <input type="text" class="form-control" name="eventQuantity" placeholder="+event quantity">
                                         <button type="submit" class="btn btn-secondary">update</button>
                                     </div>
                                 </form>

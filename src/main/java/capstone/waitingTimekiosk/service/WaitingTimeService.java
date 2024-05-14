@@ -52,7 +52,7 @@ public class WaitingTimeService {
                         }
                     }
                 } else{
-                    finalTime = menuItem.getDefaultTime();
+                    finalTime = waitTime;
                 }
             }
             //이벤트 타임이 설정되지 않은 메뉴의 경우 동시 조리 가능한 수량 단위로 추가 대기시간 설정

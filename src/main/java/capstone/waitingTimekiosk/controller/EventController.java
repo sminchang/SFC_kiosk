@@ -34,7 +34,6 @@ public class EventController {
     public String settingPage(@CookieValue(name = "accessToken", defaultValue = "not found") String accessToken,
                               @CookieValue(name = "shopId", defaultValue = "not found") String shopId,
                               @RequestParam String menuId,
-                              @RequestParam int eventTime,
                               @RequestParam int eventQuantity,
                               Model model) {
         kakaoApi.tokenCheck(accessToken);
@@ -44,8 +43,11 @@ public class EventController {
 
         //event 관련값 추가 후 변경
         MenuItem menuItem = menuItemRepository.findById(menuId);
-        menuItem.setEventTime(eventTime);
         menuItem.setEventQuantity(menuItem.getEventQuantity()+eventQuantity); //이전 값에 누적
+        menuItem.setEventTime(1);
+        if(menuItem.getEventQuantity() <= 0){
+            menuItem.setEventTime(0);
+        }
         menuItemRepository.save(menuItem);
 
         //전체 메뉴 최종 대기 시간 업데이트, 이벤트 수량 설정 후 실행되야 함
@@ -53,6 +55,6 @@ public class EventController {
 
         model.addAttribute("categorys", categorys);
         model.addAttribute("menus",menus);
-        return "html/adminPage/timeSetting";
+        return "html/adminPage/eventSetting";
     }
 }

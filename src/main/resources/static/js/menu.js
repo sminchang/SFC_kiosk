@@ -22,7 +22,8 @@ function decrementQuantity(event, menuItemId, price) {
     const quantityInput = itemElement.querySelector('input[name$="].quantity"]');
     quantityInput.value = products[menuItemId].quantity;
 
-    updateWaitingTime(menuItemId); // 대기 시간 업데이트
+    updateIndividualWaitingTime(menuItemId); // 대기 시간 업데이트
+    updateEntireWaitingTime();
 }
 
 function incrementQuantity(event, menuItemId, price) {
@@ -41,7 +42,8 @@ function incrementQuantity(event, menuItemId, price) {
     const quantityInput = itemElement.querySelector('input[name$="].quantity"]');
     quantityInput.value = products[menuItemId].quantity;
 
-    updateWaitingTime(menuItemId); // 대기 시간 업데이트
+    updateIndividualWaitingTime(menuItemId); // 대기 시간 업데이트
+    updateEntireWaitingTime();
 }
 
 function updatePrice(menuItemId) {
@@ -55,6 +57,33 @@ function updateTotalPrice() {
         total += products[menuItemId].price * products[menuItemId].quantity;
     }
     document.getElementById('total-price').textContent = `₩${total}`;
+}
+
+function updateEntireWaitingTime() {
+    let maxFinalTime = 0;
+
+    for (const menuItemId in products) {
+        const menuItem = findMenuItemById(menuItemId);
+        if (menuItem && menuItem.finalTime > maxFinalTime) {
+            maxFinalTime = menuItem.finalTime;
+        }
+    }
+
+    document.getElementById('estimated-waiting-time').textContent = `예상 대기시간: ${maxFinalTime} mins`;
+}
+
+function findMenuItemById(menuItemId) {
+    const menuItems = document.querySelectorAll('.col');
+    for (let i = 0; i < menuItems.length; i++) {
+        const menuItem = menuItems[i];
+        const timeElement = menuItem.querySelector(`[data-menu-id="${menuItemId}"]`);
+        if (timeElement) {
+            return {
+                finalTime: parseInt(timeElement.dataset.finalTime)
+            };
+        }
+    }
+    return null;
 }
 
 function fetchMenuItems(category) {
@@ -77,25 +106,35 @@ function fetchMenuItems(category) {
             console.error('Error:', error);
         });
 }
-
-function updateWaitingTime(menuItemId) {
+function updateIndividualWaitingTime(menuItemId) {
     const timeElement = document.querySelector(`[data-menu-id="${menuItemId}"]`);
-
     if (timeElement) {
         const eventQuantity = parseInt(timeElement.dataset.eventQuantity);
-        const eventTime = parseInt(timeElement.dataset.eventTime);
-        const finalTime = parseInt(timeElement.dataset.finalTime);
-
+        const defaultTime = parseInt(timeElement.dataset.defaultTime);
+        const CCQ = parseInt(timeElement.dataset.ccq);
         const cartItemQuantity = getCartItemQuantity(menuItemId);
         const remainingQuantity = eventQuantity - cartItemQuantity;
+        let finalTime = parseInt(timeElement.dataset.finalTime);
 
-        let resultTime;
         if (cartItemQuantity === 0) {
-            resultTime = eventTime; // 카트에 메뉴 아이템이 없는 경우 초기 대기 시간 사용
-        } else {
-            resultTime = remainingQuantity >= 0 ? eventTime : finalTime;
+            finalTime = parseInt(timeElement.dataset.initialFinalTime);
         }
-        timeElement.textContent = `${resultTime} mins`;
+
+        if (remainingQuantity < 0) {
+            let waitTime = defaultTime;
+            const additionalQuantity = Math.abs(remainingQuantity);
+            if (additionalQuantity / CCQ > 0) {
+                if (additionalQuantity % CCQ !== 0) {
+                    finalTime = Math.ceil(additionalQuantity / CCQ) * waitTime;
+                } else {
+                    finalTime = (additionalQuantity / CCQ) * waitTime;
+                }
+            } else {
+                finalTime = waitTime;
+            }
+        }
+        timeElement.dataset.finalTime = finalTime;
+        timeElement.textContent = `${finalTime} mins`;
     }
 }
 
@@ -168,12 +207,14 @@ function createMenuElement(menuItem) {
 
     const timeElement = document.createElement('small');
     timeElement.classList.add('text-muted');
-    timeElement.dataset.menuId = menuItem.id; // data-menu-id 속성 추가
-    timeElement.dataset.eventQuantity = menuItem.eventQuantity; // data-event-quantity 속성 추가
-    timeElement.dataset.eventTime = menuItem.eventTime; // data-event-time 속성 추가
-    timeElement.dataset.finalTime = menuItem.finalTime; // data-final-time 속성 추가
-    timeElement.textContent = menuItem.eventTime > 0 ? `${menuItem.eventTime} mins` : `${menuItem.finalTime} mins`;
-
+    timeElement.dataset.menuId = menuItem.id;
+    timeElement.dataset.eventQuantity = menuItem.eventQuantity;
+    timeElement.dataset.eventTime = menuItem.eventTime;
+    timeElement.dataset.finalTime = menuItem.finalTime;
+    timeElement.dataset.initialFinalTime = menuItem.finalTime;
+    timeElement.dataset.defaultTime = menuItem.defaultTime;
+    timeElement.dataset.ccq = menuItem.ccq;
+    timeElement.textContent = `${menuItem.finalTime} mins`;
     buttonGroupElement.appendChild(viewButtonElement);
     buttonGroupElement.appendChild(addButtonElement);
 
@@ -215,7 +256,8 @@ function addToCart(menuItem) {
     updateCartInStorage(menuItem);
     showAddedConfirmation(menuItem);
     updateTotalPrice();
-    updateWaitingTime(menuItem.id); // 대기 시간 업데이트
+    updateIndividualWaitingTime(menuItem.id); // 대기 시간 업데이트
+    updateEntireWaitingTime();
 }
 
 function updateCartInStorage(menuItem) {
@@ -257,7 +299,8 @@ function removeToCart(event, menuItemId) {
     delete products[menuItemId];
 
     updateTotalPrice();
-    updateWaitingTime(menuItemId);
+    updateIndividualWaitingTime(menuItemId);
+    updateEntireWaitingTime();
 }
 
 function createCartItemElement(menuItem) {

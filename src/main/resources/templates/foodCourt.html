@@ -37,13 +37,10 @@
 <body>
 <div class="container">
     <header class="d-flex justify-content-center py-3 bg-white fixed-top">
-        <a href="/backHome" id="doubleClickLink" class="navbar-brand d-flex text-white align-items-center me-5">
+        <a href="/" id="doubleClickLink" class="navbar-brand d-flex text-white align-items-center me-5">
             back</a>
         <ul class="nav nav-pills">
-            <li class="nav-item"><a data-category="fastMenu" class="nav-link">fast menu</a></li>
-            <li th:each="category : ${categorys}" class="nav-item">
-                <a th:data-category="${category.categoryName}" class="nav-link" th:text="${category.categoryName}"></a>
-            </li>
+            <li th:each="shop : ${shops}" class="dropdown nav-item"><a th:href="@{/foodCourtShop/{shopId}(shopId=${shop.id})}" class="nav-link" th:text="${shop.shopName}"></a></li>
         </ul>
         <button type="button" class="btn btn-outline-secondary ms-5" data-bs-toggle="modal" data-bs-target="#cartModal">your cart</button>
     </header>
@@ -84,7 +81,8 @@
                             <label class="form-check-label" for="paypal">PayPal</label>
                         </div>
                     </div>
-                    <div class="modal-footer">
+                    <div class="modal-footer d-flex justify-content-between">
+                        <span id="estimated-waiting-time"></span>
                         <button type="submit" class="btn btn-primary">payment</button>
                     </div>
                 </form>
@@ -107,7 +105,7 @@
                                 <div class="btn-group">
                                     <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-container="body" data-bs-toggle="popover" data-bs-placement="bottom" th:data-bs-content="${menu.description}">View</button>
                                     <button type="button" class="btn btn-sm btn-outline-secondary add-button" th:attr="onclick='addToCart({ id: \'' + ${menu.id} + '\', menuName: \'' + ${menu.menuName} + '\', price: \'' + ${menu.price} + '\' })'">Add</button></div>
-                                <small class="text-muted" th:data-event-quantity="${menu.eventQuantity}" th:data-event-time="${menu.eventTime}" th:data-default-time="${menu.defaultTime}" th:data-menu-id="${menu.id}"></small>
+                                <small class="text-muted" th:data-event-quantity="${menu.eventQuantity}" th:data-final-time="${menu.finalTime}" th:data-initial-final-time="${menu.finalTime}" th:data-event-time="${menu.eventTime}" th:data-default-time="${menu.defaultTime}" th:data-ccq="${menu.CCQ}" th:data-menu-id="${menu.id}"></small>
                             </div>
                         </div>
                     </div>
@@ -151,10 +149,13 @@
         });
     });
 
-    //초기 카테고리 로드
     document.addEventListener('DOMContentLoaded', () => {
-        const initialCategory = document.querySelector('.nav-link[data-category]').getAttribute('data-category');
-        fetchMenuItems(initialCategory);
+        // 초기 대기 시간 업데이트
+        document.querySelectorAll('[data-menu-id]').forEach(timeElement => {
+            const menuItemId = timeElement.getAttribute('data-menu-id');
+            updateIndividualWaitingTime(menuItemId);
+        });
+        updateEntireWaitingTime();
     });
 </script>
 

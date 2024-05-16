@@ -48,4 +48,10 @@ public class MenuItemRepository {
                 .setParameter("categoryName",categoryName)
                 .getResultList();
     }
+
+    public List<MenuItem> findListByFacilityName(String facilityName){
+        return em.createQuery("SELECT m FROM MenuItem m WHERE m.finalTime < 6 AND m.shop.id IN (SELECT s.id FROM Shop s WHERE s.shopName LIKE CONCAT('%', :facilityName, '%'))", MenuItem.class)
+                .setParameter("facilityName",facilityName)
+                .getResultList();
+    }
 }

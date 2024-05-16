@@ -36,4 +36,10 @@ public class ShopRepository {
         Long id = Long.parseLong(shopId);
         return em.find(Shop.class, id);
     }
+
+    public List<Shop> findListByfacilityName(String facilityName){
+        return em.createQuery("SELECT s FROM Shop s WHERE s.shopName LIKE CONCAT('%', :facilityName, '%')", Shop.class)
+                .setParameter("facilityName", facilityName)
+                .getResultList();
+    }
 }

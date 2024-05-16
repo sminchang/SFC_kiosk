@@ -116,11 +116,7 @@ function updateIndividualWaitingTime(menuItemId) {
         const remainingQuantity = eventQuantity - cartItemQuantity;
         let finalTime = parseInt(timeElement.dataset.finalTime);
 
-        if (cartItemQuantity === 0) {
-            finalTime = parseInt(timeElement.dataset.initialFinalTime);
-        }
-
-        if (remainingQuantity < 0) {
+        if (remainingQuantity <= 0) {
             let waitTime = defaultTime;
             const additionalQuantity = Math.abs(remainingQuantity);
             if (additionalQuantity / CCQ > 0) {
@@ -132,6 +128,9 @@ function updateIndividualWaitingTime(menuItemId) {
             } else {
                 finalTime = waitTime;
             }
+        }
+        else {
+            finalTime = parseInt(timeElement.dataset.initialFinalTime);
         }
         timeElement.dataset.finalTime = finalTime;
         timeElement.textContent = `${finalTime} mins`;
@@ -253,10 +252,10 @@ function addToCart(menuItem) {
         };
     }
 
+    updateIndividualWaitingTime(menuItem.id); // 대기 시간 업데이트
     updateCartInStorage(menuItem);
     showAddedConfirmation(menuItem);
     updateTotalPrice();
-    updateIndividualWaitingTime(menuItem.id); // 대기 시간 업데이트
     updateEntireWaitingTime();
 }
 

@@ -8,6 +8,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 //카카오 로그인 참조: https://innovation123.tistory.com/181
 //git 사용법: https://juyoungit.tistory.com/649
 //이미지 동적 업로드 설정: https://g4daclom.tistory.com/77
+//mySql 연동: https://velog.io/@dionisos198/Spring-boot-%EC%99%80-MySQL-workbench-%EC%97%B0%EA%B2%B0%ED%95%B4%EB%B3%B4%EA%B8%B0
+//이외의 대부분 참조 코드: claude.ai 질의 반복
 
 @SpringBootApplication
 public class WaitingTimeKioskApplication {

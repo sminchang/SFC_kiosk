@@ -2,22 +2,29 @@ spring:
   application:
     name: waitingTime-kiosk
   datasource:
-    url: jdbc:h2:tcp://localhost/~/desktop/capstone/kioskData
-    username: sa
-    password:
-    driver-class-name: org.h2.Driver
+    url: jdbc:mysql://localhost:3306/waitingTimeKiosk?useSSL=false&serverTimezone=Asia/Seoul
+    username: root
+    password: ${spring.database.password}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    #  datasource:
+    #    url: jdbc:h2:tcp://localhost/~/desktop/capstone/kioskData
+    #    username: sa
+    #    password:
+    #    driver-class-name: org.h2.Driver
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: create #초기화 시 create, 초기화 후 none으로 바꾸기
     properties:
       hibernate:
         format_sql: true
+    show-sql: true
   profiles:
     include: private
   servlet:
     multipart:
       location: C:/Users/Minchang Sung/desktop/capstone/waitingTime-kiosk/src/main/resources/static/
       max-file-size: 10MB
+
 
 logging:
   level:
@@ -28,3 +35,6 @@ logging:
           jdbc:
             bind: trace
 
+server:
+  address: 192.210.163.72 #로컬 ip 입력하기, 개발 시 localhost로 설정
+  port: 8080

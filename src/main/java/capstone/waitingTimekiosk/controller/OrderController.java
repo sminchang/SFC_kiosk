@@ -10,6 +10,7 @@ import capstone.waitingTimekiosk.repository.OrdersRepository;
 import capstone.waitingTimekiosk.repository.ShopRepository;
 import capstone.waitingTimekiosk.service.KakaoApi;
 import capstone.waitingTimekiosk.service.WaitingTimeService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -35,10 +37,15 @@ public class OrderController {
     private final WaitingTimeService waitingTimeService;
 
     @PostMapping("new/order")
-    public String orderFromCart(@CookieValue(name = "accessToken", defaultValue = "not found") String accessToken,
-                                @CookieValue(name = "shopId", defaultValue = "not found") String shopId,
-                                @ModelAttribute OrderForm orderForm){
-        kakaoApi.tokenCheck(accessToken);
+    public String orderFromCart(/*@CookieValue(name = "accessToken", defaultValue = "not found") String accessToken,
+                                */@CookieValue(name = "shopId", defaultValue = "not found") String shopId,
+                                  @ModelAttribute OrderForm orderForm,
+                                  RedirectAttributes redirectAttributes,
+                                  HttpServletRequest request){
+
+        //걸제 기능이 도입되면 해당 기능 없어도 문제 없을 것으로 생각
+        //kakaoApi.tokenCheck(accessToken); //foodCourtMenu에서 이용 시 인가가 안되는 문제 때문에 삭제, 추후 문제가 되면 수정
+
         Shop shop = shopRepository.findById(shopId);
 
         //주문 항목 생성
@@ -70,11 +77,15 @@ public class OrderController {
             //전체 메뉴 최종 대기 시간 업데이트
             waitingTimeService.makeFinalTime(shop.getId());
 
-
             //외래키 연관관계 설정
             orders.addOrderItem(orderItem);
             menuItem.addOrderItem(orderItem);
+        }
 
+        //직전 요청이 foodCourtMenu였다면 foodCourtMenu로 리다이렉트
+        if (request.getHeader("Referer").contains("/foodCourtMenu")) {
+            redirectAttributes.addAttribute("shopId", shopId);
+            return "redirect:/foodCourtMenu";
         }
 
         return "redirect:/menu";

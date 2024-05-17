@@ -232,10 +232,10 @@ public class MenuController {
     }
 
     @GetMapping("/menu/category/{categoryName}")
-    public ResponseEntity<List<MenuItem>> menuCategory(@CookieValue(name = "accessToken", defaultValue = "not found") String accessToken,
-                                                       @CookieValue(name = "shopId", defaultValue = "not found") String shopId,
+    public ResponseEntity<List<MenuItem>> menuCategory(/*@CookieValue(name = "accessToken", defaultValue = "not found") String accessToken,
+                                                       */@CookieValue(name = "shopId", defaultValue = "not found") String shopId,
                                                        @PathVariable String categoryName){
-        kakaoApi.tokenCheck(accessToken);
+        //kakaoApi.tokenCheck(accessToken); //foodCourtMenu에서 사용할 때 인가정보가 없어서 오류나는 문제->민감 정보가 아닌 json 응답이라 해당 과정에서 인가를 뺌
         Shop shop = shopRepository.findById(shopId);
 
         if("fastMenu".equals(categoryName)){

@@ -37,7 +37,7 @@
 <body>
 <div class="container">
     <header class="d-flex justify-content-center py-3 bg-white fixed-top">
-        <a href="/backHome" id="doubleClickLink" class="navbar-brand d-flex text-white align-items-center me-5">
+        <a href="/backHome" id="doubleClickLink" class="navbar-brand text-light d-flex align-items-center" style="width: fit-content;">
             back</a>
         <ul class="nav nav-pills">
             <li class="nav-item"><a data-category="fastMenu" class="nav-link">fast menu</a></li>
@@ -96,7 +96,6 @@
 <main>
     <div class="album py-5 bg-light">
         <div class="container pt-5">
-
             <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
                 <div class="col" th:each="menu : ${menus}">
                     <div class="card shadow-sm">

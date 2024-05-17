@@ -116,7 +116,10 @@ function updateIndividualWaitingTime(menuItemId) {
         const remainingQuantity = eventQuantity - cartItemQuantity;
         let finalTime = parseInt(timeElement.dataset.finalTime);
 
-        if (remainingQuantity <= 0) {
+        const nextQuantity =eventQuantity - (cartItemQuantity + 1);
+        let nextTime;
+
+        if (remainingQuantity < 0) {
             let waitTime = defaultTime;
             const additionalQuantity = Math.abs(remainingQuantity);
             if (additionalQuantity / CCQ > 0) {
@@ -134,6 +137,28 @@ function updateIndividualWaitingTime(menuItemId) {
         }
         timeElement.dataset.finalTime = finalTime;
         timeElement.textContent = `${finalTime} mins`;
+        console.log("finalTime",finalTime);
+
+
+        if (nextQuantity < 0) {
+            let waitTime = defaultTime;
+            const additionalQuantity = Math.abs(nextQuantity);
+            if (additionalQuantity / CCQ > 0) {
+                if (additionalQuantity % CCQ !== 0) {
+                    nextTime = Math.ceil(additionalQuantity / CCQ) * waitTime;
+                } else {
+                    nextTime = (additionalQuantity / CCQ) * waitTime;
+                }
+            } else {
+                nextTime = waitTime;
+            }
+        }
+        else {
+            nextTime = parseInt(timeElement.dataset.initialFinalTime);
+        }
+        timeElement.dataset.nextTime = nextTime;
+        timeElement.textContent = `${nextTime} mins`;
+        console.log("nextTime",nextTime);
     }
 }
 

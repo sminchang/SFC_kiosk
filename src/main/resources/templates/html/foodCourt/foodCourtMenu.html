@@ -30,6 +30,11 @@
             white-space: nowrap;
             -webkit-overflow-scrolling: touch;
         }
+
+        a {
+            text-decoration: none;  /* 밑줄 제거 */
+            color: inherit;        /* 기본 텍스트 색상 사용 */
+        }
     </style>
 
 
@@ -37,10 +42,14 @@
 <body>
 <div class="container">
     <header class="d-flex justify-content-center py-3 bg-white fixed-top">
-        <a href="/" id="doubleClickLink" class="navbar-brand d-flex text-white align-items-center me-5">
-            back</a>
+        <a th:href="@{/foodCourt/{facilityName}(facilityName=${facilityName})}" class="btn btn-link bi bi-arrow-left me-4" style="position: absolute; left: 20px;">
+            <img src="/bottstrap-5.2.3/dist/arrow-left.svg" alt="Back Home" style="width: 24px; height: 24px;">
+        </a>
         <ul class="nav nav-pills">
-            <li th:each="shop : ${shops}" class="dropdown nav-item"><a th:href="@{/foodCourtShop/{shopId}(shopId=${shop.id})}" class="nav-link" th:text="${shop.shopName}"></a></li>
+            <li class="nav-item"><a data-category="fastMenu" class="nav-link">fast menu</a></li>
+            <li th:each="category : ${categorys}" class="nav-item">
+                <a th:data-category="${category.categoryName}" class="nav-link" th:text="${category.categoryName}"></a>
+            </li>
         </ul>
         <button type="button" class="btn btn-outline-secondary ms-5" data-bs-toggle="modal" data-bs-target="#cartModal">your cart</button>
     </header>
@@ -93,7 +102,6 @@
 <main>
     <div class="album py-5 bg-light">
         <div class="container pt-5">
-
             <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
                 <div class="col" th:each="menu : ${menus}">
                     <div class="card shadow-sm">
@@ -105,7 +113,7 @@
                                 <div class="btn-group">
                                     <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-container="body" data-bs-toggle="popover" data-bs-placement="bottom" th:data-bs-content="${menu.description}">View</button>
                                     <button type="button" class="btn btn-sm btn-outline-secondary add-button" th:attr="onclick='addToCart({ id: \'' + ${menu.id} + '\', menuName: \'' + ${menu.menuName} + '\', price: \'' + ${menu.price} + '\' })'">Add</button></div>
-                                <small class="text-muted" th:data-event-quantity="${menu.eventQuantity}" th:data-final-time="${menu.finalTime}" th:data-initial-final-time="${menu.finalTime}" th:data-event-time="${menu.eventTime}" th:data-default-time="${menu.defaultTime}" th:data-ccq="${menu.CCQ}" th:data-menu-id="${menu.id}"></small>
+                                <small class="text-muted" th:data-event-quantity="${menu.eventQuantity}" th:data-final-time="${menu.finalTime}" th:data-initial-final-time="${menu.finalTime}" th:data-event-time="${menu.eventTime}" th:data-default-time="${menu.defaultTime}" th:data-ccq="${menu.CCQ}" th:data-menu-id="${menu.id}" th:data-next-time="${menu.finalTime}"></small>
                             </div>
                         </div>
                     </div>
@@ -130,16 +138,6 @@
         });
     });
 
-    document.getElementById('doubleClickLink').addEventListener('dblclick', function(e) {
-        // 더블 클릭 이벤트 발생 시 로직
-        window.location.href = this.href; // href 속성의 URL로 이동
-    });
-
-    // 기본 클릭 이벤트에서는 페이지 이동을 방지
-    document.getElementById('doubleClickLink').addEventListener('click', function(e) {
-        e.preventDefault(); // 기본 이벤트(링크 이동)를 방지
-    });
-
     //카테고리 링크 클릭 이벤트 리스너
     document.querySelectorAll('.nav-link[data-category]').forEach(item => {
         item.addEventListener('click', (event) => {
@@ -149,14 +147,39 @@
         });
     });
 
+    //초기 카테고리 로드
     document.addEventListener('DOMContentLoaded', () => {
-        // 초기 대기 시간 업데이트
-        document.querySelectorAll('[data-menu-id]').forEach(timeElement => {
-            const menuItemId = timeElement.getAttribute('data-menu-id');
-            updateIndividualWaitingTime(menuItemId);
-        });
-        updateEntireWaitingTime();
+        const initialCategory = document.querySelector('.nav-link[data-category]').getAttribute('data-category');
+        fetchMenuItems(initialCategory);
     });
+</script>
+
+<script>
+    let inactivityTimer;
+
+    // 마우스 움직임이나 키보드 입력 등의 이벤트 발생 시 타이머 리셋
+    function resetInactivityTimer() {
+        clearTimeout(inactivityTimer);
+        inactivityTimer = setTimeout(redirectToFoodCourtIndex, 180000); // 3분 (180000ms)
+    }
+
+    // foodCourtIndex 페이지로 리다이렉트
+    function redirectToFoodCourtIndex() {
+        window.location.href = "/foodCourt/[[${facilityName}]]";
+    }
+
+    // 페이지 로드 시 타이머 시작
+    document.addEventListener('DOMContentLoaded', () => {
+        resetInactivityTimer();
+    });
+
+    // 사용자 활동 감지를 위한 이벤트 리스너 등록
+    document.addEventListener('mousemove', resetInactivityTimer);
+    document.addEventListener('keydown', resetInactivityTimer);
+    document.addEventListener('touchstart', resetInactivityTimer);
+    document.addEventListener('click', resetInactivityTimer);
+    document.addEventListener('scroll', resetInactivityTimer);
+
 </script>
 
 <script th:inline="javascript">

@@ -36,5 +36,5 @@ logging:
             bind: trace
 
 server:
-  address: 192.210.163.72 #로컬 ip 입력하기, 개발 시 localhost로 설정
+  address: localhost #개발 시 localhost로 설정, 배포 시 로컬 ip 입력하고 kakao developers에서 login-logout redirect uri와 private.yml 수정
   port: 8080

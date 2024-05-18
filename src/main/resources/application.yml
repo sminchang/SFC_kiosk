@@ -1,19 +1,19 @@
 spring:
   application:
     name: waitingTime-kiosk
+#  datasource:
+#    url: jdbc:mysql://localhost:3306/waitingTimeKiosk?useSSL=false&serverTimezone=Asia/Seoul
+#    username: root
+#    password: ${spring.database.password}
+#    driver-class-name: com.mysql.cj.jdbc.Driver
   datasource:
-    url: jdbc:mysql://localhost:3306/waitingTimeKiosk?useSSL=false&serverTimezone=Asia/Seoul
-    username: root
-    password: ${spring.database.password}
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    #  datasource:
-    #    url: jdbc:h2:tcp://localhost/~/desktop/capstone/kioskData
-    #    username: sa
-    #    password:
-    #    driver-class-name: org.h2.Driver
+    url: jdbc:h2:tcp://localhost/~/desktop/capstone/kioskData
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
   jpa:
     hibernate:
-      ddl-auto: create #초기화 시 create, 초기화 후 none으로 바꾸기
+      ddl-auto: none #초기화 시 create, 초기화 후 none으로 바꾸기
     properties:
       hibernate:
         format_sql: true

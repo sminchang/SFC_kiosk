@@ -103,7 +103,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr th:each="entry : ${demandData}" class="record" onclick="handleRecordClick(this)">
+                    <tr th:each="entry : ${demandData}" class="record" onclick="handleRecordClick(this,  document.getElementById('selectedOption').textContent)">
                     <td th:text="|${entry.value['menuName']} (ID${entry.key})|"></td>
                         <td th:text="${entry.value['daily']}"></td>
                         <td th:text="${entry.value['weekly']}"></td>
@@ -132,6 +132,15 @@
     //드롭박스 메인에 이번 주,월,년 텍스트 데이터 가져오기
     function selectOption(option) {
         document.getElementById('selectedOption').textContent = option;
+        var selectedRecord = document.querySelector('.record.selected');
+        if (selectedRecord) {
+            handleRecordClick(selectedRecord, option);
+        } else {
+            var firstRecord = document.querySelector('.record');
+            if (firstRecord) {
+                handleRecordClick(firstRecord, option);
+            }
+        }
     }
 
     // 레코드 마우스 오버 효과 적용
@@ -160,7 +169,7 @@
     };
 
     //클릭 시 해당 메뉴에 대한 수요도 지표 출력
-    function handleRecordClick(record) {
+    function handleRecordClick(record, option) {
         var menuName = record.querySelector('td:first-child').textContent.match(/(.+) \(ID\d+\)/)[1];
         document.querySelector('h2').textContent = menuName;
 
@@ -176,8 +185,14 @@
             });
         });
 
+        // 선택된 레코드에 .selected 클래스 추가
+        document.querySelectorAll('.record').forEach(function(record) {
+            record.classList.remove('selected');
+        });
+        record.classList.add('selected');
+
         // 필터링된 주문 데이터를 dashboard.js로 전달
-        window.renderChart(filteredOrderItems);
+        window.renderChart(filteredOrderItems, option || 'This year');
     }
 </script>
 

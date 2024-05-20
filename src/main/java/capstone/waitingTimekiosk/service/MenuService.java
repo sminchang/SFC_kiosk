@@ -30,7 +30,7 @@ public class MenuService {
     public void setCookie(HttpServletResponse response, String shopId) {
         Cookie cookie = new Cookie("shopId", shopId);
         cookie.setHttpOnly(true);
-        cookie.setSecure(true);
+        //cookie.setSecure(true); //https 세팅시 사용
         cookie.setPath("/");
         response.addCookie(cookie);
     }

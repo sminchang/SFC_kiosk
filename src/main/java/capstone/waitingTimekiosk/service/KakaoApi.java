@@ -70,7 +70,7 @@ public class KakaoApi {
         Cookie cookie = new Cookie("accessToken", cookieToken);
         cookie.setHttpOnly(true);
         cookie.setSecure(true);
-        cookie.setPath("/");
+        //cookie.setPath("/"); //https 사용시 설정
         response.addCookie(cookie);
     }
 

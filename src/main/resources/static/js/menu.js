@@ -280,6 +280,7 @@ function addToCart(menuItem) {
     showAddedConfirmation(menuItem);
     updateTotalPrice();
     updateEntireWaitingTime();
+    updatePaymentButton();
 }
 
 function updateCartInStorage(menuItem) {
@@ -293,6 +294,7 @@ function updateCartInStorage(menuItem) {
     }
 
     sessionStorage.setItem('cartItems', JSON.stringify(cartItems));
+    updatePaymentButton();
 }
 
 function showAddedConfirmation(menuItem) {
@@ -323,6 +325,14 @@ function removeToCart(event, menuItemId) {
     updateTotalPrice();
     updateIndividualWaitingTime(menuItemId);
     updateEntireWaitingTime();
+    updatePaymentButton();
+}
+
+//장바구니에 항목이 있을 때만 payment 버튼 활성화
+function updatePaymentButton() {
+    const paymentButton = document.getElementById('paymentButton');
+    const cartItems = JSON.parse(sessionStorage.getItem('cartItems') || '[]');
+    paymentButton.disabled = cartItems.length === 0;
 }
 
 function createCartItemElement(menuItem) {

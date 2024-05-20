@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -59,6 +60,13 @@ public class DemandService {
             }
         }
 
-        return demandData;
+        //annual 기준으로 내림차순 정렬, 페이지에서 주문량이 많은 정보가 상단에 위치하게 함
+        Map<Long, Map<String, Object>> sortedDemandData = new LinkedHashMap<>();
+        demandData.entrySet()
+                .stream()
+                .sorted(Map.Entry.comparingByValue((v1, v2) -> Integer.compare((int) v2.get("annual"), (int) v1.get("annual"))))
+                .forEachOrdered(entry -> sortedDemandData.put(entry.getKey(), entry.getValue()));
+
+        return sortedDemandData;
     }
 }

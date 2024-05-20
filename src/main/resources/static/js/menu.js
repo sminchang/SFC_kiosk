@@ -29,21 +29,22 @@ function decrementQuantity(event, menuItemId, price) {
 function incrementQuantity(event, menuItemId, price) {
     event.stopPropagation();
     event.preventDefault();
+    if (products[menuItemId].quantity < 2147483647) {
+        products[menuItemId].quantity++;
+        document.getElementById(`quantity-${menuItemId}`).textContent = products[menuItemId].quantity;
+        updatePrice(menuItemId);
+        updateTotalPrice();
+        updateQuantity(menuItemId, products[menuItemId].quantity);
 
-    products[menuItemId].quantity++;
+        const itemElement = document.getElementById(`cart-item-${menuItemId}`);
+        const quantityInput = itemElement.querySelector('input[name$="].quantity"]');
+        quantityInput.value = products[menuItemId].quantity;
 
-    document.getElementById(`quantity-${menuItemId}`).textContent = products[menuItemId].quantity;
-    updatePrice(menuItemId);
-    updateTotalPrice();
-
-    updateQuantity(menuItemId, products[menuItemId].quantity);
-
-    const itemElement = document.getElementById(`cart-item-${menuItemId}`);
-    const quantityInput = itemElement.querySelector('input[name$="].quantity"]');
-    quantityInput.value = products[menuItemId].quantity;
-
-    updateIndividualWaitingTime(menuItemId); // 대기 시간 업데이트
-    updateEntireWaitingTime();
+        updateIndividualWaitingTime(menuItemId);
+        updateEntireWaitingTime();
+    } else {
+        alert('최대 수량은 2147483647입니다.');
+    }
 }
 
 function updatePrice(menuItemId) {

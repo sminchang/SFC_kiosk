@@ -81,7 +81,7 @@
                                 <form role="form" action="/event" method="post">
                                 <div class="input-group">
                                         <input type="hidden" name="menuId" th:value="${menu.id}">
-                                        <input type="text" class="form-control" name="eventQuantity" placeholder="+event quantity" max="2147483647" step="1">
+                                        <input type="number" class="form-control" name="eventQuantity" placeholder="+event quantity" max="2147483647" step="1">
                                         <button type="submit" class="btn btn-secondary">update</button>
                                     </div>
                                 </form>

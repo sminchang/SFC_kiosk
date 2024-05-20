@@ -138,8 +138,6 @@ function updateIndividualWaitingTime(menuItemId) {
         }
         timeElement.dataset.finalTime = finalTime;
         timeElement.textContent = `${finalTime} mins`;
-        console.log("finalTime",finalTime);
-
 
         if (nextQuantity < 0) {
             let waitTime = defaultTime;
@@ -159,7 +157,6 @@ function updateIndividualWaitingTime(menuItemId) {
         }
         timeElement.dataset.nextTime = nextTime;
         timeElement.textContent = `${nextTime} mins`;
-        console.log("nextTime",nextTime);
     }
 }
 

@@ -74,6 +74,12 @@ public class MenuController {
         shop.addMenuItem(menuItem);
         category.addMenuItem(menuItem);
 
+        // 폴더가 존재하지 않으면 생성
+        File folder = new File(path + "/img");
+        if (!folder.exists()) {
+            folder.mkdirs();
+        }
+
         //파일 업로드 및 파일 경로 저장
         File file = new File(path + "/img/" + UUID.randomUUID() + ".jpg"); //seqeunce++로 대체할지 고민해보기
         form.getImage().transferTo(file);

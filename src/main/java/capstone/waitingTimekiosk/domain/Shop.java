@@ -15,7 +15,6 @@ public class Shop {
     @Column(name = "shop_id")
     private Long id;
 
-
     //메뉴판을 소유한 멤버 식별
     @Setter
     @ManyToOne(fetch = FetchType.LAZY)
@@ -30,8 +29,7 @@ public class Shop {
     @OneToMany(mappedBy = "shop", cascade = CascadeType.REMOVE)
     private List<Category> categories = new ArrayList<>();
 
-    protected Shop() {
-    }
+    protected Shop() {}
 
     public Shop(Member member, String shopName) {
         this.member = member;

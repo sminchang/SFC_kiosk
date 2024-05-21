@@ -35,8 +35,7 @@ public class Orders {
     @OneToMany(mappedBy = "orders", cascade = CascadeType.REMOVE)
     private List<OrderItem> orderItems = new ArrayList<>();
 
-    protected Orders() {
-    }
+    protected Orders() {}
 
     public Orders(Shop shop) {
         this.shop = shop;

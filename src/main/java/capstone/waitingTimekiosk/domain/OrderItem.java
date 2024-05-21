@@ -26,7 +26,6 @@ public class OrderItem {
     @JsonIgnore
     private Orders orders;
 
-
     //주문이 가지는 메뉴 정보
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "menu_item_id")
@@ -35,8 +34,7 @@ public class OrderItem {
 
     private int quantity; //주문 수량
 
-    protected OrderItem() {
-    }
+    protected OrderItem() {}
 
     public OrderItem(Orders orders) {
         this.orders = orders;

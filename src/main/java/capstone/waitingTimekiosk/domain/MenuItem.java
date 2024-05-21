@@ -50,9 +50,7 @@ public class MenuItem {
     @OneToMany(mappedBy = "menuItem", cascade = CascadeType.REMOVE)
     private List<OrderItem> orderItems = new ArrayList<>();
 
-    protected MenuItem() {
-
-    }
+    protected MenuItem() {}
 
     public MenuItem(Shop shop) {
         this.shop = shop;

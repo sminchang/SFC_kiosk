@@ -27,9 +27,7 @@ public class Category {
     @OneToMany(mappedBy = "category", cascade = CascadeType.REMOVE)
     private List<MenuItem> menuItems = new ArrayList<>();
 
-    protected Category() {
-
-    }
+    protected Category() {}
 
     public Category(Shop shop, String categoryName) {
         this.shop = shop;

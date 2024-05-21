@@ -23,10 +23,7 @@ public class Member {
     @OneToMany(mappedBy = "member", cascade = CascadeType.REMOVE)
     private List<Shop> shops = new ArrayList<>();
 
-
-    protected Member() {
-
-    }
+    protected Member() {}
 
     public Member(String email, String nickname) {
         this.email = email;

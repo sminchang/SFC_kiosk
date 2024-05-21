@@ -15,7 +15,9 @@ public class Shop {
     @Column(name = "shop_id")
     private Long id;
 
+
     //메뉴판을 소유한 멤버 식별
+    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
@@ -34,10 +36,6 @@ public class Shop {
     public Shop(Member member, String shopName) {
         this.member = member;
         this.shopName = shopName;
-    }
-
-    public void setMember(Member member) {
-        this.member = member;
     }
 
     public void addMenuItem(MenuItem menuItem) {

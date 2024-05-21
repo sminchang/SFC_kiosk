@@ -58,10 +58,6 @@ public class MenuItem {
         this.shop = shop;
     }
 
-    public void setShop(Shop shop) {
-        this.shop = shop;
-    }
-
     public void addOrderItem(OrderItem orderItem) {
         orderItems.add(orderItem);
         orderItem.setMenuItem(this);

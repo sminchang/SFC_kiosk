@@ -3,6 +3,7 @@ package capstone.waitingTimekiosk.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +16,7 @@ public class Category {
     @Column(name = "category_id")
     private Long id;
 
+    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "shop_id")
     @JsonIgnore
@@ -32,10 +34,6 @@ public class Category {
     public Category(Shop shop, String categoryName) {
         this.shop = shop;
         this.categoryName = categoryName;
-    }
-
-    public void setShop(Shop shop) {
-        this.shop = shop;
     }
 
     public void addMenuItem(MenuItem menuItem) {

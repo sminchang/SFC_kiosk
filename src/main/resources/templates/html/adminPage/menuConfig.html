@@ -220,6 +220,10 @@
                                             <input type="number" class="form-control" th:field="*{defaultTime}" placeholder="mins" min="0" max="2147483647" step="1" required>
                                         </div>
                                         <div class="mb-3">
+                                            <label th:for="CCQ" class="col-form-label">동시 조리 가능한 수량</label>
+                                            <input type="number" class="form-control" th:field="*{CCQ}" placeholder="mins" min="1" max="2147483647" step="1" required>
+                                        </div>
+                                            <div class="mb-3">
                                             <label th:for="image" class="col-form-label">menu image</label>
                                             <input type="file" class="form-control" th:field="*{image}" accept=".jpg,.jpeg,.png">>
                                         </div>

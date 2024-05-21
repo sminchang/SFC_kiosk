@@ -6,7 +6,7 @@ import lombok.Setter;
 import java.util.ArrayList;
 import java.util.List;
 @Getter @Setter
-public class OrderForm {
+public class OrderDTO {
     private List<CartItem> orderItems = new ArrayList<>();
 
     @Getter @Setter

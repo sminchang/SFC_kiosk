@@ -152,7 +152,7 @@ public class AuthController {
 
         model.addAttribute("categorys", categorys);
         model.addAttribute("menus",menus);
-        model.addAttribute("menuForm", new MenuForm());
+        model.addAttribute("menuDTO", new MenuDTO());
         return "html/adminPage/menuConfig";
     }
 
@@ -241,7 +241,7 @@ public class AuthController {
     @GetMapping("/menu")
     public String menuPage(@CookieValue(name = "accessToken", defaultValue = "not found") String accessToken,
                            @CookieValue(name = "shopId", defaultValue = "not found") String shopId,
-                           OrderForm orderForm,
+                           OrderDTO orderDTO,
                            Model model) {
         kakaoApi.tokenCheck(accessToken);
         Shop shop = shopRepository.findById(shopId);
@@ -250,7 +250,7 @@ public class AuthController {
 
         model.addAttribute("categorys", categorys);
         model.addAttribute("menus",menus);
-        model.addAttribute("orderForm", orderForm);
+        model.addAttribute("orderDTO", orderDTO);
         return "html/consumerPage/menu";
     }
 }

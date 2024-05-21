@@ -39,7 +39,7 @@ public class OrderController {
     @PostMapping("new/order")
     public String orderFromCart(/*@CookieValue(name = "accessToken", defaultValue = "not found") String accessToken,
                                 */@CookieValue(name = "shopId", defaultValue = "not found") String shopId,
-                                  @ModelAttribute OrderForm orderForm,
+                                  @ModelAttribute OrderDTO orderDTO,
                                   RedirectAttributes redirectAttributes,
                                   HttpServletRequest request){
 
@@ -53,8 +53,8 @@ public class OrderController {
         ordersRepository.save(orders);
 
         //주문 항목 내부 주문 내역 생성
-        List<OrderForm.CartItem> cartItems = orderForm.getOrderItems();
-        for (OrderForm.CartItem cartItem : cartItems){
+        List<OrderDTO.CartItem> cartItems = orderDTO.getOrderItems();
+        for (OrderDTO.CartItem cartItem : cartItems){
             logger.info("Id: {}, Quantity: {}", cartItem.getMenuItemId(), cartItem.getQuantity());
             OrderItem orderItem = new OrderItem(orders);
             MenuItem menuItem = menuItemRepository.findById(cartItem.getMenuItemId());

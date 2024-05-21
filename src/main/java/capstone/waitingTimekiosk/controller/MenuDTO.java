@@ -6,7 +6,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 
 @Getter @Setter
-public class MenuForm {
+public class MenuDTO {
 
     private String menuName;
 

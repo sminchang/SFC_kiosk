@@ -55,7 +55,7 @@ public class MenuController {
         List<MenuItem> menus = menuItemRepository.findListByCategory(shop.getId(),categoryName);
 
         model.addAttribute("categorys", categorys);
-        model.addAttribute("menuForm", new MenuForm());
+        model.addAttribute("menuDTO", new MenuDTO());
         model.addAttribute("menus", menus);
         return "html/adminPage/menuConfig";
     }
@@ -63,7 +63,7 @@ public class MenuController {
     @PostMapping("/new/menuItem")
     public String newMenuItem(@CookieValue(name = "accessToken", defaultValue = "not found") String accessToken,
                               @CookieValue(name = "shopId", defaultValue = "not found") String shopId,
-                              MenuForm form,
+                              MenuDTO form,
                               Model model) throws IOException {
         kakaoApi.tokenCheck(accessToken);
         Shop shop = shopRepository.findById(shopId);
@@ -101,7 +101,7 @@ public class MenuController {
         List<MenuItem> menus = menuItemRepository.findListByCategory(shop.getId(),category.getCategoryName());
 
         model.addAttribute("categorys", categorys);
-        model.addAttribute("menuForm", new MenuForm());
+        model.addAttribute("menuDTO", new MenuDTO());
         model.addAttribute("menus", menus);
         return "html/adminPage/menuConfig";
     }
@@ -112,7 +112,7 @@ public class MenuController {
                                  @CookieValue(name = "shopId", defaultValue = "not found") String shopId,
                                  @RequestParam String menuId,
                                  @RequestParam String categoryName,
-                                 MenuForm form,
+                                 MenuDTO form,
                                  Model model) throws IOException {
         kakaoApi.tokenCheck(accessToken);
         Shop shop = shopRepository.findById(shopId);
@@ -147,7 +147,7 @@ public class MenuController {
         List<MenuItem> menus = menuItemRepository.findListByCategory(shop.getId(),category.getCategoryName());
 
         model.addAttribute("categorys", categorys);
-        model.addAttribute("menuForm", new MenuForm());
+        model.addAttribute("menuDTO", new MenuDTO());
         model.addAttribute("menus", menus);
         return "html/adminPage/menuConfig";
     }
@@ -165,7 +165,7 @@ public class MenuController {
         List<MenuItem> menus = menuItemRepository.findListByFastMenu(shop.getId(),5);
 
         model.addAttribute("categorys", categorys);
-        model.addAttribute("menuForm", new MenuForm());
+        model.addAttribute("menuDTO", new MenuDTO());
         model.addAttribute("menus", menus);
         return "html/adminPage/menuConfig";
     }
@@ -187,7 +187,7 @@ public class MenuController {
         ordersRepository.removeEmptyOrders(shop.getId());
 
         model.addAttribute("categorys", categorys);
-        model.addAttribute("menuForm", new MenuForm());
+        model.addAttribute("menuDTO", new MenuDTO());
         model.addAttribute("menus", menus);
         return "html/adminPage/menuConfig";
     }
@@ -210,7 +210,7 @@ public class MenuController {
 
         List<Category> categorys = categoryRepository.findListByShopId(shop.getId());
         model.addAttribute("categorys", categorys);
-        model.addAttribute("menuForm", new MenuForm());
+        model.addAttribute("menuDTO", new MenuDTO());
 
         return "html/adminPage/menuConfig";
     }

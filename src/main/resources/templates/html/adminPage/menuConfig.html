@@ -80,7 +80,7 @@
                         <h1 class="modal-title fs-5" id="newMenuModalLabel">New menu</h1>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    <form role="form", action="/new/menuItem" th:object="${menuForm}" method="post" enctype="multipart/form-data">
+                    <form role="form", action="/new/menuItem" th:object="${menuDTO}" method="post" enctype="multipart/form-data">
                         <div class="modal-body">
                             <div class="mb-3">
                                 <label th:for="categoryName" class="form-label">category</label>
@@ -200,7 +200,7 @@
                                     <h1 class="modal-title fs-5" id="menuUpdateModalLabel">Update the menu</h1>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
-                                <form role="form", action="/update/menuItem" th:object="${menuForm}" method="post" enctype="multipart/form-data">
+                                <form role="form", action="/update/menuItem" th:object="${menuDTO}" method="post" enctype="multipart/form-data">
                                     <div class="modal-body">
                                         <input type="hidden" name="menuId" th:value="${menu.id}">
                                         <div class="mb-3">

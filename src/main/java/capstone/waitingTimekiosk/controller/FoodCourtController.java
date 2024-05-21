@@ -28,7 +28,7 @@ public class FoodCourtController {
 
     @GetMapping("/foodCourt/{facilityName}")
     public String foodCourIndex(@PathVariable String facilityName,
-                                OrderForm orderForm,
+                                OrderDTO orderDTO,
                                 Model model){
 
         List<MenuItem> menus = menuItemRepository.findListByFacilityName(facilityName);
@@ -36,7 +36,7 @@ public class FoodCourtController {
 
         model.addAttribute("shops", shops);
         model.addAttribute("menus", menus);
-        model.addAttribute("orderForm", orderForm);
+        model.addAttribute("orderDTO", orderDTO);
         return "html/foodCourt/foodCourtIndex";
     }
 
@@ -44,7 +44,7 @@ public class FoodCourtController {
     public String foodCourtMenu(@RequestParam String shopId,
                                 @RequestParam String facilityName,
                                 HttpServletResponse response,
-                                OrderForm orderForm,
+                                OrderDTO orderDTO,
                                 Model model){
         Shop shop = shopRepository.findById(shopId);
         List<Category> categorys = categoryRepository.findListByShopId(shop.getId());
@@ -56,7 +56,7 @@ public class FoodCourtController {
         model.addAttribute("categorys", categorys);
         model.addAttribute("menus",menus);
         model.addAttribute("facilityName",facilityName);
-        model.addAttribute("orderForm", orderForm);
+        model.addAttribute("orderDTO", orderDTO);
         return "html/foodCourt/foodCourtMenu";
     }
 }

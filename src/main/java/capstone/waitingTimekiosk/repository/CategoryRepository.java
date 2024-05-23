@@ -1,8 +1,6 @@
 package capstone.waitingTimekiosk.repository;
 
 import capstone.waitingTimekiosk.domain.Category;
-import capstone.waitingTimekiosk.domain.Member;
-import capstone.waitingTimekiosk.domain.Shop;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
@@ -10,36 +8,16 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-@Repository
-public class CategoryRepository {
+public interface CategoryRepository {
 
-    @PersistenceContext
-    private EntityManager em;
+    public Long save(Category category);
 
-    @Transactional
-    public Long save(Category category) {
-        em.persist(category);
-        return category.getId();
-    }
+    public void delete(String categoryId);
 
-    @Transactional
-    public void delete(String categoryId) {
-        Long id = Long.parseLong(categoryId);
-        Category category = em.find(Category.class, id);
-        em.remove(category);
-    }
+    //select m from Category m where m.shop.id =:shopId
+    public List<Category> findListByShopId(Long shopId);
 
-    public List<Category> findListByShopId(Long shopId) {
-        return em.createQuery("select m from Category m where m.shop.id =:shopId", Category.class)
-                .setParameter("shopId",shopId)
-                .getResultList();
-    }
-
-    public Category findCategory(Long shopId, String categoryName) {
-        return em.createQuery("select m from Category m where m.shop.id = :shopId and m.categoryName = :categoryName", Category.class)
-                .setParameter("shopId",shopId)
-                .setParameter("categoryName",categoryName)
-                .getSingleResult();
-    }
+    //select m from Category m where m.shop.id = :shopId and m.categoryName = :categoryName
+    public Category findCategory(Long shopId, String categoryName);
 
 }

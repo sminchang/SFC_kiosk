@@ -1,6 +1,7 @@
 package capstone.waitingTimekiosk.service;
 
 import capstone.waitingTimekiosk.domain.Category;
+import capstone.waitingTimekiosk.domain.MenuItem;
 import capstone.waitingTimekiosk.domain.Shop;
 import capstone.waitingTimekiosk.repository.CategoryRepository;
 import jakarta.servlet.http.Cookie;
@@ -27,7 +28,8 @@ public class MenuService {
         }
     }
 
-    public void setCookie(HttpServletResponse response, String shopId) {
+    public void setCookie(HttpServletResponse response, Long LongShopId) {
+        String shopId = String.valueOf(LongShopId);
         Cookie cookie = new Cookie("shopId", shopId);
         cookie.setHttpOnly(true);
         //cookie.setSecure(true); //https 세팅시 사용

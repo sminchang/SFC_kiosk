@@ -109,7 +109,7 @@ public class AuthController {
     @GetMapping("/memberMenu")
     public String memberPage(@CookieValue(name = "accessToken", defaultValue = "not found") String accessToken,
                              HttpServletResponse response,
-                             @RequestParam String shopId,
+                             @RequestParam Long shopId,
                              Model model) throws JsonProcessingException {
         kakaoApi.tokenCheck(accessToken);
         Member member = memberService.findMember(accessToken);
@@ -143,7 +143,7 @@ public class AuthController {
 
     @GetMapping("/menuConfig")
     public String ConfigPage(@CookieValue(name = "accessToken", defaultValue = "not found") String accessToken,
-                             @CookieValue(name = "shopId", defaultValue = "not found") String shopId,
+                             @CookieValue(name = "shopId", defaultValue = "not found") Long shopId,
                              Model model){
         kakaoApi.tokenCheck(accessToken);
         Shop shop = shopRepository.findById(shopId);
@@ -158,7 +158,7 @@ public class AuthController {
 
     @GetMapping("/menuDemand")
     public String demandPage(@CookieValue(name = "accessToken", defaultValue = "not found") String accessToken,
-                             @CookieValue(name = "shopId", defaultValue = "not found") String shopId,
+                             @CookieValue(name = "shopId", defaultValue = "not found") Long shopId,
                              @RequestParam(required = false, defaultValue = "") String year,
                              Model model) {
         kakaoApi.tokenCheck(accessToken);
@@ -214,7 +214,7 @@ public class AuthController {
 
     @GetMapping("/orderState")
     public String statePage(@CookieValue(name = "accessToken", defaultValue = "not found") String accessToken,
-                            @CookieValue(name = "shopId", defaultValue = "not found") String shopId,
+                            @CookieValue(name = "shopId", defaultValue = "not found") Long shopId,
                             Model model) {
         kakaoApi.tokenCheck(accessToken);
         Shop shop = shopRepository.findById(shopId);
@@ -226,7 +226,7 @@ public class AuthController {
 
     @GetMapping("/eventSetting")
     public String settingPage(@CookieValue(name = "accessToken", defaultValue = "not found") String accessToken,
-                              @CookieValue(name = "shopId", defaultValue = "not found") String shopId,
+                              @CookieValue(name = "shopId", defaultValue = "not found") Long shopId,
                               Model model) {
         kakaoApi.tokenCheck(accessToken);
         Shop shop = shopRepository.findById(shopId);
@@ -240,7 +240,7 @@ public class AuthController {
 
     @GetMapping("/menu")
     public String menuPage(@CookieValue(name = "accessToken", defaultValue = "not found") String accessToken,
-                           @CookieValue(name = "shopId", defaultValue = "not found") String shopId,
+                           @CookieValue(name = "shopId", defaultValue = "not found") Long shopId,
                            OrderDTO orderDTO,
                            Model model) {
         kakaoApi.tokenCheck(accessToken);

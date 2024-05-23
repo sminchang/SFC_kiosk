@@ -41,7 +41,7 @@ public class FoodCourtController {
     }
 
     @GetMapping("/foodCourtMenu")
-    public String foodCourtMenu(@RequestParam String shopId,
+    public String foodCourtMenu(@RequestParam Long shopId,
                                 @RequestParam String facilityName,
                                 HttpServletResponse response,
                                 OrderDTO orderDTO,

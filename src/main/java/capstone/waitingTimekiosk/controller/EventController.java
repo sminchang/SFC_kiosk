@@ -32,8 +32,8 @@ public class EventController {
 
     @PostMapping("/event")
     public String settingPage(@CookieValue(name = "accessToken", defaultValue = "not found") String accessToken,
-                              @CookieValue(name = "shopId", defaultValue = "not found") String shopId,
-                              @RequestParam String menuId,
+                              @CookieValue(name = "shopId", defaultValue = "not found") Long shopId,
+                              @RequestParam Long menuId,
                               @RequestParam int eventQuantity,
                               Model model) {
         kakaoApi.tokenCheck(accessToken);

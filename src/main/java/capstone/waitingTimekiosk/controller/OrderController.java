@@ -38,7 +38,7 @@ public class OrderController {
 
     @PostMapping("new/order")
     public String orderFromCart(/*@CookieValue(name = "accessToken", defaultValue = "not found") String accessToken,
-                                */@CookieValue(name = "shopId", defaultValue = "not found") String shopId,
+                                */@CookieValue(name = "shopId", defaultValue = "not found") Long shopId,
                                   @ModelAttribute OrderDTO orderDTO,
                                   RedirectAttributes redirectAttributes,
                                   HttpServletRequest request){

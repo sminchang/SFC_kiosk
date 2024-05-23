@@ -42,7 +42,7 @@ public class MenuController {
 
     @PostMapping("/new/category")
     public String newCategory(@CookieValue(name = "accessToken", defaultValue = "not found") String accessToken,
-                              @CookieValue(name = "shopId", defaultValue = "not found") String shopId,
+                              @CookieValue(name = "shopId", defaultValue = "not found") Long shopId,
                               @RequestParam String categoryName,
                               Model model) {
         kakaoApi.tokenCheck(accessToken);
@@ -62,7 +62,7 @@ public class MenuController {
 
     @PostMapping("/new/menuItem")
     public String newMenuItem(@CookieValue(name = "accessToken", defaultValue = "not found") String accessToken,
-                              @CookieValue(name = "shopId", defaultValue = "not found") String shopId,
+                              @CookieValue(name = "shopId", defaultValue = "not found") Long shopId,
                               MenuDTO form,
                               Model model) throws IOException {
         kakaoApi.tokenCheck(accessToken);
@@ -109,8 +109,8 @@ public class MenuController {
 
     @PostMapping("/update/menuItem")
     public String updateMenuItem(@CookieValue(name = "accessToken", defaultValue = "not found") String accessToken,
-                                 @CookieValue(name = "shopId", defaultValue = "not found") String shopId,
-                                 @RequestParam String menuId,
+                                 @CookieValue(name = "shopId", defaultValue = "not found") Long shopId,
+                                 @RequestParam Long menuId,
                                  @RequestParam String categoryName,
                                  MenuDTO form,
                                  Model model) throws IOException {
@@ -154,7 +154,7 @@ public class MenuController {
 
     @GetMapping("/remove/category")
     public String removeCategory(@CookieValue(name = "accessToken", defaultValue = "not found") String accessToken,
-                                 @CookieValue(name = "shopId", defaultValue = "not found") String shopId,
+                                 @CookieValue(name = "shopId", defaultValue = "not found") Long shopId,
                                  @RequestParam String categoryId,
                                  Model model) {
         kakaoApi.tokenCheck(accessToken);
@@ -172,8 +172,8 @@ public class MenuController {
 
     @GetMapping("/remove/menuItem")
     public String removeMenuItem(@CookieValue(name = "accessToken", defaultValue = "not found") String accessToken,
-                                 @CookieValue(name = "shopId", defaultValue = "not found") String shopId,
-                                 @RequestParam String menuId,
+                                 @CookieValue(name = "shopId", defaultValue = "not found") Long shopId,
+                                 @RequestParam Long menuId,
                                  Model model) {
         kakaoApi.tokenCheck(accessToken);
         Shop shop = shopRepository.findById(shopId);
@@ -184,7 +184,7 @@ public class MenuController {
         List<Category> categorys = categoryRepository.findListByShopId(shop.getId());
         List<MenuItem> menus = menuItemRepository.findListByCategory(shop.getId(), categoryName);
 
-        ordersRepository.removeEmptyOrders(shop.getId());
+        ordersRepository.deleteEmptyOrders(shop.getId());
 
         model.addAttribute("categorys", categorys);
         model.addAttribute("menuDTO", new MenuDTO());
@@ -194,7 +194,7 @@ public class MenuController {
 
     @GetMapping("/menuConfig/category/{categoryName}")
     public String menuConfigCategory(@CookieValue(name = "accessToken", defaultValue = "not found") String accessToken,
-                              @CookieValue(name = "shopId", defaultValue = "not found") String shopId,
+                              @CookieValue(name = "shopId", defaultValue = "not found") Long shopId,
                               @PathVariable String categoryName,
                               Model model){
         kakaoApi.tokenCheck(accessToken);
@@ -217,7 +217,7 @@ public class MenuController {
 
     @GetMapping("/eventSetting/category/{categoryName}")
     public String eventSettingCategory(@CookieValue(name = "accessToken", defaultValue = "not found") String accessToken,
-                              @CookieValue(name = "shopId", defaultValue = "not found") String shopId,
+                              @CookieValue(name = "shopId", defaultValue = "not found") Long shopId,
                               @PathVariable String categoryName,
                               Model model){
         kakaoApi.tokenCheck(accessToken);
@@ -239,7 +239,7 @@ public class MenuController {
 
     @GetMapping("/menu/category/{categoryName}")
     public ResponseEntity<List<MenuItem>> menuCategory(/*@CookieValue(name = "accessToken", defaultValue = "not found") String accessToken,
-                                                       */@CookieValue(name = "shopId", defaultValue = "not found") String shopId,
+                                                       */@CookieValue(name = "shopId", defaultValue = "not found") Long shopId,
                                                        @PathVariable String categoryName){
         //kakaoApi.tokenCheck(accessToken); //foodCourtMenu에서 사용할 때 인가정보가 없어서 오류나는 문제->민감 정보가 아닌 json 응답이라 해당 과정에서 인가를 뺌
         Shop shop = shopRepository.findById(shopId);

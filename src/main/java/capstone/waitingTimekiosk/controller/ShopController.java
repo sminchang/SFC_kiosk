@@ -45,7 +45,7 @@ public class ShopController {
 
     @GetMapping("/remove/shop")
     public String removeShop(@CookieValue(name = "accessToken", defaultValue = "not found") String accessToken,
-                             @RequestParam String shopId,
+                             @RequestParam Long shopId,
                              Model model) throws JsonProcessingException {
         kakaoApi.tokenCheck(accessToken);
         Member member = memberService.findMember(accessToken);

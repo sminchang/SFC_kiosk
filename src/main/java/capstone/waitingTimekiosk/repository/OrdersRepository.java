@@ -16,6 +16,12 @@ public interface OrdersRepository {
     //select m from Orders m where m.shop.id = :shopId
     public List<Orders> findListByShopId(Long shopId);
 
-    //select m from Orders m where m.shop.id = :shopId and m.status = false
-    public List<Orders> findListByShopIdAndFalse(Long shopId);
+    //select m from Orders m where m.shop.id = :shopId and m.providedTime IS NULL
+    public List<Orders> findBackOrders(Long shopId);
+
+    //select m.id from Orders m where m.providedTime IS NULL
+    public List<Long> findBackOrderIds(Long shopId);
+
+    //SELECT o FROM Orders o WHERE o.id IN :backOrderIds
+    public List<Orders> findOrderListByBackOrderIds(Orders order);
 }

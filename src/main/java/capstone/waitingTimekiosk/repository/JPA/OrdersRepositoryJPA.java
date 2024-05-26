@@ -7,7 +7,9 @@ import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Repository;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Repository
 public class OrdersRepositoryJPA implements OrdersRepository {
@@ -44,9 +46,28 @@ public class OrdersRepositoryJPA implements OrdersRepository {
                 .getResultList();
     }
 
-    public List<Orders> findListByShopIdAndFalse(Long shopId) {
-        return em.createQuery("select m from Orders m where m.shop.id = :shopId and m.status = false", Orders.class)
+    public List<Orders> findBackOrders(Long shopId) {
+        return em.createQuery("select m from Orders m where m.shop.id = :shopId and m.providedTime IS NULL ", Orders.class)
                 .setParameter("shopId", shopId)
+                .getResultList();
+    }
+
+    public List<Long> findBackOrderIds(Long shopId) {
+        return em.createQuery("select m.id from Orders m where m.providedTime IS NULL and m.shop.id =:shopId", Long.class)
+                .setParameter("shopId", shopId)
+                .getResultList();
+    }
+
+    //backOrderIds 파싱하여 해당 order들 불러오기
+    public List<Orders> findOrderListByBackOrderIds(Orders order){
+
+        // 문자열을 파싱하여 밀린 주문 ID 리스트 생성
+        List<Long> backOrderIds = Arrays.stream(order.getBackOrderIds().split(","))
+                .map(Long::parseLong)
+                .collect(Collectors.toList());
+        // 밀린 주문 ID를 사용하여 해당 주문들의 정보 조회
+        return em.createQuery("SELECT o FROM Orders o WHERE o.id IN :backOrderIds", Orders.class)
+                .setParameter("backOrderIds", backOrderIds)
                 .getResultList();
     }
 }

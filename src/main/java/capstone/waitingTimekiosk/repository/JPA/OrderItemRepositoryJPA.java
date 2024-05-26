@@ -28,11 +28,11 @@ public class OrderItemRepositoryJPA implements OrderItemRepository {
     }
 
 
-    //orderStatus 반영하여 waitingTime에 필요한 수량 조회
+    //orders.providedTime 반영하여 waitingTime에 필요한 수량 조회
     public List<Object[]> findWaitingTimeListByShopId(Long shopId) {
         return em.createQuery("SELECT m.menuItem, SUM(m.quantity) " +
                         "FROM OrderItem m " +
-                        "WHERE m.orders.shop.id = :shopId AND m.orders.status = false " +
+                        "WHERE m.orders.shop.id = :shopId AND m.orders.providedTime IS NULL " +
                         "GROUP BY m.menuItem", Object[].class)
                 .setParameter("shopId", shopId)
                 .getResultList();
@@ -47,7 +47,7 @@ public class OrderItemRepositoryJPA implements OrderItemRepository {
                         "AND m.id NOT IN (" +
                         "    SELECT oi.menuItem.id " +
                         "    FROM OrderItem oi " +
-                        "    WHERE oi.orders.status = false " +
+                        "    WHERE oi.orders.providedTime IS NULL " +
                         ")")
                 .setParameter("shopId", shopId)
                 .executeUpdate();

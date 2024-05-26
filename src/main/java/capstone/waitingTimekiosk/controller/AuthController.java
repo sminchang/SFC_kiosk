@@ -218,7 +218,7 @@ public class AuthController {
                             Model model) {
         kakaoApi.tokenCheck(accessToken);
         Shop shop = shopRepository.findById(shopId);
-        List<Orders> orders = ordersRepository.findListByShopIdAndFalse(shop.getId());
+        List<Orders> orders = ordersRepository.findBackOrders(shop.getId());
 
         model.addAttribute("orderList", orders);
         return "html/adminPage/orderState";

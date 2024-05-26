@@ -18,8 +18,8 @@ public interface OrderItemRepository {
     public List<OrderItem> findListByOrderId(Long orderId);
 
 
-    //orderStatus 반영하여 waitingTime에 필요한 수량 조회
-    //SELECT m.menuItem, SUM(m.quantity) FROM OrderItem m WHERE m.orders.shop.id = :shopId AND m.orders.status = false GROUP BY m.menuItem
+    //orders.ProvidedTime 반영하여 waitingTime에 필요한 수량 조회
+    //SELECT m.menuItem, SUM(m.quantity) FROM OrderItem m WHERE m.orders.shop.id = :shopId AND m.orders.providedTime IS NULL GROUP BY m.menuItem
     public List<Object[]> findWaitingTimeListByShopId(Long shopId);
 
     //현재 주문 대기에 들어가지 않은 메뉴들의 경우 finalTime 초기화
@@ -29,7 +29,7 @@ public interface OrderItemRepository {
                         "AND m.id NOT IN (" +
                         "    SELECT oi.menuItem.id " +
                         "    FROM OrderItem oi " +
-                        "    WHERE oi.orders.status = false " +
+                        "    WHERE oi.orders.providedTime IS NULL " +
                         ")*/
     //@Transactional
     public void initFinalTime(Long shopId);

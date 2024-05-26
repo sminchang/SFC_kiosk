@@ -1,9 +1,6 @@
 package capstone.waitingTimekiosk.controller;
 
-import capstone.waitingTimekiosk.domain.MenuItem;
-import capstone.waitingTimekiosk.domain.OrderItem;
-import capstone.waitingTimekiosk.domain.Orders;
-import capstone.waitingTimekiosk.domain.Shop;
+import capstone.waitingTimekiosk.domain.*;
 import capstone.waitingTimekiosk.repository.MenuItemRepository;
 import capstone.waitingTimekiosk.repository.OrderItemRepository;
 import capstone.waitingTimekiosk.repository.OrdersRepository;
@@ -22,7 +19,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @RequiredArgsConstructor
@@ -32,7 +31,6 @@ public class OrderController {
     private final OrdersRepository ordersRepository;
     private final OrderItemRepository orderItemRepository;
     private final MenuItemRepository menuItemRepository;
-    private final KakaoApi kakaoApi;
     private final ShopRepository shopRepository;
     private final WaitingTimeService waitingTimeService;
 
@@ -49,16 +47,23 @@ public class OrderController {
         Shop shop = shopRepository.findById(shopId);
 
         //주문 항목 생성
-        Orders orders = new Orders(shop);
-        ordersRepository.save(orders);
+        Orders order = new Orders(shop);
+        //주문 시점에 밀린 주문들 기입--추후 예상 대기시간 알고리즘 모델링 시 소요 시간에 분석에 반영
+        List<Long> backOrders = ordersRepository.findBackOrderIds(shop.getId());
+        order.setBackOrderIds(
+                backOrders.stream()
+                .map(String::valueOf)
+                .collect(Collectors.joining(","))
+        );
+        ordersRepository.save(order);
 
         //주문 항목 내부 주문 내역 생성
         List<OrderDTO.CartItem> cartItems = orderDTO.getOrderItems();
         for (OrderDTO.CartItem cartItem : cartItems){
             logger.info("Id: {}, Quantity: {}", cartItem.getMenuItemId(), cartItem.getQuantity());
-            OrderItem orderItem = new OrderItem(orders);
+            OrderItem orderItem = new OrderItem(order);
             MenuItem menuItem = menuItemRepository.findById(cartItem.getMenuItemId());
-            orderItem.setOrders(orders);
+            orderItem.setOrders(order);
             orderItem.setMenuItem(menuItem);
             orderItem.setQuantity(cartItem.getQuantity());
             orderItemRepository.save(orderItem);
@@ -78,7 +83,7 @@ public class OrderController {
             waitingTimeService.makeFinalTime(shop.getId());
 
             //외래키 연관관계 설정
-            orders.addOrderItem(orderItem);
+            order.addOrderItem(orderItem);
             menuItem.addOrderItem(orderItem);
         }
 
@@ -95,7 +100,6 @@ public class OrderController {
     public String orderComplete(@RequestParam Long orderId){
 
         Orders order = ordersRepository.findById(orderId);
-        order.setStatus(true);
         order.setProvidedTime(LocalDateTime.now());
         ordersRepository.save(order);
 

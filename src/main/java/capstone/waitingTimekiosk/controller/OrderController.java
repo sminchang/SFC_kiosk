@@ -37,6 +37,7 @@ public class OrderController {
     @PostMapping("new/order")
     public String orderFromCart(/*@CookieValue(name = "accessToken", defaultValue = "not found") String accessToken,
                                 */@CookieValue(name = "shopId", defaultValue = "not found") Long shopId,
+                                  @RequestParam(required = false) String facilityName,
                                   @ModelAttribute OrderDTO orderDTO,
                                   RedirectAttributes redirectAttributes,
                                   HttpServletRequest request){
@@ -92,6 +93,7 @@ public class OrderController {
         //직전 요청이 foodCourtMenu였다면 foodCourtMenu로 리다이렉트
         if (request.getHeader("Referer").contains("/foodCourtMenu")) {
             redirectAttributes.addAttribute("shopId", shopId);
+            redirectAttributes.addAttribute("facilityName", facilityName);
             return "redirect:/foodCourtMenu";
         }
 

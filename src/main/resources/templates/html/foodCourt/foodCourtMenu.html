@@ -63,7 +63,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="orderDTO" action="/new/order" th:object="${orderDTO}" method="post">
+                <form id="orderDTO" th:action="@{/new/order(facilityName=${facilityName})}" th:object="${orderDTO}" method="post">
                     <ul class="list-group mb-3" id="cartItems">
                         <li th:each="orderItem, itemStat : *{orderItems}" class="list-group-item d-flex justify-content-between align-items-center">
                             <input type="hidden" th:field="*{orderItems[__${itemStat.index}__].menuItemId}">

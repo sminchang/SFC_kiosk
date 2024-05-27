@@ -116,8 +116,9 @@ function updateIndividualWaitingTime(menuItemId) {
         const cartItemQuantity = getCartItemQuantity(menuItemId);
         const remainingQuantity = eventQuantity - cartItemQuantity;
         let finalTime = parseInt(timeElement.dataset.finalTime);
-
-        const nextQuantity =eventQuantity - (cartItemQuantity + 1);
+        let initialFinalTime =  parseInt(timeElement.dataset.initialFinalTime);
+        let delayTime = (initialFinalTime - defaultTime > 0) ? (initialFinalTime - defaultTime) : 0;
+        const nextQuantity = eventQuantity - (cartItemQuantity + 1);
         let nextTime;
 
         if (remainingQuantity < 0) {
@@ -125,16 +126,16 @@ function updateIndividualWaitingTime(menuItemId) {
             const additionalQuantity = Math.abs(remainingQuantity);
             if (additionalQuantity / CCQ > 0) {
                 if (additionalQuantity % CCQ !== 0) {
-                    finalTime = Math.ceil(additionalQuantity / CCQ) * waitTime;
+                    finalTime = Math.ceil(additionalQuantity / CCQ) * waitTime + delayTime;
                 } else {
-                    finalTime = (additionalQuantity / CCQ) * waitTime;
+                    finalTime = (additionalQuantity / CCQ) * waitTime + delayTime;
                 }
             } else {
-                finalTime = waitTime;
+                finalTime = waitTime + delayTime;
             }
         }
         else {
-            finalTime = parseInt(timeElement.dataset.initialFinalTime);
+            finalTime = initialFinalTime;
         }
         timeElement.dataset.finalTime = finalTime;
         timeElement.textContent = `${finalTime} mins`;
@@ -144,16 +145,16 @@ function updateIndividualWaitingTime(menuItemId) {
             const additionalQuantity = Math.abs(nextQuantity);
             if (additionalQuantity / CCQ > 0) {
                 if (additionalQuantity % CCQ !== 0) {
-                    nextTime = Math.ceil(additionalQuantity / CCQ) * waitTime;
+                    nextTime = Math.ceil(additionalQuantity / CCQ) * waitTime + delayTime;
                 } else {
-                    nextTime = (additionalQuantity / CCQ) * waitTime;
+                    nextTime = (additionalQuantity / CCQ) * waitTime + delayTime;
                 }
             } else {
-                nextTime = waitTime;
+                nextTime = waitTime + delayTime;
             }
         }
         else {
-            nextTime = parseInt(timeElement.dataset.initialFinalTime);
+            nextTime = initialFinalTime;
         }
         timeElement.dataset.nextTime = nextTime;
         timeElement.textContent = `${nextTime} mins`;
@@ -321,7 +322,7 @@ function removeToCart(event, menuItemId) {
     sessionStorage.setItem('cartItems', JSON.stringify(cartItems));
 
     // orderItems에서 해당 항목 제거 후 나머지 항목들의 인덱스 조정
-    const orderItemsInputs = form.querySelectorAll('input[name^="orderItems"]');
+    const orderItemsInputs = document.querySelectorAll('input[name^="orderItems"]');
     let index = 0;
     for (let i = 0; i < orderItemsInputs.length; i += 2) {
         const idInput = orderItemsInputs[i];

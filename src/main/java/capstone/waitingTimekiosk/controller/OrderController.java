@@ -60,6 +60,7 @@ public class OrderController {
         //주문 항목 내부 주문 내역 생성
         List<OrderDTO.CartItem> cartItems = orderDTO.getOrderItems();
         for (OrderDTO.CartItem cartItem : cartItems){
+            if (cartItem.getMenuItemId() != null) {
             logger.info("Id: {}, Quantity: {}", cartItem.getMenuItemId(), cartItem.getQuantity());
             OrderItem orderItem = new OrderItem(order);
             MenuItem menuItem = menuItemRepository.findById(cartItem.getMenuItemId());
@@ -85,6 +86,7 @@ public class OrderController {
             //외래키 연관관계 설정
             order.addOrderItem(orderItem);
             menuItem.addOrderItem(orderItem);
+        }
         }
 
         //직전 요청이 foodCourtMenu였다면 foodCourtMenu로 리다이렉트

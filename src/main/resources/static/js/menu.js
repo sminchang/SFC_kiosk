@@ -320,6 +320,20 @@ function removeToCart(event, menuItemId) {
     cartItems = cartItems.filter(item => item.id !== menuItemId);
     sessionStorage.setItem('cartItems', JSON.stringify(cartItems));
 
+    // orderItems에서 해당 항목 제거 후 나머지 항목들의 인덱스 조정
+    const orderItemsInputs = form.querySelectorAll('input[name^="orderItems"]');
+    let index = 0;
+    for (let i = 0; i < orderItemsInputs.length; i += 2) {
+        const idInput = orderItemsInputs[i];
+        const qtyInput = orderItemsInputs[i + 1];
+
+        if (idInput.value !== menuItemId) {
+            idInput.name = `orderItems[${index}].menuItemId`;
+            qtyInput.name = `orderItems[${index}].quantity`;
+            index++;
+        }
+    }
+
     delete products[menuItemId];
 
     updateTotalPrice();

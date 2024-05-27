@@ -49,7 +49,7 @@ public class AuthController {
         return "redirect:" + kakaoAuthUrl;
     }
 
-    @RequestMapping("/memberIndex")
+    @GetMapping("/memberIndex")
     public String login(HttpServletResponse response, @RequestParam String code, Model model) throws JsonProcessingException {
         //1. 인가 코드 받기 - @RequestParam String code
 
@@ -80,7 +80,7 @@ public class AuthController {
     }
 
     //클라이언트가 로그아웃 요청 시 카카오 계정 로그아웃 후 리다이렉트 되어 액세스 토큰 만료 요청 컨트롤러로 이동
-    @RequestMapping("/logout")
+    @GetMapping("/logout")
     public String deleteToken(@CookieValue(name = "accessToken", defaultValue = "not found") String accessToken, HttpServletResponse response) throws JsonProcessingException {
 
         //카카오 서버에 액세스 토큰 만료 요청,

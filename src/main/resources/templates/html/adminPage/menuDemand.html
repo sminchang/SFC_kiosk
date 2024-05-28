@@ -73,20 +73,6 @@
         <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
             <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                 <h2>sales</h2>
-                <div class="btn-toolbar mb-2 mb-md-0">
-                    <div class="dropdown">
-                        <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <span data-feather="calendar" class="align-text-bottom"></span>
-                            <span id="selectedOption">This year</span>
-                        </button>
-                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            <a class="dropdown-item" href="#" onclick="selectOption('This year')">This year</a>
-                            <a class="dropdown-item" href="#" onclick="selectOption('This month')">This month</a>
-                            <a class="dropdown-item" href="#" onclick="selectOption('This week')">This week</a>
-                            <a class="dropdown-item" href="#" onclick="selectOption('Today')">Today</a>
-                        </div>
-                    </div>
-                </div>
             </div>
 
             <canvas class="my-4 w-100" id="myChart" width="900" height="380"></canvas>
@@ -103,7 +89,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr th:each="entry : ${demandData}" class="record" onclick="handleRecordClick(this,  document.getElementById('selectedOption').textContent)">
+                    <tr th:each="entry : ${demandData}" class="record" onclick="handleRecordClick(this, 'This year')">
                     <td th:text="|${entry.value['menuName']} (ID${entry.key})|"></td>
                         <td th:text="${entry.value['daily']}"></td>
                         <td th:text="${entry.value['weekly']}"></td>

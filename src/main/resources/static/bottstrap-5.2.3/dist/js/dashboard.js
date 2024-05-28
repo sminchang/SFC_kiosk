@@ -34,7 +34,13 @@ function calculateWeeklyData(filteredOrderItems) {
         }
     });
 
-    return weeklyData;
+    // weeklyData 객체의 키를 정렬하여 반환
+    var sortedWeeklyData = {};
+    Object.keys(weeklyData).sort().forEach(function(key) {
+        sortedWeeklyData[key] = weeklyData[key];
+    });
+
+    return sortedWeeklyData;
 }
 
 // 요일별 수량 계산 함수 추가
@@ -75,6 +81,47 @@ function calculateHourlyData(filteredOrderItems) {
     return hourlyData;
 }
 
+function handleChartClick(event, chart, filteredOrderItems, option) {
+    var activePoints = chart.getElementsAtEvent(event);
+    if (activePoints.length > 0) {
+        var clickedElementIndex = activePoints[0]._index;
+        var label = chart.data.labels[clickedElementIndex];
+        if (option === 'This year') {
+            var selectedMonth = label.slice(0, -1);
+            var monthlyFilteredData = filteredOrderItems.filter(function (orderItem) {
+                var dateStr = orderItem.orderTime;
+                if (typeof dateStr === 'string') {
+                    var date = new Date(dateStr);
+                    return date.getMonth() + 1 == selectedMonth;
+                }
+            });
+            renderChart(monthlyFilteredData, 'This month');
+        } else if (option === 'This month') {
+            var selectedWeek = label.split(' ')[1];
+            var weeklyFilteredData = filteredOrderItems.filter(function (orderItem) {
+                var dateStr = orderItem.orderTime;
+                if (typeof dateStr === 'string') {
+                    var date = new Date(dateStr);
+                    var weekNumber = Math.ceil((date.getDate() - 1) / 7);
+                    return weekNumber == selectedWeek;
+                }
+            });
+            renderChart(weeklyFilteredData, 'This week');
+        } else if (option === 'This week') {
+            var selectedDay = label;
+            var dailyFilteredData = filteredOrderItems.filter(function (orderItem) {
+                var dateStr = orderItem.orderTime;
+                if (typeof dateStr === 'string') {
+                    var date = new Date(dateStr);
+                    var dayOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][date.getDay()];
+                    return dayOfWeek === selectedDay;
+                }
+            });
+            renderChart(dailyFilteredData, 'Today');
+        }
+    }
+}
+
 window.renderChart = function (filteredOrderItems, option) {
 // 기존 차트 제거
     var chartContainer = document.getElementById('myChart');
@@ -110,7 +157,7 @@ window.renderChart = function (filteredOrderItems, option) {
 
   // 차트 그리기
   var ctx = document.getElementById('myChart').getContext('2d');
-  new Chart(ctx, {
+  var chart = new Chart(ctx, {
       type: 'line',
       data: {
           labels: labels,
@@ -142,6 +189,9 @@ window.renderChart = function (filteredOrderItems, option) {
                       text: '월'
                   }
               }
+          },
+          onClick: function (event){
+              handleChartClick(event, chart, filteredOrderItems, option)
           }
       }
   });

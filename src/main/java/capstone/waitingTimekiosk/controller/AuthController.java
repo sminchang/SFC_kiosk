@@ -248,6 +248,7 @@ public class AuthController {
         List<Category> categorys = categoryRepository.findListByShopId(shop.getId());
         List<MenuItem> menus = menuItemRepository.findListByFastMenu(shop.getId(), 5);;
 
+        model.addAttribute("shopId", shopId);
         model.addAttribute("categorys", categorys);
         model.addAttribute("menus",menus);
         model.addAttribute("orderDTO", orderDTO);

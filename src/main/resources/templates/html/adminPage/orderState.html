@@ -94,6 +94,43 @@
 </footer>
 
 <script src="/bottstrap-5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/webjars/jquery/3.6.0/jquery.min.js}"></script>
+
+<script>
+    $(document).ready(function() {
+        const websocket = new WebSocket("ws://localhost:8080/ws/order");
+
+        websocket.onmessage = function(event) {
+            var orderDTO = JSON.parse(event.data);
+            console.log(orderDTO);
+
+            var newOrder = `
+        <div class="col">
+          <div class="card shadow-sm">
+            <div class="card-body" style="background-color: #55595c;">
+              <ul class="list-group list-group-flush">
+              ${orderDTO.orderItems.map(item => `
+                  <li class="list-group-item" style="background-color: #55595c; color: #eceeef;">
+                    ${item.menuName}: ${item.quantity}
+                  </li>
+                `).join('')}
+              </ul>
+            </div>
+            <div class="card-footer d-flex justify-content-between align-items-center">
+              <div class="btn-group">
+                <form action="/orderComplete" method="post">
+                  <input type="hidden" name="orderId" value="${orderDTO.orderId}">
+                  <button type="submit" class="btn btn-outline-secondary">complete</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+            $(".row.row-cols-1.row-cols-sm-2.row-cols-md-3.g-3").append(newOrder);
+        };
+    });
+</script>
 
 </body>
 </html>

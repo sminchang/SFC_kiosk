@@ -56,6 +56,7 @@ public class FoodCourtController {
         model.addAttribute("categorys", categorys);
         model.addAttribute("menus",menus);
         model.addAttribute("facilityName",facilityName);
+        model.addAttribute("shopId",shopId);
         model.addAttribute("orderDTO", orderDTO);
         return "html/foodCourt/foodCourtMenu";
     }

@@ -63,12 +63,10 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="orderDTO" th:action="@{/new/order(facilityName=${facilityName})}" th:object="${orderDTO}" method="post">
+                <form id="newOrder" th:action="@{/new/order}" method="get">
+                    <input type="hidden" name="facilityName" th:value="${facilityName}">
                     <ul class="list-group mb-3" id="cartItems">
-                        <li th:each="orderItem, itemStat : *{orderItems}" class="list-group-item d-flex justify-content-between align-items-center">
-                            <input type="hidden" th:field="*{orderItems[__${itemStat.index}__].menuItemId}">
-                            <input type="hidden" th:field="*{orderItems[__${itemStat.index}__].quantity}">
-                        </li>
+                        <!-- 장바구니 아이템은 JavaScript로 동적으로 추가 -->
                     </ul>
                     <li class="list-group-item d-flex justify-content-between">
                         <span>Total (KRW)</span>
@@ -124,6 +122,7 @@
 </main>
 
 <script src="/bottstrap-5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/webjars/jquery/3.6.0/jquery.min.js}"></script>
 <script src="/js/menu.js" defer></script>
 <script>
     // 모든 nav-link에 대한 이벤트 리스너 추가
@@ -184,7 +183,26 @@
 
 <script th:inline="javascript">
     /*<![CDATA[*/
-    let products = {}; /*]]>*/</script>
+    let products = {}; /*]]>*/
+    $(document).ready(function(){
+        const websocket = new WebSocket("ws://localhost:8080/ws/order");
+
+        $("#paymentButton").on("click", function(e){
+            const orderItems = Object.keys(products).map(menuItemId => ({
+                menuItemId: Number(menuItemId),
+                menuName: $(`#cart-item-${menuItemId}`).find('div:first-child').text(),
+                quantity: products[menuItemId].quantity
+            }));
+
+            const orderData = {
+                shopId: [[${shopId}]],
+                orderItems: orderItems
+            };
+
+            websocket.send(JSON.stringify(orderData));
+        });
+    });
+</script>
 
 </body>
 </html>
